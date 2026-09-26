@@ -1,0 +1,249 @@
+"use client";
+
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition, useCallback } from "react";
+import { Search, X, SlidersHorizontal, Loader2 } from "lucide-react";
+
+import { CATEGORIES, CONTENT_TYPES, SORT_OPTIONS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+
+/**
+ * Multi-level filtering + sorting for the Explorer (SRS FR-3).
+ *
+ * Every control writes to the URL rather than to local state, so a filtered
+ * view is shareable and survives refresh and the back button. The server
+ * component re-renders from those params.
+ */
+export function FilterBar({
+  genres,
+  years,
+  total,
+  lockedCategory,
+}: {
+  genres: string[];
+  years: number[];
+  total: number;
+  /** Set on category pages, where the channel is fixed and hidden from the UI. */
+  lockedCategory?: string;
+}) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [isPending, startTransition] = useTransition();
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const [term, setTerm] = useState(searchParams.get("q") ?? "");
+
+  const current = useCallback(
+    (key: string) => searchParams.get(key) ?? "",
+    [searchParams],
+  );
+
+  /** Writes one param and resets paging, since page 3 of a new filter is meaningless. */
+  const setParam = useCallback(
+    (key: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) params.set(key, value);
+      else params.delete(key);
+      params.delete("page");
+
+      startTransition(() => {
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      });
+    },
+    [router, pathname, searchParams],
+  );
+
+  // Debounce the search box so typing doesn't fire a request per keystroke.
+  useEffect(() => {
+    if (term === (searchParams.get("q") ?? "")) return;
+    const timeout = setTimeout(() => setParam("q", term), 350);
+    return () => clearTimeout(timeout);
+  }, [term, searchParams, setParam]);
+
+  const activeCount = ["category", "type", "genre", "year"].filter((key) =>
+    Boolean(current(key)),
+  ).length;
+
+  function clearAll() {
+    setTerm("");
+    startTransition(() => router.push(pathname, { scroll: false }));
+  }
+
+  return (
+    <div className="mb-10">
+      {/* Search + sort */}
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <div className="relative flex-1">
+          <Search
+            className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--ink-faint)]"
+            aria-hidden
+          />
+          <input
+            type="search"
+            value={term}
+            onChange={(event) => setTerm(event.target.value)}
+            placeholder="Search titles, summaries and tags…"
+            aria-label="Search content"
+            className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper)] py-3 pl-11 pr-11 text-[0.92rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+          />
+          {isPending && (
+            <Loader2
+              className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--spot)]"
+              aria-hidden
+            />
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          <label className="sr-only" htmlFor="sort">
+            Sort results
+          </label>
+          <select
+            id="sort"
+            value={current("sort") || "latest"}
+            onChange={(event) => setParam("sort", event.target.value)}
+            className="cursor-pointer border-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-4 py-3 text-[0.88rem] text-[var(--ink)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+          >
+            {SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+
+          <button
+            type="button"
+            onClick={() => setShowAdvanced((open) => !open)}
+            aria-expanded={showAdvanced}
+            className={cn(
+              "inline-flex items-center gap-2 border px-4 py-3 text-[0.88rem] transition-colors",
+              showAdvanced || activeCount > 0
+                ? "border-[var(--spot)] text-[var(--spot)]"
+                : "border-[var(--rule-strong)] text-[var(--ink-soft)] hover:text-[var(--ink)]",
+            )}
+          >
+            <SlidersHorizontal className="h-4 w-4" aria-hidden />
+            Filters
+            {activeCount > 0 && (
+              <span className="grid h-5 min-w-5 place-items-center bg-[var(--spot)] px-1 font-mono text-[0.65rem] text-white">
+                {activeCount}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Advanced filters */}
+      {showAdvanced && (
+        <div className="mt-4 grid gap-4 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-5 sm:grid-cols-2 lg:grid-cols-4">
+          {!lockedCategory && (
+            <FilterSelect
+              label="Channel"
+              value={current("category")}
+              onChange={(value) => setParam("category", value)}
+              options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
+              allLabel="All channels"
+            />
+          )}
+
+          <FilterSelect
+            label="Format"
+            value={current("type")}
+            onChange={(value) => setParam("type", value)}
+            options={CONTENT_TYPES.map((t) => ({ value: t, label: t }))}
+            allLabel="All formats"
+          />
+
+          <FilterSelect
+            label="Genre"
+            value={current("genre")}
+            onChange={(value) => setParam("genre", value)}
+            options={genres.map((g) => ({ value: g, label: g }))}
+            allLabel="All genres"
+          />
+
+          <FilterSelect
+            label="Release year"
+            value={current("year")}
+            onChange={(value) => setParam("year", value)}
+            options={years.map((y) => ({ value: String(y), label: String(y) }))}
+            allLabel="Any year"
+          />
+        </div>
+      )}
+
+      {/* Result count + active filter chips */}
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <p className="font-mono text-[0.72rem] uppercase tracking-[0.13em] text-[var(--ink-faint)]">
+          {total} {total === 1 ? "result" : "results"}
+        </p>
+
+        {(["category", "type", "genre", "year"] as const).map((key) => {
+          const value = current(key);
+          if (!value || (key === "category" && lockedCategory)) return null;
+          const label =
+            key === "category"
+              ? (CATEGORIES.find((c) => c.slug === value)?.name ?? value)
+              : value;
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setParam(key, "")}
+              className="inline-flex items-center gap-1.5 border border-[var(--spot)] bg-[var(--spot-wash)] px-3 py-1 text-[0.78rem] text-[var(--spot-deep)] transition-opacity hover:opacity-80"
+            >
+              {label}
+              <X className="h-3 w-3" aria-hidden />
+              <span className="sr-only">Remove {key} filter</span>
+            </button>
+          );
+        })}
+
+        {(activeCount > 0 || term) && (
+          <button
+            type="button"
+            onClick={clearAll}
+            className="text-[0.78rem] text-[var(--ink-soft)] underline-offset-4 transition-colors hover:text-[var(--spot)] hover:underline"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  options,
+  allLabel,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+  allLabel: string;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--ink-soft)]">
+        {label}
+      </label>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="cursor-pointer border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-3 py-2.5 text-[0.88rem] capitalize text-[var(--ink)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+      >
+        <option value="">{allLabel}</option>
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

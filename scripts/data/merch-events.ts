@@ -1,0 +1,475 @@
+/**
+ * Merchandise showcase and event listings.
+ *
+ * Merchandise carries no price field anywhere by design — SRS §1.5 puts
+ * purchase, ordering and payment out of scope, so these exist purely for
+ * discovery.
+ *
+ * Events use real conventions with genuine host cities and coordinates so the
+ * map and the city filter have something truthful to work with. Dates are
+ * seeded relative to the current date, which keeps the calendar populated
+ * whenever the project is demonstrated.
+ */
+
+export type MerchSeed = {
+  category: string;
+  name: string;
+  tag: "Limited Edition" | "Pre-Order" | "Collectible" | "Exclusive" | "Restock";
+  isUpcoming: boolean;
+  /** Days from today; negative is in the past. */
+  releaseOffset: number;
+  description: string;
+};
+
+export const MERCH_SEED: MerchSeed[] = [
+  {
+    category: "anime",
+    name: "Shattered Horizon — 1/7 Scale Figure",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -120,
+    description:
+      "Cold-cast resin, roughly 24cm to the top of the base. The sculpt is notable for handling fabric folds without the usual scale-figure stiffness, and the base doubles as a display for the alternate faceplate.",
+  },
+  {
+    category: "anime",
+    name: "Autumn Season Art Book",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -60,
+    description:
+      "Two hundred pages of background paintings, colour scripts and layout roughs with commentary from the art director. Printed on uncoated stock, which suits the pencil work better than the usual gloss.",
+  },
+  {
+    category: "anime",
+    name: "Key Animation Print Set",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -30,
+    description:
+      "Six reproduction genga sheets showing a single cut at each stage of production, packaged flat. Sold at convention only.",
+  },
+  {
+    category: "gaming",
+    name: "Nullpoint — Collector's Steelbook",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 45,
+    description:
+      "Steelbook case, cloth map, and a sixty-page field manual written in-universe. The manual is the interesting part — it contains routing information that functions as an actual hint book.",
+  },
+  {
+    category: "gaming",
+    name: "Record Keeper Enamel Pin Set",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -90,
+    description:
+      "Five hard-enamel pins with screen-printed detail, on a backing card designed as a save-file screen. Double-posted, so they sit flat on a jacket.",
+  },
+  {
+    category: "gaming",
+    name: "Cascade Circuit — Arcade Cabinet Replica",
+    tag: "Limited Edition",
+    isUpcoming: true,
+    releaseOffset: 80,
+    description:
+      "Quarter-scale cabinet with a working LCD and a genuinely usable microswitch stick. Side art is screen-printed rather than a decal, which is unusual at this size.",
+  },
+  {
+    category: "gaming",
+    name: "Retro Handheld Restoration Kit",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -15,
+    description:
+      "Replacement shell, screen lens, membranes and a tri-wing driver. Covers the three most common failure points on ageing handhelds.",
+  },
+  {
+    category: "movies",
+    name: "The Quiet Season — Poster Print",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -45,
+    description:
+      "Screen-printed in four colours on heavy cotton stock, numbered to an edition of three hundred. The palette is pulled directly from the film's colour script.",
+  },
+  {
+    category: "movies",
+    name: "Deepwater — Creature Maquette",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -200,
+    description:
+      "A reproduction of the practical build's design maquette, cast from the production's own scan. Unpainted, because the original was.",
+  },
+  {
+    category: "movies",
+    name: "Practical Effects: The Book",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 30,
+    description:
+      "A workshop-level survey of animatronics, miniatures and in-camera compositing, illustrated with build photography rather than finished frames.",
+  },
+  {
+    category: "tv-shows",
+    name: "Longitude — Crew Patch Set",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -75,
+    description:
+      "Embroidered patches for each department shown on the series, including two that only appear as background detail in a single episode.",
+  },
+  {
+    category: "tv-shows",
+    name: "Title Sequence Vinyl",
+    tag: "Limited Edition",
+    isUpcoming: true,
+    releaseOffset: 25,
+    description:
+      "The full title theme plus every seasonal variation, pressed on clear vinyl with an etched B-side. Sleeve notes cover the sequence's design process.",
+  },
+  {
+    category: "tv-shows",
+    name: "Meridian Line — Script Facsimile",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -10,
+    description:
+      "A facsimile shooting script for the bottle episode, including the revision pages in their production colours.",
+  },
+  {
+    category: "k-pop",
+    name: "HALO — Concept Photobook",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 20,
+    description:
+      "Three concept sets across 180 pages, with the art direction notes reproduced alongside the photography. Includes a randomised inclusion.",
+  },
+  {
+    category: "k-pop",
+    name: "Third-Generation Lightstick",
+    tag: "Limited Edition",
+    isUpcoming: true,
+    releaseOffset: 55,
+    description:
+      "Bluetooth-addressable so venues can drive the whole audience as a display. The silhouette is the identifying element, since colour is controlled centrally.",
+  },
+  {
+    category: "k-pop",
+    name: "B-Side Sessions — Cassette",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -40,
+    description:
+      "Album cuts and demo versions on cassette, with a fold-out insert carrying full production credits — increasingly the part collectors actually want.",
+  },
+  {
+    category: "comics",
+    name: "Sixth City — Complete Omnibus",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -150,
+    description:
+      "The full run in one sewn-bound volume, with the original covers reproduced as a gallery and the letters pages retained.",
+  },
+  {
+    category: "comics",
+    name: "Grid — Nine-Panel Print Set",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -20,
+    description:
+      "Nine prints designed to hang as a grid, reproducing the run's most discussed page at poster scale.",
+  },
+  {
+    category: "comics",
+    name: "Inker's Brush Set",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -5,
+    description:
+      "Three sable brushes in the sizes most commonly used for comic inking, plus a nib holder and an assortment of nibs.",
+  },
+  {
+    category: "manga",
+    name: "Ashfall — Box Set, Volumes 1–8",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -100,
+    description:
+      "The first arc collected in a slipcase whose spines form a single illustration when shelved in order.",
+  },
+  {
+    category: "manga",
+    name: "Screentone Sample Pack",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -8,
+    description:
+      "Forty adhesive tone sheets across the dot densities and gradients used most often in serialised work, with a cutting blade.",
+  },
+  {
+    category: "manga",
+    name: "Tidewater — Chapter One Facsimile",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 65,
+    description:
+      "The opening chapter reproduced at original board size, including the blue-pencil underdrawing visible in the margins.",
+  },
+  {
+    category: "cosplay",
+    name: "Meridian Armour Pattern Pack",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -35,
+    description:
+      "Printable pattern sheets for the community-standard armour reference, scaled to three body sizes with bevel guides marked.",
+  },
+  {
+    category: "cosplay",
+    name: "Thermoplastic Starter Kit",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -3,
+    description:
+      "Two sheets of thermoplastic, a contact-safe heat gun, a respirator and a set of sculpting tools. Enough for one pauldron and the mistakes that precede it.",
+  },
+  {
+    category: "cosplay",
+    name: "Prop LED Diffusion Kit",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 40,
+    description:
+      "Addressable strip, diffusion sheet in three densities, a battery pack sized for a convention day, and an inline fuse — the component most builds omit.",
+  },
+];
+
+export type EventSeed = {
+  category: string;
+  title: string;
+  type: "convention" | "meetup" | "screening" | "premiere" | "concert";
+  city: string;
+  country: string;
+  venue: string;
+  lat: number;
+  lng: number;
+  /** Days from today. */
+  inDays: number;
+  description: string;
+};
+
+export const EVENT_SEED: EventSeed[] = [
+  {
+    category: "anime",
+    title: "Anime Expo",
+    type: "convention",
+    city: "Los Angeles",
+    country: "United States",
+    venue: "Los Angeles Convention Center",
+    lat: 34.0403,
+    lng: -118.2696,
+    inDays: 96,
+    description:
+      "North America's largest anime convention. Industry panels, licensing announcements, a very large artist alley, and concert programming across four days.",
+  },
+  {
+    category: "manga",
+    title: "Comiket",
+    type: "convention",
+    city: "Tokyo",
+    country: "Japan",
+    venue: "Tokyo Big Sight",
+    lat: 35.6298,
+    lng: 139.7944,
+    inDays: 128,
+    description:
+      "The world's largest self-published comic fair. Overwhelmingly doujinshi, organised by circle rather than by publisher, and run with a logistical precision that is itself worth seeing.",
+  },
+  {
+    category: "comics",
+    title: "San Diego Comic-Con",
+    type: "convention",
+    city: "San Diego",
+    country: "United States",
+    venue: "San Diego Convention Center",
+    lat: 32.7065,
+    lng: -117.1614,
+    inDays: 110,
+    description:
+      "The convention that set the template for the modern pop-culture show. Comics programming remains strong despite the film and television presence that dominates the coverage.",
+  },
+  {
+    category: "gaming",
+    title: "Gamescom",
+    type: "convention",
+    city: "Cologne",
+    country: "Germany",
+    venue: "Koelnmesse",
+    lat: 50.9473,
+    lng: 6.9835,
+    inDays: 140,
+    description:
+      "Europe's largest games event, split between a trade area and a consumer floor. The indie hall is consistently the most interesting part.",
+  },
+  {
+    category: "cosplay",
+    title: "MCM London Comic Con",
+    type: "convention",
+    city: "London",
+    country: "United Kingdom",
+    venue: "ExCeL London",
+    lat: 51.5081,
+    lng: 0.0294,
+    inDays: 34,
+    description:
+      "Strong cosplay presence with a well-run masquerade and dedicated repair stations on the floor. Good first convention for anyone bringing a build.",
+  },
+  {
+    category: "anime",
+    title: "Japan Expo",
+    type: "convention",
+    city: "Paris",
+    country: "France",
+    venue: "Paris Nord Villepinte",
+    lat: 49.0097,
+    lng: 2.5147,
+    inDays: 88,
+    description:
+      "The largest Japanese-culture event in Europe, covering anime, manga, games and traditional arts across four halls.",
+  },
+  {
+    category: "k-pop",
+    title: "KCON",
+    type: "concert",
+    city: "Seoul",
+    country: "South Korea",
+    venue: "KINTEX",
+    lat: 37.6688,
+    lng: 126.7452,
+    inDays: 62,
+    description:
+      "Convention programming by day and a multi-act concert by night. The panel track on production and choreography is underrated.",
+  },
+  {
+    category: "comics",
+    title: "Lucca Comics & Games",
+    type: "convention",
+    city: "Lucca",
+    country: "Italy",
+    venue: "Lucca Historic Centre",
+    lat: 43.8430,
+    lng: 10.5079,
+    inDays: 155,
+    description:
+      "Held across an entire walled medieval town rather than in a hall, which makes it the most atmospheric convention on the calendar.",
+  },
+  {
+    category: "gaming",
+    title: "EVO Championship Series",
+    type: "convention",
+    city: "Las Vegas",
+    country: "United States",
+    venue: "Mandalay Bay",
+    lat: 36.0918,
+    lng: -115.1760,
+    inDays: 118,
+    description:
+      "The fighting-game community's flagship tournament. Open bracket, which means anyone can enter and occasionally someone unknown goes very far.",
+  },
+  {
+    category: "tv-shows",
+    title: "Longitude — Finale Screening",
+    type: "screening",
+    city: "Bristol",
+    country: "United Kingdom",
+    venue: "Watershed",
+    lat: 51.4507,
+    lng: -2.5976,
+    inDays: 12,
+    description:
+      "Big-screen finale showing followed by a Q&A with two of the series' directors. Limited capacity.",
+  },
+  {
+    category: "movies",
+    title: "The Quiet Season — Premiere",
+    type: "premiere",
+    city: "London",
+    country: "United Kingdom",
+    venue: "BFI Southbank",
+    lat: 51.5074,
+    lng: -0.1157,
+    inDays: 27,
+    description:
+      "Premiere screening with the cinematographer in attendance, presented from a 35mm print.",
+  },
+  {
+    category: "cosplay",
+    title: "Armour Build Meetup",
+    type: "meetup",
+    city: "Birmingham",
+    country: "United Kingdom",
+    venue: "Custard Factory",
+    lat: 52.4771,
+    lng: -1.8811,
+    inDays: 18,
+    description:
+      "Informal build day. Bring work in progress, share heat guns, and get a second opinion before you commit to a cut.",
+  },
+  {
+    category: "comics",
+    title: "Emerald City Comic Con",
+    type: "convention",
+    city: "Seattle",
+    country: "United States",
+    venue: "Seattle Convention Center",
+    lat: 47.6116,
+    lng: -122.3320,
+    inDays: 73,
+    description:
+      "Creator-focused programming and one of the better artist alleys in North America.",
+  },
+  {
+    category: "anime",
+    title: "Anime NYC",
+    type: "convention",
+    city: "New York",
+    country: "United States",
+    venue: "Javits Center",
+    lat: 40.7578,
+    lng: -74.0022,
+    inDays: 47,
+    description:
+      "Publisher-heavy programming with a reliable run of licensing announcements and a strong manga presence.",
+  },
+  {
+    category: "manga",
+    title: "Mangaka Workshop",
+    type: "meetup",
+    city: "Edinburgh",
+    country: "United Kingdom",
+    venue: "Summerhall",
+    lat: 55.9412,
+    lng: -3.1806,
+    inDays: 40,
+    description:
+      "A working session on panel layout and screentone, capped at twenty places. Materials provided.",
+  },
+  {
+    category: "k-pop",
+    title: "Comeback Listening Party",
+    type: "meetup",
+    city: "Manchester",
+    country: "United Kingdom",
+    venue: "YES Basement",
+    lat: 53.4779,
+    lng: -2.2426,
+    inDays: 9,
+    description:
+      "Album playback, concept discussion and a photocard trade table. Free entry, arrive early for the trade.",
+  },
+];

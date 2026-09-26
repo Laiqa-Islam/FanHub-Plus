@@ -1,0 +1,490 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ═══════════════════════════════ DESIGN SYSTEM ═══════════════════════════
+   "Fanzine press" — fandom's own print culture: doujinshi, convention zines,
+   risograph pamphlets. The defining characteristics of that process drive
+   every decision here:
+
+     · Spot inks, not a gradient palette. Each channel is one ink.
+     · Misregistration. Layers never line up perfectly; the offset is the
+       signature, not a defect.
+     · Halftone. Tone is dots, not smooth fills.
+     · Paper. The stock shows through, and it is never pure white.
+     · Square corners. A trimmed page has no border radius.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Stock — cool grey newsprint, deliberately not a warm cream */
+  --paper: #e7e4da;
+  --paper-2: #dcd8cc;
+  --paper-3: #d0ccbe;
+
+  --ink: #17161c;
+  --ink-soft: #55525e;
+  --ink-faint: #85818f;
+  --rule: #c2beaf;
+  --rule-strong: #a5a08f;
+
+  /* Riso spot inks, one per channel */
+  --ch-anime: #ff48a0; /* fluorescent pink */
+  --ch-gaming: #00a95c; /* green */
+  --ch-movies: #ff6c2f; /* orange */
+  --ch-tv: #0078bf; /* blue */
+  --ch-kpop: #765ba7; /* purple */
+  --ch-comics: #ff4c65; /* red */
+  --ch-manga: #00838a; /* teal */
+  --ch-cosplay: #d18700; /* bright gold */
+
+  /* House inks */
+  --spot: #ff2e88; /* the press's primary — fluorescent pink */
+  --spot-deep: #c2005f;
+  --spot-wash: #ffe2f0;
+  --spot-2: #0078bf; /* second pass — blue */
+  --spot-2-wash: #d9ecf9;
+  --flag: #d18700;
+
+  --shadow-print: 3px 3px 0 var(--ink);
+  --registration: 3px;
+}
+
+.dark {
+  /* Night press: the stock becomes ink, the inks glow off it */
+  --paper: #16151b;
+  --paper-2: #1e1d25;
+  --paper-3: #272630;
+
+  --ink: #f0ede4;
+  --ink-soft: #a5a0b0;
+  --ink-faint: #736e80;
+  --rule: #33313d;
+  --rule-strong: #4a4757;
+
+  --ch-anime: #ff6fb4;
+  --ch-gaming: #2fd689;
+  --ch-movies: #ff8f5c;
+  --ch-tv: #4aa8ec;
+  --ch-kpop: #a488d8;
+  --ch-comics: #ff7386;
+  --ch-manga: #2cb3ba;
+  --ch-cosplay: #f0ab28;
+
+  --spot: #ff4d9a;
+  --spot-deep: #ff85bb;
+  --spot-wash: #331023;
+  --spot-2: #4aa8ec;
+  --spot-2-wash: #0d2537;
+  --flag: #f0ab28;
+
+  --shadow-print: 3px 3px 0 rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-paper-3: var(--paper-3);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-spot: var(--spot);
+  --color-spot-deep: var(--spot-deep);
+  --color-spot-wash: var(--spot-wash);
+  --color-spot-2: var(--spot-2);
+  --color-flag: var(--flag);
+
+  --color-ch-anime: var(--ch-anime);
+  --color-ch-gaming: var(--ch-gaming);
+  --color-ch-movies: var(--ch-movies);
+  --color-ch-tv: var(--ch-tv);
+  --color-ch-kpop: var(--ch-kpop);
+  --color-ch-comics: var(--ch-comics);
+  --color-ch-manga: var(--ch-manga);
+  --color-ch-cosplay: var(--ch-cosplay);
+
+  --font-display: var(--font-shoulders), "Big Shoulders Display", Impact, sans-serif;
+  --font-body: var(--font-newsreader), "Newsreader", Georgia, serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+}
+
+/* ─────────────────────────────────── Base ─────────────────────────────── */
+
+html {
+  font-size: var(--font-scale, 100%);
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.02rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--spot);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid var(--spot);
+  outline-offset: 2px;
+}
+
+/* Display type is set tight, condensed and loud — poster voice. */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+/* Mono is the printer's voice: labels, marks, counts. */
+.mark {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ═══════════════════════════ Print textures ═══════════════════════════ */
+
+/* Photographs are prepared as a printing plate before the ink goes on:
+   desaturated, then pushed for contrast. Without the extra contrast a bright
+   photograph has too little tonal range to survive a spot-ink pass and comes
+   out as a flat block of colour. */
+/* Tuned by eye across the whole library. Pushed harder than this, dark
+   photographs crush to solid black; softer, and the palest ones flatten into
+   a block of ink. A single filter cannot flatter both extremes, so it is set
+   for the majority and the occasional near-white plate simply prints light —
+   which is what a light riso pass looks like anyway. */
+.plate {
+  filter: grayscale(1) contrast(1.22) brightness(0.94);
+}
+
+.dark .plate {
+  filter: grayscale(1) contrast(1.2) brightness(1.08);
+}
+
+/* Halftone — tone as dots, the way a riso lays it down. */
+.halftone {
+  background-image: radial-gradient(currentColor 0.9px, transparent 1px);
+  background-size: 4px 4px;
+}
+
+/* Paper grain, fixed over the page. Decorative only. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+.dark .grain {
+  mix-blend-mode: screen;
+  opacity: 0.16;
+}
+
+/* ═══════════════════════ Misregistration — the signature ═══════════════
+   A second ink layer sits behind the text, offset. It never lines up, and
+   that is the point. `--reg-x/y` are animated on load so the layers slide
+   into registration like a sheet going through a second pass. */
+
+.misreg {
+  position: relative;
+  display: inline-block;
+  --reg-x: var(--registration);
+  --reg-y: var(--registration);
+}
+
+.misreg::before {
+  content: attr(data-ghost);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  color: var(--ghost-ink, var(--spot));
+  transform: translate(var(--reg-x), var(--reg-y));
+  pointer-events: none;
+  /* Never announced — it is the same word printed twice. */
+}
+
+.misreg:hover {
+  --reg-x: calc(var(--registration) * 1.9);
+  --reg-y: calc(var(--registration) * -0.6);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .misreg {
+    transition: --reg-x 0.3s ease, --reg-y 0.3s ease;
+  }
+}
+
+/* ═══════════════════════════ Print components ═════════════════════════ */
+
+/* A trimmed page: square corners, hard rule, hard shadow. No blur. */
+.sheet {
+  background: var(--paper);
+  border: 1.5px solid var(--ink);
+  border-radius: 0;
+}
+
+.sheet-shadow {
+  box-shadow: var(--shadow-print);
+}
+
+/* Rotated gummed label. */
+.sticker {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fff;
+  transform: rotate(-2.5deg);
+}
+
+/* The ink strip — eight spot inks, the channel key. */
+.ink-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Registration target, the crosshair printers align by. */
+.reg-mark {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+.reg-mark::before,
+.reg-mark::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+.reg-mark::before {
+  left: 50%;
+  top: -4px;
+  bottom: -4px;
+  width: 1px;
+  transform: translateX(-50%);
+}
+.reg-mark::after {
+  top: 50%;
+  left: -4px;
+  right: -4px;
+  height: 1px;
+  transform: translateY(-50%);
+}
+
+/* ═════════════════════════════ Motion ════════════════════════════════ */
+
+/* Scroll reveal as an ink roll — the sheet is wiped, not faded. */
+.reveal {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+}
+
+html.no-js .reveal {
+  opacity: 1;
+  clip-path: none;
+}
+
+/* Load sequence: layers slide into registration. */
+@keyframes register {
+  from {
+    transform: translate(calc(var(--reg-from, 18px)), calc(var(--reg-from, 18px) * -0.7));
+    opacity: 0;
+  }
+  to {
+    transform: translate(var(--registration), var(--registration));
+    opacity: 1;
+  }
+}
+
+@keyframes ink-roll {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes feed-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.feed-track {
+  display: flex;
+  width: max-content;
+  animation: feed-scroll 42s linear infinite;
+}
+
+.feed:hover .feed-track {
+  animation-play-state: paused;
+}
+
+@keyframes press-pulse {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(2px, -1px);
+  }
+}
+
+/* ═══════════════════════════ Article prose ════════════════════════════ */
+
+.prose-fanhub {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.68;
+  color: var(--ink);
+}
+
+.prose-fanhub > * + * {
+  margin-top: 1.35em;
+}
+
+.prose-fanhub p {
+  max-width: 64ch;
+}
+
+/* Drop cap — a print convention, and it earns its place on long reads. */
+.prose-fanhub > p:first-child::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.6em;
+  line-height: 0.76;
+  padding: 0.06em 0.1em 0 0;
+  color: var(--spot);
+}
+
+.prose-fanhub h2,
+.prose-fanhub h3 {
+  font-family: var(--font-display);
+  margin-top: 1.9em;
+}
+
+.prose-fanhub h2 {
+  font-size: 1.75rem;
+}
+
+.prose-fanhub a {
+  color: var(--spot-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+
+.prose-fanhub blockquote {
+  border-left: 4px solid var(--spot);
+  padding-left: 1.1em;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+
+.prose-fanhub ul,
+.prose-fanhub ol {
+  padding-left: 1.3em;
+  max-width: 64ch;
+}
+
+.prose-fanhub li + li {
+  margin-top: 0.45em;
+}
+
+/* ═══════════════════════════ Scrollbar ════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: var(--paper-2);
+  border-left: 1px solid var(--rule);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  border: 3px solid var(--paper-2);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--spot);
+}
+
+/* ═══════════════════════ Reduced motion ═══════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    clip-path: none;
+  }
+  .grain {
+    display: none;
+  }
+}
+
+html[data-reduced-motion="true"] .feed-track {
+  animation: none;
+}
+html[data-reduced-motion="true"] .reveal {
+  opacity: 1;
+  clip-path: none;
+}
+
+/* ═════════════════════════ react-toastify ═════════════════════════════ */
+
+.Toastify__toast {
+  background: var(--paper) !important;
+  color: var(--ink) !important;
+  border: 1.5px solid var(--ink) !important;
+  border-radius: 0 !important;
+  box-shadow: var(--shadow-print) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+}
+.Toastify__progress-bar {
+  background: var(--spot) !important;
+}
+.Toastify__close-button {
+  color: var(--ink) !important;
+  opacity: 1 !important;
+}

@@ -1,0 +1,43 @@
+import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import { CATEGORY_SLUGS, ROLES } from "@/lib/constants";
+
+const UserSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true, maxlength: 60 },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    // Never selected by default — an accidental `.find()` must not leak hashes.
+    passwordHash: { type: String, required: true, select: false },
+    role: { type: String, enum: ROLES, default: "user", index: true },
+
+    avatarUrl: { type: String, default: "" },
+    // Cloudinary public_id, kept so we can destroy the old asset on replace.
+    avatarPublicId: { type: String, default: "" },
+    bio: { type: String, default: "", maxlength: 280 },
+
+    /** Favourite fandoms — the many-to-many User ↔ Category link (SRS §1.8). */
+    favoriteCategories: [{ type: String, enum: CATEGORY_SLUGS }],
+
+    /** Display preferences surfaced in the profile editor. */
+    preferences: {
+      theme: { type: String, enum: ["light", "dark", "system"], default: "system" },
+      fontScale: { type: Number, default: 100, min: 90, max: 130 },
+      reducedMotion: { type: Boolean, default: false },
+    },
+
+    emailVerifiedAt: { type: Date, default: null },
+    lastLoginAt: { type: Date, default: null },
+  },
+  { timestamps: true },
+);
+
+export type UserDoc = InferSchemaType<typeof UserSchema>;
+
+export const User: Model<UserDoc> =
+  (models.User as Model<UserDoc>) ?? model<UserDoc>("User", UserSchema);
