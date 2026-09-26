@@ -1,5 +1,7 @@
 import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
 import { CATEGORY_SLUGS, CONTENT_TYPES } from "@/lib/constants";
+import { EMBED_PROVIDERS } from "@/lib/embeds";
+import { MediaAssetSchema } from "./media-asset";
 
 /**
  * The central content record: featured articles, videos, audio clips and image
@@ -29,6 +31,23 @@ const ContentSchema = new Schema(
     mediaRuntime: { type: String, default: "" },
     /** Admin-controlled media tagging (SRS FR-5). */
     mediaTags: [{ type: String }],
+
+    /**
+     * Ordered plates for an image piece (v2 Phase 12). `coverImage` stays the
+     * single representative still used by cards and share previews; this is the
+     * set the gallery walks through.
+     */
+    gallery: { type: [MediaAssetSchema], default: [] },
+
+    /**
+     * Embedded player, stored as provider + id rather than a URL. See
+     * `lib/embeds.ts` — the URL is rebuilt at render time, never persisted.
+     */
+    embedProvider: { type: String, enum: [...EMBED_PROVIDERS, ""], default: "" },
+    embedId: { type: String, default: "" },
+
+    /** Transcript for audio and video, shown under the player (v2 Phase 16). */
+    transcript: { type: String, default: "" },
 
     genre: [{ type: String }],
     tags: [{ type: String }],

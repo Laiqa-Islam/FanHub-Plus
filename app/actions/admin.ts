@@ -21,6 +21,7 @@ import {
   EVENT_TYPES,
   ROLES,
 } from "@/lib/constants";
+import { parseEmbed, supportedProviderList } from "@/lib/embeds";
 import { fieldErrors } from "@/lib/validation";
 import type { FormState } from "@/app/actions/auth";
 
@@ -58,7 +59,19 @@ const ContentSchema = z.object({
   genre: z.string().trim().max(200).optional(),
   // Admin-controlled media tagging (SRS FR-5).
   mediaTags: z.string().trim().max(200).optional(),
+  /**
+   * A platform link (v2 Phase 11). Entered as a URL for convenience, but stored
+   * as provider + id — administrators get the same parser members do, and the
+   * same guarantee that no URL from a form reaches an iframe.
+   */
+  embedUrl: z.string().trim().max(400).optional(),
+  transcript: z.string().trim().max(30_000).optional(),
   status: z.enum(["draft", "published"]),
+}).refine((data) => !data.embedUrl || parseEmbed(data.embedUrl) !== null, {
+  // Without this an unrecognised link would store as an empty embed and the
+  // piece would publish with no player, giving no hint as to why.
+  message: `We can embed ${supportedProviderList()}. That link isn't one of them.`,
+  path: ["embedUrl"],
 });
 
 const CharacterSchema = z.object({
@@ -113,7 +126,11 @@ function buildDocument(kind: ResourceKind, data: Record<string, unknown>) {
   switch (kind) {
     case "content": {
       const d = data as z.infer<typeof ContentSchema>;
+      const embed = d.embedUrl ? parseEmbed(d.embedUrl) : null;
       return {
+        embedProvider: embed?.provider ?? "",
+        embedId: embed?.id ?? "",
+        transcript: d.transcript ?? "",
         title: d.title,
         slug: slugify(d.title),
         category: d.category,

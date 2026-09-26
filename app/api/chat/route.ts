@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
 
   // Model calls cost money and take seconds, so the limit is deliberately
   // tight and keyed on the conversation rather than the IP.
-  const limit = rateLimit(`chat:${sessionId}`, 15, 300);
+  const limit = await rateLimit(`chat:${sessionId}`, 15, 300);
   if (!limit.ok) {
     return NextResponse.json(
       { error: `That's a lot of questions. Try again in ${limit.retryAfterSeconds}s.` },

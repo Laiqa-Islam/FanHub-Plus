@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   }
 
   // One shared bucket: Nominatim's limit applies to us as a whole, not per user.
-  const limit = rateLimit("nominatim", 1, 1);
+  const limit = await rateLimit("nominatim", 1, 1);
   if (!limit.ok) {
     return NextResponse.json(
       { error: "Searching too quickly. Try again in a moment." },

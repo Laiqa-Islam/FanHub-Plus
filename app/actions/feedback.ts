@@ -45,7 +45,7 @@ export async function submitFeedback(
     headerList.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     headerList.get("x-real-ip") ||
     "local";
-  const limit = rateLimit(`feedback:${ip}`, 5, 900);
+  const limit = await rateLimit(`feedback:${ip}`, 5, 900);
   if (!limit.ok) {
     return { message: `That's a lot of feedback. Try again in ${limit.retryAfterSeconds}s.` };
   }

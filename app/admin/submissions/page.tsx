@@ -56,6 +56,19 @@ export default async function AdminSubmissionsPage() {
         <div className="flex flex-col gap-5">
           {pending.map((submission) => {
             const author = submission.userId as unknown as { name?: string; email?: string };
+
+            // Submissions predating v2 Phase 10 kept a single cover image in
+            // `mediaUrl`; present it as a one-image set so one card renders both.
+            const media = (submission.media ?? []).length
+              ? (submission.media ?? []).map((asset) => ({
+                  url: asset.url,
+                  kind: String(asset.kind),
+                  caption: asset.caption ?? "",
+                }))
+              : submission.mediaUrl
+                ? [{ url: submission.mediaUrl, kind: "image", caption: "" }]
+                : [];
+
             return (
               <ReviewCard
                 key={String(submission._id)}
@@ -67,7 +80,12 @@ export default async function AdminSubmissionsPage() {
                 authorEmail={author?.email ?? ""}
                 submittedAt={relativeTime(submission.createdAt)}
                 body={submission.body}
-                mediaUrl={submission.mediaUrl ?? ""}
+                format={submission.format ?? "article"}
+                media={media}
+                embedProvider={submission.embedProvider ?? ""}
+                embedId={submission.embedId ?? ""}
+                transcript={submission.transcript ?? ""}
+                ownWorkDeclared={Boolean(submission.ownWorkDeclared)}
               />
             );
           })}

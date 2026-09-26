@@ -9,16 +9,17 @@ drift out of step with the code. Do not edit by hand.
 
 | Collection | Model | Fields | Indexes | Documents |
 | --- | --- | ---: | ---: | ---: |
-| `activitylogs` | ActivityLog | 9 | 3 | 9 |
+| `activitylogs` | ActivityLog | 9 | 3 | 13 |
 | `bookmarks` | Bookmark | 7 | 2 | 2 |
 | `characterprofiles` | CharacterProfile | 14 | 5 | 32 |
 | `chatbotqueries` | ChatbotQuery | 8 | 3 | 24 |
-| `contents` | Content | 26 | 8 | 56 |
+| `contents` | Content | 30 | 8 | 57 |
 | `events` | Event | 18 | 7 | 16 |
-| `fansubmissions` | FanSubmission | 14 | 3 | 0 |
+| `fansubmissions` | FanSubmission | 20 | 4 | 1 |
 | `faqentries` | FaqEntry | 9 | 2 | 8 |
 | `feedbacks` | Feedback | 11 | 3 | 0 |
 | `merchandiseitems` | MerchandiseItem | 15 | 6 | 25 |
+| `ratebuckets` | RateBucket | 3 | 1 | 2 |
 | `ratings` | Rating | 7 | 3 | 1 |
 | `tokens` | Token | 8 | 3 | 0 |
 | `users` | User | 16 | 2 | 3 |
@@ -133,6 +134,10 @@ Mongoose model: **Content**
 | `mediaCredit` | String |  |  |  | `""` |
 | `mediaRuntime` | String |  |  |  | `""` |
 | `mediaTags` | Mixed[] |  |  |  |  |
+| `gallery` | Mixed[] |  |  |  | `[]` |
+| `embedProvider` | String |  |  | `youtube`, `vimeo`, `spotify`, `soundcloud`, `` | `""` |
+| `embedId` | String |  |  |  | `""` |
+| `transcript` | String |  |  |  | `""` |
 | `genre` | Mixed[] |  |  |  |  |
 | `tags` | Mixed[] |  |  |  |  |
 | `releaseDate` | Date |  |  |  | `null` |
@@ -203,6 +208,12 @@ Mongoose model: **FanSubmission**
 | `title` | String | yes |  |  |  |
 | `category` | String | yes |  | `anime`, `gaming`, `movies`, `tv-shows`, `k-pop`, `comics`, `manga`, `cosplay` |  |
 | `body` | String | yes |  |  |  |
+| `format` | String | yes |  | `article`, `gallery`, `audio`, `video`, `embed` | `"article"` |
+| `media` | Mixed[] |  |  |  | `[]` |
+| `embedProvider` | String |  |  | `youtube`, `vimeo`, `spotify`, `soundcloud`, `` | `""` |
+| `embedId` | String |  |  |  | `""` |
+| `transcript` | String |  |  |  | `""` |
+| `ownWorkDeclared` | Boolean |  |  |  | `false` |
 | `mediaUrl` | String |  |  |  | `""` |
 | `mediaPublicId` | String |  |  |  | `""` |
 | `status` | String |  |  | `pending`, `approved`, `rejected` | `"pending"` |
@@ -218,6 +229,7 @@ Mongoose model: **FanSubmission**
 
 - `{ userId: 1 }`
 - `{ category: 1 }`
+- `{ format: 1 }`
 - `{ status: 1 }`
 
 ## `faqentries`
@@ -295,6 +307,20 @@ Mongoose model: **MerchandiseItem**
 - `{ isUpcoming: 1 }`
 - `{ popularityScore: 1 }`
 - `{ name: text, description: text }`
+
+## `ratebuckets`
+
+Mongoose model: **RateBucket**
+
+| Field | Type | Required | Unique | Enum / Ref | Default |
+| --- | --- | :-: | :-: | --- | --- |
+| `_id` | String | yes |  |  |  |
+| `count` | Number | yes |  |  | `0` |
+| `resetAt` | Date | yes |  |  |  |
+
+**Indexes**
+
+- `{ resetAt: 1 }` — {"expireAfterSeconds":0}
 
 ## `ratings`
 

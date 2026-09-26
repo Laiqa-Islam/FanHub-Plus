@@ -14,3 +14,4 @@ export { Feedback, type FeedbackDoc } from "./Feedback";
 export { FanSubmission, type FanSubmissionDoc } from "./FanSubmission";
 export { ActivityLog, type ActivityLogDoc } from "./ActivityLog";
 export { FaqEntry, type FaqEntryDoc, ChatbotQuery, type ChatbotQueryDoc } from "./Chatbot";
+export { RateBucket, type RateBucketDoc } from "./RateBucket";

@@ -2,7 +2,6 @@
 
 import { useRef, useState, useEffect, useCallback } from "react";
 import { Play, Pause, Volume2, VolumeX, Maximize, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 /**
  * Video player (SRS FR-5).
@@ -51,9 +50,24 @@ export function VideoPlayer({
     // A stalled source fires no `error` event — it simply never reaches
     // HAVE_METADATA, which would leave the viewer watching a spinner
     // indefinitely. Give it a generous window, then say so plainly.
-    const stallTimer = setTimeout(() => {
-      if (video.readyState === 0) setFailed(true);
-    }, 20_000);
+    //
+    // The timer only runs while the tab is visible. Browsers defer media
+    // preloading in a hidden tab to save bandwidth, so `readyState === 0` there
+    // means "hasn't started" rather than "is broken" — judging it would show a
+    // failure notice for a perfectly good video to anyone who opens the page in
+    // a background tab and comes back to it.
+    let stallTimer: ReturnType<typeof setTimeout>;
+
+    const armStallTimer = () => {
+      clearTimeout(stallTimer);
+      if (document.hidden) return;
+      stallTimer = setTimeout(() => {
+        if (video.readyState === 0) setFailed(true);
+      }, 20_000);
+    };
+
+    armStallTimer();
+    document.addEventListener("visibilitychange", armStallTimer);
 
     const onPlay = () => setPlaying(true);
     const onPause = () => setPlaying(false);
@@ -76,6 +90,7 @@ export function VideoPlayer({
 
     return () => {
       clearTimeout(stallTimer);
+      document.removeEventListener("visibilitychange", armStallTimer);
       video.removeEventListener("play", onPlay);
       video.removeEventListener("pause", onPause);
       video.removeEventListener("waiting", onWaiting);

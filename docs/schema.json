@@ -1,6 +1,6 @@
 {
   "database": "fanhub",
-  "generatedAt": "2026-09-26T04:24:17.057Z",
+  "generatedAt": "2026-09-26T05:29:08.311Z",
   "engine": "MongoDB (Mongoose)",
   "collections": [
     {
@@ -100,7 +100,7 @@
           "options": {}
         }
       ],
-      "documentCount": 9
+      "documentCount": 13
     },
     {
       "model": "Bookmark",
@@ -509,6 +509,41 @@
           "unique": false
         },
         {
+          "path": "gallery",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false,
+          "default": "[]"
+        },
+        {
+          "path": "embedProvider",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\"",
+          "enum": [
+            "youtube",
+            "vimeo",
+            "spotify",
+            "soundcloud",
+            ""
+          ]
+        },
+        {
+          "path": "embedId",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "transcript",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
           "path": "genre",
           "type": "Mixed[]",
           "required": false,
@@ -654,7 +689,7 @@
           "options": {}
         }
       ],
-      "documentCount": 56
+      "documentCount": 57
     },
     {
       "model": "Event",
@@ -887,6 +922,62 @@
           "unique": false
         },
         {
+          "path": "format",
+          "type": "String",
+          "required": true,
+          "unique": false,
+          "default": "\"article\"",
+          "enum": [
+            "article",
+            "gallery",
+            "audio",
+            "video",
+            "embed"
+          ]
+        },
+        {
+          "path": "media",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false,
+          "default": "[]"
+        },
+        {
+          "path": "embedProvider",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\"",
+          "enum": [
+            "youtube",
+            "vimeo",
+            "spotify",
+            "soundcloud",
+            ""
+          ]
+        },
+        {
+          "path": "embedId",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "transcript",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "ownWorkDeclared",
+          "type": "Boolean",
+          "required": false,
+          "unique": false,
+          "default": "false"
+        },
+        {
           "path": "mediaUrl",
           "type": "String",
           "required": false,
@@ -976,12 +1067,18 @@
         },
         {
           "keys": {
+            "format": 1
+          },
+          "options": {}
+        },
+        {
+          "keys": {
             "status": 1
           },
           "options": {}
         }
       ],
-      "documentCount": 0
+      "documentCount": 1
     },
     {
       "model": "FaqEntry",
@@ -1335,6 +1432,42 @@
         }
       ],
       "documentCount": 25
+    },
+    {
+      "model": "RateBucket",
+      "collection": "ratebuckets",
+      "fields": [
+        {
+          "path": "_id",
+          "type": "String",
+          "required": true,
+          "unique": false
+        },
+        {
+          "path": "count",
+          "type": "Number",
+          "required": true,
+          "unique": false,
+          "default": "0"
+        },
+        {
+          "path": "resetAt",
+          "type": "Date",
+          "required": true,
+          "unique": false
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "resetAt": 1
+          },
+          "options": {
+            "expireAfterSeconds": 0
+          }
+        }
+      ],
+      "documentCount": 2
     },
     {
       "model": "Rating",

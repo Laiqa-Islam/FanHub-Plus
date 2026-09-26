@@ -67,7 +67,7 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
 
   if (!parsed.success) return { errors: fieldErrors(parsed.error) };
 
-  const limit = rateLimit(await clientKey("register"), 5, 600);
+  const limit = await rateLimit(await clientKey("register"), 5, 600);
   if (!limit.ok) {
     return { message: `Too many sign-up attempts. Try again in ${limit.retryAfterSeconds}s.` };
   }
@@ -124,7 +124,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
 
   const { email, password } = parsed.data;
   const key = await clientKey(`login:${email}`);
-  const limit = rateLimit(key, 8, 600);
+  const limit = await rateLimit(key, 8, 600);
   if (!limit.ok) {
     return { message: `Too many attempts. Try again in ${limit.retryAfterSeconds}s.` };
   }
@@ -145,7 +145,7 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
     const matches = await bcrypt.compare(password, user.passwordHash);
     if (!matches) return invalid;
 
-    resetLimit(key);
+    await resetLimit(key);
 
     user.lastLoginAt = new Date();
     await user.save();
@@ -212,7 +212,7 @@ export async function resendVerification(_prev: FormState, formData: FormData): 
   const email = String(formData.get("email") || "").trim().toLowerCase();
   if (!email) return { errors: { email: "Enter your email address." } };
 
-  const limit = rateLimit(await clientKey(`resend:${email}`), 3, 900);
+  const limit = await rateLimit(await clientKey(`resend:${email}`), 3, 900);
   if (!limit.ok) {
     return { message: `Please wait ${limit.retryAfterSeconds}s before requesting another link.` };
   }
@@ -242,7 +242,7 @@ export async function requestPasswordReset(
   if (!parsed.success) return { errors: fieldErrors(parsed.error) };
 
   const { email } = parsed.data;
-  const limit = rateLimit(await clientKey(`forgot:${email}`), 3, 900);
+  const limit = await rateLimit(await clientKey(`forgot:${email}`), 3, 900);
   if (!limit.ok) {
     return { message: `Please wait ${limit.retryAfterSeconds}s before trying again.` };
   }

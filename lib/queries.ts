@@ -3,6 +3,7 @@ import type { SortOrder } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
 import { Content } from "@/models";
 import { CATEGORY_SLUGS, CONTENT_TYPES } from "@/lib/constants";
+import { embedThumbnail } from "@/lib/embeds";
 
 /**
  * Filters are assembled from URL params, so their values are widened strings.
@@ -111,11 +112,46 @@ export type ContentListItem = {
   mediaCredit: string;
   mediaRuntime: string;
   mediaTags: string[];
+  /** Ordered plates for an image piece (v2 Phase 12). */
+  gallery: GalleryPlate[];
+  /** Embedded player, as provider + id — never a URL (v2 Phase 11). */
+  embedProvider: string;
+  embedId: string;
+  /** Transcript for audio and video (v2 Phase 16). Plain text. */
+  transcript: string;
 };
+
+export type GalleryPlate = {
+  url: string;
+  caption: string;
+  width: number;
+  height: number;
+};
+
+/** Normalises an embedded media subdocument, whatever shape Mongo hands back. */
+function toPlate(raw: unknown): GalleryPlate {
+  const asset = (raw ?? {}) as Record<string, unknown>;
+  return {
+    url: String(asset.url ?? ""),
+    caption: String(asset.caption ?? ""),
+    width: Number(asset.width ?? 0),
+    height: Number(asset.height ?? 0),
+  };
+}
 
 function toListItem(doc: Record<string, unknown>): ContentListItem {
   const ratingCount = Number(doc.ratingCount ?? 0);
   const ratingSum = Number(doc.ratingSum ?? 0);
+
+  const embedProvider = String(doc.embedProvider ?? "");
+  const embedId = String(doc.embedId ?? "");
+
+  // An embedded piece holds no image of ours, which would leave its card blank.
+  // Where the provider exposes a thumbnail from the id alone, use it — resolved
+  // here so every card, list and share preview gets it without asking.
+  const coverImage =
+    String(doc.coverImage ?? "") || embedThumbnail(embedProvider, embedId);
+
   return {
     id: String(doc._id),
     title: String(doc.title ?? ""),
@@ -123,7 +159,7 @@ function toListItem(doc: Record<string, unknown>): ContentListItem {
     category: String(doc.category ?? ""),
     type: String(doc.type ?? ""),
     summary: String(doc.summary ?? ""),
-    coverImage: String(doc.coverImage ?? ""),
+    coverImage,
     genre: (doc.genre as string[]) ?? [],
     releaseDate: doc.releaseDate ? new Date(doc.releaseDate as string).toISOString() : null,
     popularityScore: Number(doc.popularityScore ?? 0),
@@ -135,6 +171,10 @@ function toListItem(doc: Record<string, unknown>): ContentListItem {
     mediaCredit: String(doc.mediaCredit ?? ""),
     mediaRuntime: String(doc.mediaRuntime ?? ""),
     mediaTags: (doc.mediaTags as string[]) ?? [],
+    gallery: ((doc.gallery as unknown[]) ?? []).map(toPlate).filter((plate) => plate.url),
+    embedProvider,
+    embedId,
+    transcript: String(doc.transcript ?? ""),
   };
 }
 

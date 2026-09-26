@@ -6,6 +6,7 @@ import { requireUser } from "@/lib/dal";
 import { connectToDatabase } from "@/lib/db";
 import { FanSubmission } from "@/models";
 import { categoryBySlug } from "@/lib/constants";
+import { FORMAT_SPECS, isSubmissionFormat } from "@/lib/media-kinds";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { SubmissionForm } from "@/components/submit/submission-form";
 import { Button } from "@/components/ui/button";
@@ -35,10 +36,11 @@ export default async function SubmitPage() {
 
       <header className="mb-10">
         <p className="mark mb-3">Fan submissions</p>
-        <h1 className="font-display text-[clamp(2rem,5vw,2.8rem)]">Write for Fan Hub Plus</h1>
+        <h1 className="font-display text-[clamp(2rem,5vw,2.8rem)]">Make something for Fan Hub Plus</h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
-          Got a build log, a theory, a recommendation list or a craft explainer? Send it in.
-          An administrator reads every submission before it goes live.
+          A theory, a build log, a photo set of a costume you finished, a recording you made, or a
+          link to something worth watching. An administrator reads every submission before it goes
+          live.
         </p>
       </header>
 
@@ -77,7 +79,11 @@ export default async function SubmitPage() {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-semibold">{submission.title}</p>
                     <p className="font-mono text-[0.68rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
-                      {category?.name} · {status.label} · {relativeTime(submission.createdAt)}
+                      {category?.name} ·{" "}
+                      {FORMAT_SPECS[
+                        isSubmissionFormat(submission.format) ? submission.format : "article"
+                      ].label}{" "}
+                      · {status.label} · {relativeTime(submission.createdAt)}
                     </p>
                     {submission.reviewNote && (
                       <p className="mt-1.5 text-[0.84rem] text-[var(--ink-soft)]">

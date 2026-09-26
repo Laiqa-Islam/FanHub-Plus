@@ -1,5 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
+import { MEDIA_SOURCE_HOSTS } from "@/lib/media-hosts";
+
 /**
  * Streams the licensed media library through the application.
  *
@@ -14,16 +16,7 @@ import { NextResponse, type NextRequest } from "next/server";
  * not on this list is refused.
  */
 
-const ALLOWED_HOSTS = new Set([
-  "media.w3.org",
-  "archive.org",
-  "ia600000.us.archive.org",
-  "test-videos.co.uk",
-  "www.soundhelix.com",
-  "interactive-examples.mdn.mozilla.net",
-  "commondatastorage.googleapis.com",
-  "upload.wikimedia.org",
-]);
+const ALLOWED_HOSTS = new Set<string>(MEDIA_SOURCE_HOSTS);
 
 /** Only media types — never let this route relay HTML or scripts. */
 const ALLOWED_PREFIXES = ["video/", "audio/", "image/"];

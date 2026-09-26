@@ -12,6 +12,8 @@ import { Reveal } from "@/components/motion/reveal";
 import { ShareButton } from "@/components/share-button";
 import { VideoPlayer } from "@/components/media/video-player";
 import { AudioPlayer } from "@/components/media/audio-player";
+import { EmbedFrame } from "@/components/media/embed-frame";
+import { PlateGallery } from "@/components/media/plate-gallery";
 import { RatingWidget } from "@/components/media/rating-widget";
 import { getCurrentUser } from "@/lib/dal";
 import { mediaSrc } from "@/lib/media";
@@ -151,23 +153,44 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
       {/* Body */}
       <div className="mx-auto max-w-3xl px-5 py-14">
         {/* Multimedia Center player (SRS FR-5) */}
-        {item.type === "video" && item.mediaUrl && (
-          <figure className="mb-10">
-            <VideoPlayer
-              src={mediaSrc(item.mediaUrl)}
-              poster={item.mediaPoster || item.coverImage}
+
+        {/* An embed takes precedence over a file: a piece submitted as a
+            platform link has no media of ours to play. */}
+        {item.embedProvider && item.embedId ? (
+          <div className="mb-10">
+            <EmbedFrame
+              provider={item.embedProvider}
+              id={item.embedId}
               title={item.title}
               ink={ink}
             />
-            <MediaCaption credit={item.mediaCredit} tags={item.mediaTags} />
-          </figure>
-        )}
+          </div>
+        ) : (
+          <>
+            {item.type === "video" && item.mediaUrl && (
+              <figure className="mb-10">
+                <VideoPlayer
+                  src={mediaSrc(item.mediaUrl)}
+                  poster={item.mediaPoster || item.coverImage}
+                  title={item.title}
+                  ink={ink}
+                />
+                <MediaCaption credit={item.mediaCredit} tags={item.mediaTags} />
+              </figure>
+            )}
 
-        {item.type === "audio" && item.mediaUrl && (
-          <figure className="mb-10">
-            <AudioPlayer src={mediaSrc(item.mediaUrl)} title={item.title} ink={ink} />
-            <MediaCaption credit={item.mediaCredit} tags={item.mediaTags} />
-          </figure>
+            {item.type === "audio" && item.mediaUrl && (
+              <figure className="mb-10">
+                <AudioPlayer src={mediaSrc(item.mediaUrl)} title={item.title} ink={ink} />
+                <MediaCaption credit={item.mediaCredit} tags={item.mediaTags} />
+              </figure>
+            )}
+
+            {/* Photo set (v2 Phase 12) */}
+            {item.gallery.length > 0 && (
+              <PlateGallery plates={item.gallery} title={item.title} />
+            )}
+          </>
         )}
 
         <div
@@ -177,6 +200,23 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
           // sanitised and reviewed before they can reach this field.
           dangerouslySetInnerHTML={{ __html: item.body }}
         />
+
+        {/* Transcript (v2 Phase 16). Collapsed so it doesn't dominate the page,
+            but present in the DOM so it is searchable and readable without
+            playing anything. Rendered as text — React escapes it, so unlike the
+            body above this needs no sanitising pass. */}
+        {item.transcript && (
+          <details className="mt-10 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)]">
+            <summary className="cursor-pointer px-5 py-3.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot)]">
+              Read the transcript
+            </summary>
+            <div className="max-h-[32rem] overflow-y-auto border-t border-[var(--rule)] px-5 py-4">
+              <p className="whitespace-pre-wrap text-[0.94rem] leading-relaxed text-[var(--ink-soft)]">
+                {item.transcript}
+              </p>
+            </div>
+          </details>
+        )}
 
         {/* Audience feedback on media (SRS FR-5) */}
         {item.type !== "article" && (

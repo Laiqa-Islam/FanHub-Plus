@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { connectToDatabase } from "@/lib/db";
 import { Content } from "@/models";
 import { CATEGORIES, CONTENT_TYPES, categoryBySlug } from "@/lib/constants";
+import { embedHref } from "@/lib/embeds";
 import { Misreg } from "@/components/press";
 import { ResourceManager, type FieldSpec } from "@/components/admin/resource-manager";
 import { formatDate } from "@/lib/utils";
@@ -45,6 +46,17 @@ const FIELDS: FieldSpec[] = [
     hint: "Comma separated, e.g. Trailer, Breakdown.",
   },
   {
+    name: "embedUrl",
+    label: "Embed link",
+    hint: "YouTube, Vimeo, Spotify or SoundCloud. Takes precedence over Media URL.",
+  },
+  {
+    name: "transcript",
+    label: "Transcript",
+    kind: "textarea",
+    hint: "Plain text, shown under the player. Makes spoken content searchable.",
+  },
+  {
     name: "status",
     label: "Status",
     kind: "select",
@@ -78,6 +90,10 @@ export default async function AdminContentPage() {
         mediaUrl: doc.mediaUrl ?? "",
         genre: (doc.genre ?? []).join(", "),
         mediaTags: (doc.mediaTags ?? []).join(", "),
+        // The form takes a URL; the record stores provider + id, so rebuild the
+        // canonical link for editing rather than exposing the internal pair.
+        embedUrl: embedHref(doc.embedProvider ?? "", doc.embedId ?? "") ?? "",
+        transcript: doc.transcript ?? "",
         status: doc.status ?? "published",
       },
     };
