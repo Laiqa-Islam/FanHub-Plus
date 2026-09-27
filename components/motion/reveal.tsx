@@ -35,14 +35,23 @@ export function Reveal({
   useGSAP(
     () => {
       if (document.documentElement.dataset.reducedMotion === "true") {
-        gsap.set(".reveal", { opacity: 1, y: 0, x: 0, scale: 1, clipPath: "none" });
+        gsap.set(".reveal", {
+          opacity: 1,
+          y: 0,
+          x: 0,
+          scale: 1,
+          clipPath: "none",
+        });
         return;
       }
 
       // The house reveal is an ink roll: the clipping is wiped onto the page
       // left to right, the way a roller passes over a sheet. Fading upward is
       // the generic choice and it says nothing about the subject.
-      const from: gsap.TweenVars = { opacity: 0, clipPath: "inset(0 100% 0 0)" };
+      const from: gsap.TweenVars = {
+        opacity: 0,
+        clipPath: "inset(0 100% 0 0)",
+      };
       if (direction === "up") from.y = 18;
       if (direction === "down") from.y = -18;
       if (direction === "left") from.x = 24;
@@ -65,7 +74,9 @@ export function Reveal({
         scrollTrigger: {
           trigger: scope.current,
           start: "top 85%",
-          toggleActions: once ? "play none none none" : "play none none reverse",
+          toggleActions: once
+            ? "play none none none"
+            : "play none none reverse",
         },
       });
 
@@ -84,7 +95,13 @@ export function Reveal({
         const rect = node.getBoundingClientRect();
         const onScreen = rect.top < window.innerHeight && rect.bottom > 0;
         if (onScreen) {
-          gsap.set(targets, { opacity: 1, y: 0, x: 0, scale: 1, clipPath: "none" });
+          gsap.set(targets, {
+            opacity: 1,
+            y: 0,
+            x: 0,
+            scale: 1,
+            clipPath: "none",
+          });
         }
       }, 4000);
 

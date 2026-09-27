@@ -24,9 +24,19 @@ import {
   FaqEntry,
 } from "../models";
 import { CATEGORIES } from "../lib/constants";
-import { pickStock, stock, EVENT_IMAGES, type STOCK } from "../lib/stock-images";
+import {
+  pickStock,
+  stock,
+  EVENT_IMAGES,
+  type STOCK,
+} from "../lib/stock-images";
 import { CONTENT_SEED } from "./data/content";
-import { VIDEO_SOURCES, AUDIO_SOURCES, VIDEO_TAGS, AUDIO_TAGS } from "./data/media";
+import {
+  VIDEO_LIBRARY,
+  AUDIO_LIBRARY,
+  VIDEO_SOURCES,
+  AUDIO_SOURCES,
+} from "./data/media";
 import { CHARACTER_SEED } from "./data/characters";
 import { MERCH_SEED, EVENT_SEED } from "./data/merch-events";
 
@@ -173,24 +183,33 @@ async function seed() {
     };
 
     if (item.type === "video") {
-      const source = VIDEO_SOURCES[videoCursor % VIDEO_SOURCES.length];
+      // A piece that names its clip gets that clip. Only an unpinned one
+      // falls back to the rotation, which is what used to attach an open
+      // movie about a rabbit to an essay on action choreography.
+      const source =
+        (item.media
+          ? VIDEO_LIBRARY[item.media as keyof typeof VIDEO_LIBRARY]
+          : undefined) ?? VIDEO_SOURCES[videoCursor % VIDEO_SOURCES.length];
       videoCursor += 1;
       media = {
         mediaUrl: source.url,
         mediaPoster: source.poster ?? "",
         mediaCredit: source.credit,
         mediaRuntime: source.runtime,
-        mediaTags: [VIDEO_TAGS[videoCursor % VIDEO_TAGS.length], "Video"],
+        mediaTags: [source.tag, "Video"],
       };
     } else if (item.type === "audio") {
-      const source = AUDIO_SOURCES[audioCursor % AUDIO_SOURCES.length];
+      const source =
+        (item.media
+          ? AUDIO_LIBRARY[item.media as keyof typeof AUDIO_LIBRARY]
+          : undefined) ?? AUDIO_SOURCES[audioCursor % AUDIO_SOURCES.length];
       audioCursor += 1;
       media = {
         mediaUrl: source.url,
         mediaPoster: "",
         mediaCredit: source.credit,
         mediaRuntime: source.runtime,
-        mediaTags: [AUDIO_TAGS[audioCursor % AUDIO_TAGS.length], "Audio"],
+        mediaTags: [source.tag, "Audio"],
       };
     } else if (item.type === "image") {
       media = { ...media, mediaTags: ["Gallery"] };
@@ -224,7 +243,9 @@ async function seed() {
           viewCount: item.popularity * 37 + index * 11,
           // Ratings imply a plausible average between about 3.6 and 4.8.
           ratingCount: 12 + (index % 40),
-          ratingSum: Math.round((12 + (index % 40)) * (3.6 + (item.popularity % 12) / 10)),
+          ratingSum: Math.round(
+            (12 + (index % 40)) * (3.6 + (item.popularity % 12) / 10),
+          ),
           isFeatured: item.popularity >= 88,
           status: "published",
         },
@@ -298,7 +319,9 @@ async function seed() {
           isUpcoming: item.isUpcoming,
           description: item.description,
           priceCents: item.priceCents ?? 2_499 + (index % 6) * 500,
-          imageUrl: item.imageUrl ?? pickStock(item.category as keyof typeof STOCK, imagePosition, 2),
+          imageUrl:
+            item.imageUrl ??
+            pickStock(item.category as keyof typeof STOCK, imagePosition, 2),
           gallery: item.gallery ?? [
             pickStock(item.category as keyof typeof STOCK, imagePosition, 3),
             pickStock(item.category as keyof typeof STOCK, imagePosition, 4),
@@ -332,7 +355,9 @@ async function seed() {
           // GeoJSON order is [longitude, latitude].
           location: { type: "Point", coordinates: [event.lng, event.lat] },
           startsAt: daysFromNow(event.inDays),
-          endsAt: daysFromNow(event.inDays + (event.type === "convention" ? 3 : 0)),
+          endsAt: daysFromNow(
+            event.inDays + (event.type === "convention" ? 3 : 0),
+          ),
           ticketUrl: "https://example.com/tickets",
           imageUrl: stock(EVENT_IMAGES[index % EVENT_IMAGES.length]),
           isHighlight: event.inDays < 45,
@@ -361,21 +386,28 @@ async function seed() {
   // submissions live in the same collection and must survive a reseed.
   console.log("→ Pruning records no longer in the library…");
 
-  const [contentPruned, charactersPruned, merchPruned, eventsPruned] = await Promise.all([
-    Content.deleteMany({
-      slug: { $nin: CONTENT_SEED.map((item) => slugify(item.title)) },
-      authorId: null,
-    }),
-    CharacterProfile.deleteMany({
-      slug: { $nin: CHARACTER_SEED.map((c) => slugify(`${c.name}-${c.franchise}`)) },
-    }),
-    MerchandiseItem.deleteMany({
-      slug: { $nin: MERCH_SEED.map((item) => slugify(item.name)) },
-    }),
-    Event.deleteMany({
-      slug: { $nin: EVENT_SEED.map((event) => slugify(`${event.title}-${event.city}`)) },
-    }),
-  ]);
+  const [contentPruned, charactersPruned, merchPruned, eventsPruned] =
+    await Promise.all([
+      Content.deleteMany({
+        slug: { $nin: CONTENT_SEED.map((item) => slugify(item.title)) },
+        authorId: null,
+      }),
+      CharacterProfile.deleteMany({
+        slug: {
+          $nin: CHARACTER_SEED.map((c) => slugify(`${c.name}-${c.franchise}`)),
+        },
+      }),
+      MerchandiseItem.deleteMany({
+        slug: { $nin: MERCH_SEED.map((item) => slugify(item.name)) },
+      }),
+      Event.deleteMany({
+        slug: {
+          $nin: EVENT_SEED.map((event) =>
+            slugify(`${event.title}-${event.city}`),
+          ),
+        },
+      }),
+    ]);
 
   const pruned =
     contentPruned.deletedCount +
@@ -385,12 +417,19 @@ async function seed() {
   console.log(`✓ ${pruned} stale records removed`);
 
   const total =
-    CONTENT_SEED.length + CHARACTER_SEED.length + MERCH_SEED.length + EVENT_SEED.length;
-  console.log(`\n✓ Seed complete — ${total} records across ${CATEGORIES.length} channels.\n`);
+    CONTENT_SEED.length +
+    CHARACTER_SEED.length +
+    MERCH_SEED.length +
+    EVENT_SEED.length;
+  console.log(
+    `\n✓ Seed complete — ${total} records across ${CATEGORIES.length} channels.\n`,
+  );
   console.log("  Evaluation accounts");
   console.log("  ─────────────────────────────────────────────");
   for (const account of ACCOUNTS) {
-    console.log(`  ${account.role.padEnd(8)} ${account.email.padEnd(22)} ${account.password}`);
+    console.log(
+      `  ${account.role.padEnd(8)} ${account.email.padEnd(22)} ${account.password}`,
+    );
   }
   console.log("");
 

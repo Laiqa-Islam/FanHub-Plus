@@ -39,7 +39,10 @@ export function Magnetic({
       ref={ref}
       onPointerMove={handleMove}
       onPointerLeave={reset}
-      className={cn("inline-block transition-transform duration-500 ease-out", className)}
+      className={cn(
+        "inline-block transition-transform duration-500 ease-out",
+        className,
+      )}
       {...rest}
     >
       {children}

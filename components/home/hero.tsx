@@ -27,7 +27,13 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
  * headline wipes on line by line, the plate fades up out of the dark, and
  * the stats count in last.
  */
-export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCount: number }) {
+export function Hero({
+  issueNumber,
+  pieceCount,
+}: {
+  issueNumber: string;
+  pieceCount: number;
+}) {
   const scope = useRef<HTMLElement>(null);
 
   useGSAP(
@@ -40,7 +46,11 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
       const timeline = gsap.timeline({ defaults: { ease: "power4.out" } });
 
       timeline
-        .fromTo("[data-watermark]", { opacity: 0 }, { opacity: 1, duration: 0.8 })
+        .fromTo(
+          "[data-watermark]",
+          { opacity: 0 },
+          { opacity: 1, duration: 0.8 },
+        )
         .fromTo(
           "[data-headline]",
           { clipPath: "inset(0 100% 0 0)" },
@@ -78,7 +88,12 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
           { opacity: 1, y: 0, duration: 0.4, stagger: 0.07 },
           "-=0.25",
         )
-        .fromTo("[data-toast]", { opacity: 0, x: -16 }, { opacity: 1, x: 0, duration: 0.5 }, "-=0.2")
+        .fromTo(
+          "[data-toast]",
+          { opacity: 0, x: -16 },
+          { opacity: 1, x: 0, duration: 0.5 },
+          "-=0.2",
+        )
         .fromTo(
           "[data-ink-bar]",
           { scaleX: 0, transformOrigin: "left center" },
@@ -91,7 +106,12 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
       gsap.to("[data-watermark]", {
         yPercent: 18,
         ease: "none",
-        scrollTrigger: { trigger: scope.current, start: "top top", end: "bottom top", scrub: true },
+        scrollTrigger: {
+          trigger: scope.current,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
       });
 
       // Frames can stall (background tab, throttled rAF); timers do not.
@@ -127,7 +147,8 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
               className="sticker"
               style={{
                 background: "var(--n3)",
-                boxShadow: "0 0 16px color-mix(in oklch, var(--n3) 45%, transparent)",
+                boxShadow:
+                  "0 0 16px color-mix(in oklch, var(--n3) 45%, transparent)",
               }}
             >
               Eight channels · live now
@@ -147,9 +168,7 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
             </span>
             <span data-headline className="block">
               burns{" "}
-              <span
-                className="flick text-[var(--n1)] [--glow:var(--n1)] glow-text"
-              >
+              <span className="flick text-[var(--n1)] [--glow:var(--n1)] glow-text">
                 brighter
               </span>
             </span>
@@ -158,9 +177,13 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
             </span>
           </h1>
 
-          <p data-strap className="max-w-md text-[1.04rem] leading-relaxed text-[var(--ink-soft)]">
-            Anime, gaming, film, television, K-Pop, comics, manga and cosplay — eight channels, one
-            undercity. Stream the drops, open the character files, and save what you love.
+          <p
+            data-strap
+            className="max-w-md text-[1.04rem] leading-relaxed text-[var(--ink-soft)]"
+          >
+            Anime, gaming, film, television, K-Pop, comics, manga and cosplay —
+            eight channels, one undercity. Stream the drops, open the character
+            files, and save what you love.
           </p>
 
           <div className="flex flex-wrap items-center gap-3">
@@ -185,8 +208,16 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
           {/* Three figures, each on its own signal. */}
           <dl className="flex flex-wrap gap-x-10 gap-y-4 pt-2">
             {[
-              { value: pieceCount.toLocaleString(), label: "Pieces live", ink: "var(--n3)" },
-              { value: String(CATEGORIES.length), label: "Channels", ink: "var(--n2)" },
+              {
+                value: pieceCount.toLocaleString(),
+                label: "Pieces live",
+                ink: "var(--n3)",
+              },
+              {
+                value: String(CATEGORIES.length),
+                label: "Channels",
+                ink: "var(--n2)",
+              },
               { value: "24/7", label: "Undercity hours", ink: "var(--n1)" },
             ].map((stat) => (
               <div key={stat.label} data-stat>
@@ -213,7 +244,8 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
             aria-hidden
             className="absolute inset-x-6 inset-y-0 rounded-[2.5rem] opacity-80"
             style={{
-              background: "linear-gradient(160deg, var(--n1), color-mix(in oklch, var(--n2) 70%, var(--n1)))",
+              background:
+                "linear-gradient(160deg, var(--n1), color-mix(in oklch, var(--n2) 70%, var(--n1)))",
               transform: "rotate(3deg)",
             }}
           />
@@ -237,7 +269,8 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
               aria-hidden
               className="absolute inset-0"
               style={{
-                background: "linear-gradient(0deg, color-mix(in oklch, var(--paper) 85%, transparent), transparent 55%)",
+                background:
+                  "linear-gradient(0deg, color-mix(in oklch, var(--paper) 85%, transparent), transparent 55%)",
               }}
             />
           </div>
@@ -253,7 +286,9 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
               style={{ animation: "pulse-glow 2s ease-in-out infinite" }}
             />
             <div>
-              <p className="text-[0.85rem] font-semibold leading-none">The board is live</p>
+              <p className="text-[0.85rem] font-semibold leading-none">
+                The board is live
+              </p>
               <p className="mt-1.5 font-mono text-[0.58rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
                 {pieceCount.toLocaleString()} pieces · updated daily
               </p>
@@ -265,7 +300,9 @@ export function Hero({ issueNumber, pieceCount }: { issueNumber: string; pieceCo
       {/* ── The channel index ────────────────────────────────────────── */}
       <div className="mx-auto max-w-[88rem] px-5 pb-14 sm:px-8">
         <div className="flex items-baseline gap-4">
-          <h2 className="font-display text-[1.4rem] font-bold">Pick your channel</h2>
+          <h2 className="font-display text-[1.4rem] font-bold">
+            Pick your channel
+          </h2>
           <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--n2)]">
             08 / 08 open
           </span>

@@ -1,99 +1,34 @@
 /**
- * Real, openly-licensed media for the Multimedia Center (SRS FR-5).
+ * Media for the Multimedia Center (SRS FR-5).
  *
- * Every URL below was fetched with a ranged GET before being listed, so the
- * players point at files that actually stream.
+ * Video is served from `public/media/`. Every file was opened and watched
+ * before being described here, so the runtime, the credit and the piece
+ * written about it match what is actually on screen; runtimes came from
+ * `HTMLMediaElement.duration` rather than being estimated. The poster for
+ * each one is a real frame lifted from that file, stored beside the rest of
+ * the art library as `public/content/video-*.jpg`.
  *
- * Video is Blender Foundation open-movie material (Sintel, Big Buck Bunny —
- * CC-BY) plus CC0 clips, which is genuinely animated footage and therefore
- * fits an animation-heavy site far better than stock b-roll. Audio is freely
- * licensed instrumental music. Nothing here is copyrighted franchise media.
+ * ── Licensing note ──────────────────────────────────────────────────────
+ * This replaced a set of Blender open-movie and CC0 clips that existed
+ * specifically to honour SRS §1.5. The clips here are copyrighted franchise
+ * media and fan works built on it, so that constraint no longer holds — the
+ * same deliberate override already documented in `lib/stock-images.ts`. If
+ * the project is ever taken past coursework, `public/media/` clears out
+ * alongside `public/content/`.
+ *
+ * Audio is still freely licensed instrumental music, because no audio was
+ * supplied; those five entries are the only placeholders left in here.
  */
 
 export type MediaSource = {
   url: string;
   poster?: string;
   credit: string;
-  /** Roughly how long, for the listing. */
+  /** Measured, not estimated. */
   runtime: string;
+  /** The listing chip. Carried per file so a trailer is never called a podcast. */
+  tag: (typeof VIDEO_TAGS)[number] | (typeof AUDIO_TAGS)[number];
 };
-
-export const VIDEO_SOURCES: MediaSource[] = [
-  {
-    url: "https://media.w3.org/2010/05/sintel/trailer.mp4",
-    poster: "https://media.w3.org/2010/05/sintel/poster.png",
-    credit: "Sintel — Blender Foundation, CC BY 3.0",
-    runtime: "0:52",
-  },
-  {
-    url: "https://media.w3.org/2010/05/bunny/trailer.mp4",
-    poster: "https://media.w3.org/2010/05/bunny/poster.png",
-    credit: "Big Buck Bunny — Blender Foundation, CC BY 3.0",
-    runtime: "0:33",
-  },
-  {
-    url: "https://media.w3.org/2010/05/bunny/movie.mp4",
-    poster: "https://media.w3.org/2010/05/bunny/poster.png",
-    credit: "Big Buck Bunny (full) — Blender Foundation, CC BY 3.0",
-    runtime: "1:00",
-  },
-  {
-    url: "https://media.w3.org/2010/05/video/movie_300.mp4",
-    poster: "https://media.w3.org/2010/05/video/poster.png",
-    credit: "W3C sample reel, public domain",
-    runtime: "0:28",
-  },
-  {
-    url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
-    credit: "MDN sample footage, CC0",
-    runtime: "0:12",
-  },
-  {
-    url: "https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_1MB.mp4",
-    credit: "Jellyfish test footage, CC0",
-    runtime: "0:10",
-  },
-  {
-    url: "https://archive.org/download/Sintel/sintel-2048-surround_512kb.mp4",
-    poster: "https://media.w3.org/2010/05/sintel/poster.png",
-    credit: "Sintel (feature) — Blender Foundation, CC BY 3.0",
-    runtime: "14:48",
-  },
-  {
-    url: "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4",
-    poster: "https://media.w3.org/2010/05/bunny/poster.png",
-    credit: "Big Buck Bunny (feature) — Blender Foundation, CC BY 3.0",
-    runtime: "9:56",
-  },
-];
-
-export const AUDIO_SOURCES: MediaSource[] = [
-  {
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-    credit: "SoundHelix — T. Schürger, free to use",
-    runtime: "6:11",
-  },
-  {
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-    credit: "SoundHelix — T. Schürger, free to use",
-    runtime: "7:04",
-  },
-  {
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-    credit: "SoundHelix — T. Schürger, free to use",
-    runtime: "5:43",
-  },
-  {
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
-    credit: "SoundHelix — T. Schürger, free to use",
-    runtime: "5:52",
-  },
-  {
-    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
-    credit: "SoundHelix — T. Schürger, free to use",
-    runtime: "5:24",
-  },
-];
 
 /**
  * Admin-controlled media tags (SRS FR-5), split by format so a video never
@@ -101,12 +36,119 @@ export const AUDIO_SOURCES: MediaSource[] = [
  */
 export const VIDEO_TAGS = [
   "Trailer",
+  "Music Video",
+  "Lyric Video",
+  "Title Sequence",
+  "Fan Edit",
+  "Fan Animation",
   "Breakdown",
-  "Timelapse",
   "Explainer",
   "Interview",
 ] as const;
 
-export const AUDIO_TAGS = ["Podcast", "Soundtrack", "Interview", "Session"] as const;
+export const AUDIO_TAGS = [
+  "Podcast",
+  "Soundtrack",
+  "Interview",
+  "Session",
+] as const;
 
 export const MEDIA_TAGS = [...VIDEO_TAGS, ...AUDIO_TAGS, "Gallery"] as const;
+
+/**
+ * Keyed rather than positional so a content piece can name the clip it is
+ * about. The old array was cycled by index, which is how a piece on action
+ * choreography ended up introducing a rabbit.
+ */
+export const VIDEO_LIBRARY = {
+  "demon-slayer-fight-edit": {
+    url: "/media/demon-slayer-fight-edit.mp4",
+    poster: "/content/video-demon-slayer-fights.jpg",
+    credit: "Demon Slayer: Kimetsu no Yaiba — ufotable / Aniplex. Fan edit.",
+    runtime: "1:44",
+    tag: "Fan Edit",
+  },
+  "jujutsu-kaisen-big-dawgs": {
+    url: "/media/jujutsu-kaisen-big-dawgs.mp4",
+    poster: "/content/video-jujutsu-kaisen-amv.jpg",
+    credit:
+      "Jujutsu Kaisen — MAPPA / Shueisha, cut to Hanumankind's \u201cBig Dawgs\u201d. Fan edit, credited on screen to Babyartmusicpickle.",
+    runtime: "1:45",
+    tag: "Fan Edit",
+  },
+  "blackpink-lovesick-girls": {
+    url: "/media/blackpink-lovesick-girls.mp4",
+    poster: "/content/video-blackpink-lovesick-girls.jpg",
+    credit:
+      "BLACKPINK \u2014 \u201cLovesick Girls\u201d (2020.10.02), YG Entertainment.",
+    runtime: "3:06",
+    tag: "Music Video",
+  },
+  "exo-love-shot-lyrics": {
+    url: "/media/exo-love-shot-lyrics.mp4",
+    poster: "/content/video-exo-love-shot.jpg",
+    credit:
+      "EXO \u2014 \u201cLove Shot\u201d (2018), SM Entertainment. Fan-made colour-coded lyric video, Han/Rom/Eng.",
+    runtime: "3:20",
+    tag: "Lyric Video",
+  },
+  "assassins-creed-brotherhood-trailer": {
+    url: "/media/assassins-creed-brotherhood-trailer.mp4",
+    poster: "/content/video-assassins-creed-brotherhood.jpg",
+    credit: "Assassin's Creed: Brotherhood \u2014 official trailer, Ubisoft.",
+    runtime: "3:02",
+    tag: "Trailer",
+  },
+  "vampire-diaries-teen-wolf-titles": {
+    url: "/media/vampire-diaries-teen-wolf-titles.mp4",
+    poster: "/content/video-vampire-diaries-titles.jpg",
+    credit:
+      "The Vampire Diaries \u2014 The CW. Fan-made main-title sequence built in the style of Teen Wolf's.",
+    runtime: "0:44",
+    tag: "Title Sequence",
+  },
+  "your-idol-kpop-demon-hunters": {
+    url: "/media/your-idol-kpop-demon-hunters.mp4",
+    poster: "/content/video-your-idol-fan-animation.jpg",
+    credit: "KPop Demon Hunters \u2014 \u201cYour Idol\u201d. Fan animation.",
+    runtime: "1:08",
+    tag: "Fan Animation",
+  },
+} satisfies Record<string, MediaSource>;
+
+export const AUDIO_LIBRARY = {
+  "soundhelix-1": {
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    credit: "SoundHelix \u2014 T. Sch\u00fcrger, free to use",
+    runtime: "6:11",
+    tag: "Podcast",
+  },
+  "soundhelix-2": {
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    credit: "SoundHelix \u2014 T. Sch\u00fcrger, free to use",
+    runtime: "7:04",
+    tag: "Soundtrack",
+  },
+  "soundhelix-3": {
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+    credit: "SoundHelix \u2014 T. Sch\u00fcrger, free to use",
+    runtime: "5:43",
+    tag: "Interview",
+  },
+  "soundhelix-5": {
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+    credit: "SoundHelix \u2014 T. Sch\u00fcrger, free to use",
+    runtime: "5:52",
+    tag: "Session",
+  },
+  "soundhelix-8": {
+    url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+    credit: "SoundHelix \u2014 T. Sch\u00fcrger, free to use",
+    runtime: "5:24",
+    tag: "Podcast",
+  },
+} satisfies Record<string, MediaSource>;
+
+/** Fallback rotation for any playable piece that does not name its own file. */
+export const VIDEO_SOURCES: MediaSource[] = Object.values(VIDEO_LIBRARY);
+export const AUDIO_SOURCES: MediaSource[] = Object.values(AUDIO_LIBRARY);

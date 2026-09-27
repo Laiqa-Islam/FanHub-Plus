@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { Search, Bookmark, MapPin, PlayCircle, Sparkles, ShieldCheck } from "lucide-react";
+import {
+  Search,
+  Bookmark,
+  MapPin,
+  PlayCircle,
+  Sparkles,
+  ShieldCheck,
+} from "lucide-react";
 
 import { Reveal } from "@/components/motion/reveal";
 import { Button } from "@/components/ui/button";
@@ -55,11 +62,18 @@ export function FeatureSections() {
     <>
       <section className="border-y border-[var(--rule)] bg-[var(--paper-2)]">
         <div className="mx-auto max-w-[88rem] px-5 py-16 sm:px-8">
-          <PressHeading mark="What's in it" title="How it works" ghostInk="var(--n3)" />
+          <PressHeading
+            mark="What's in it"
+            title="How it works"
+            ghostInk="var(--n3)"
+          />
 
           {/* Six panels, each lit by a different channel on hover, so the
               row reads as the colour key repeated rather than one accent. */}
-          <Reveal stagger={0.06} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal
+            stagger={0.06}
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {CAPABILITIES.map((capability, index) => (
               <Link
                 key={capability.title}
@@ -116,8 +130,9 @@ export function FeatureSections() {
             Plug in
           </Misreg>
           <p className="mx-auto mt-6 max-w-lg text-[1.06rem] leading-relaxed text-[var(--ink-soft)]">
-            Make an account to save pieces, rate what you watch, follow your channels, and get a
-            front page that opens on the things you actually care about. It costs nothing.
+            Make an account to save pieces, rate what you watch, follow your
+            channels, and get a front page that opens on the things you actually
+            care about. It costs nothing.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Button asChild size="lg">

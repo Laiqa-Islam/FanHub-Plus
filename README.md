@@ -208,17 +208,22 @@ switch both survive, still persisted per account and mirrored to `localStorage`.
 
 ## Media
 
-The Multimedia Center streams genuinely open-licensed media:
+The Multimedia Center plays two kinds of thing:
 
-- **Video** — Blender Foundation open movies (*Sintel*, *Big Buck Bunny*, CC BY 3.0) plus CC0
-  clips. Real animated footage, which suits an animation-heavy site far better than stock
-  b-roll.
-- **Audio** — freely licensed instrumental tracks.
+- **Video** — seven clips in `public/media/`, served straight from `/public`. Each one is
+  pinned to the piece written about it by a `media` key in `scripts/data/media.ts`, its
+  runtime was measured rather than estimated, and its poster is a real frame lifted out of
+  the file itself (`public/content/video-*.jpg`). See the licensing note below.
+- **Audio** — freely licensed instrumental tracks, still hosted upstream. These are the last
+  placeholders in the library; no audio was supplied.
 
-Everything is served through `app/api/media/route.ts` rather than linked directly. That route
-forwards Range requests (so seeking works), returns the upstream content type, and — most
-importantly — **only proxies hosts on an explicit allowlist**. Forwarding an arbitrary
-caller-supplied URL would make it an open proxy and an SSRF vector.
+Local files are served as-is: `mediaSrc()` returns any `/`-prefixed URL untouched, so adding a
+clip to `public/media/` needs no allowlist change.
+
+Anything still hosted upstream goes through `app/api/media/route.ts` rather than being linked
+directly. That route forwards Range requests (so seeking works), returns the upstream content
+type, and — most importantly — **only proxies hosts on an explicit allowlist**. Forwarding an
+arbitrary caller-supplied URL would make it an open proxy and an SSRF vector.
 
 Proxying also makes playback same-origin, so it keeps working on networks and browser profiles
 that block third-party media hosts, and it does not depend on upstream CORS headers.
@@ -229,16 +234,20 @@ player says so and offers a retry.
 
 ## Content and image licensing
 
-The seed carries a real editorial library rather than placeholder text: 56 written pieces, 32
-character profiles, 41 merchandise items and 16 events, all authored for this project.
+The seed carries a real editorial library rather than placeholder text: 63 written pieces, 36
+character profiles, 41 merchandise items and 16 events, all authored for this project. Every
+piece names the art it runs on, and the seven video pieces additionally name the clip they are
+about, so a card's picture and its words are never about different things.
 
-> **⚠ This build hosts franchise fan art.** Editorial and character imagery is served from
-> `public/content/` — a pool of anime fan art supplied for the Neon Oni build, wired up through
-> `lib/stock-images.ts`. It replaced a curated Unsplash pool that existed specifically to honour
-> **SRS §1.5**, which asks the project not to host copyrighted franchise art. That constraint no
-> longer holds for this build. The decision was deliberate; this note exists so nobody later
-> reads §1.5 and assumes the code still follows it. **If this project goes anywhere beyond
-> coursework, `public/content/` is the first thing to clear.**
+> **⚠ This build hosts franchise fan art and franchise video.** Editorial and character
+> imagery is served from `public/content/` and video from `public/media/`, wired up through
+> `lib/stock-images.ts` and `scripts/data/media.ts`. Between them they replaced a curated
+> Unsplash pool and a set of Blender open movies that existed specifically to honour
+> **SRS §1.5**, which asks the project not to host copyrighted franchise material. That
+> constraint no longer holds for this build. The decision was deliberate; this note exists so
+> nobody later reads §1.5 and assumes the code still follows it. **If this project goes
+> anywhere beyond coursework, `public/content/` and `public/media/` are the first things to
+> clear.**
 
 `scripts/fetch-art.ts` builds most of that pool: official series covers, film
 posters and character portraits from **AniList** (no API key) and game capsule

@@ -104,7 +104,8 @@ export function FeatureSpread({
               </div>
 
               <p className="mt-4 font-mono text-[0.6rem] uppercase tracking-[0.16em] text-[var(--ink-faint)]">
-                {formatDate(lead.releaseDate)} · {lead.viewCount.toLocaleString()} reads
+                {formatDate(lead.releaseDate)} ·{" "}
+                {lead.viewCount.toLocaleString()} reads
                 {lead.ratingCount > 0 && ` · ${lead.averageRating.toFixed(1)}★`}
               </p>
             </Link>
@@ -160,7 +161,10 @@ export function FeatureSpread({
 
       {/* The board */}
       {rest.length > 0 && (
-        <Reveal stagger={0.05} className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal
+          stagger={0.05}
+          className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {rest.map((item, index) => (
             <ContentCard key={item.id} item={item} index={index} />
           ))}

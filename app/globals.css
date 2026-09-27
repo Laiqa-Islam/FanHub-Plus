@@ -426,6 +426,46 @@ html.no-js .reveal {
   animation-play-state: paused;
 }
 
+/* Rails: the same trick as the ticker, but with the duration and direction
+   set per instance so two rows can pass each other. The track holds the list
+   twice, so translating exactly -50% lands on an identical frame and the
+   seam is invisible. */
+@keyframes rail-left {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes rail-right {
+  from {
+    transform: translateX(-50%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.rail-track {
+  display: flex;
+  width: max-content;
+  animation: rail-left var(--rail-duration, 60s) linear infinite;
+}
+
+.rail-track[data-direction="right"] {
+  animation-name: rail-right;
+}
+
+.rail:hover .rail-track {
+  animation-play-state: paused;
+}
+
+html[data-reduced-motion="true"] .rail-track {
+  animation: none;
+}
+
 /* ═══════════════════════════ Article prose ════════════════════════════ */
 
 .prose-fanhub {

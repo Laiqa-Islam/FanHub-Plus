@@ -74,10 +74,13 @@ export function DecodeText({
     // throttled (backgrounded tab, power saving). Without this, a reader
     // could be left staring at scrambled glyphs indefinitely — setTimeout
     // keeps firing where requestAnimationFrame does not.
-    const settleId = setTimeout(() => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      setDisplay(text);
-    }, delay + duration + 400);
+    const settleId = setTimeout(
+      () => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        setDisplay(text);
+      },
+      delay + duration + 400,
+    );
 
     return () => {
       clearTimeout(timeoutId);

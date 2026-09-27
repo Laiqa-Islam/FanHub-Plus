@@ -44,7 +44,8 @@ export function TiltCard({
 
   function reset() {
     const node = ref.current;
-    if (node) node.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
+    if (node)
+      node.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg)";
     if (glareRef.current) glareRef.current.style.background = "transparent";
   }
 

@@ -10,6 +10,13 @@
  * more than it sounds: the library previously cycled a channel pool by
  * position, which meant a piece about editing could open under a poster for a
  * film it never mentioned. Leave `art` empty and the old cycling still applies.
+ *
+ * The seven playable video pieces do the same thing with `media`: each was
+ * written after watching the file it points at, and its art is a frame taken
+ * from that file. The essays that used to carry the `video` type had no
+ * footage behind them — they were articles wearing a play button — so they
+ * are typed honestly now, and the videos are the pieces below that genuinely
+ * have something to play.
  */
 
 export type ContentSeed = {
@@ -22,6 +29,12 @@ export type ContentSeed = {
   summary: string;
   /** Art id in `public/content/`, including extension. */
   art: string;
+  /**
+   * For a video or audio piece, the key of the file it is about in
+   * `VIDEO_LIBRARY` / `AUDIO_LIBRARY`. Same idea as `art`: leave it off and
+   * the seed falls back to cycling the rotation.
+   */
+  media?: string;
   paragraphs: string[];
 };
 
@@ -62,7 +75,7 @@ const raw: ContentSeed[] = [
   {
     category: "anime",
     title: "Attack on Titan: Storyboarding the Rumbling",
-    type: "video",
+    type: "article",
     genre: ["Craft", "Breakdown"],
     year: 2025,
     popularity: 97,
@@ -140,6 +153,40 @@ const raw: ContentSeed[] = [
     ],
   },
 
+  {
+    category: "anime",
+    title: "Watch: Demon Slayer With Everything but the Fighting Removed",
+    type: "video",
+    genre: ["Action", "Craft"],
+    year: 2026,
+    popularity: 94,
+    summary:
+      "Strip a season down to its combat and you find out what a show is actually built from. What survives this cut is a camera that never once loses the blade.",
+    art: "video-demon-slayer-fights.jpg",
+    media: "demon-slayer-fight-edit",
+    paragraphs: [
+      "A fan edit is an unkind test. Cut away the dialogue, the training, the flashbacks and the jokes, and most action series collapse into noise — exchanges that only made sense because someone explained the stakes forty seconds earlier. This one does not collapse, and the reason is legibility.",
+      "Watch where the sword is in any given frame. Tanjiro leaps through a field of embers and the blade stays the brightest, most saturated object on screen; Giyu draws and the composition reorganises around the line of the draw. The effects work is dense enough to be genuinely hard to read, so the show compensates by treating the weapon as the frame's anchor and letting everything else blur past it.",
+      "That is also why the fights survive being paused, screenshotted and re-cut by strangers. A sequence built so that each individual frame states who is attacking and from where is a sequence that can be shuffled, slowed, or set to unrelated music and still parse. The edit is not flattering the show. It is auditing it.",
+    ],
+  },
+  {
+    category: "anime",
+    title: "Watch: Jujutsu Kaisen, Cut to “Big Dawgs”",
+    type: "video",
+    genre: ["Fan Work", "Editing"],
+    year: 2026,
+    popularity: 91,
+    summary:
+      "An edit set to a Hanumankind track, cutting on the snare rather than on the story. It makes the series feel faster than it actually is, and that is a technique, not an accident.",
+    art: "video-jujutsu-kaisen-amv.jpg",
+    media: "jujutsu-kaisen-big-dawgs",
+    paragraphs: [
+      "The anime music video is one of the few genuinely native fan forms, and its governing rule is that the edit obeys the song, not the show. Cuts land on the beat. A four-second shot gets one second. A character walks into frame and is gone before you have placed them, because the snare arrived.",
+      "It works here because Jujutsu Kaisen is unusually rich in single-frame identifiers — Gojo's blindfold and white hair, Sukuna's markings, the specific violet of Hollow Purple against a night street. You need roughly a third of a second to recognise any of them, which is exactly the budget a beat-locked edit can afford. A series with subtler character design would turn to mush at this cadence.",
+      "What the form cannot do is argue. There is no claim being made here about the story, and looking for one is a category error; the pleasure is rhythmic and associative, closer to a remix than to criticism. The editor, credited on the end card as Babyartmusicpickle, is doing musicianship with someone else's footage.",
+    ],
+  },
   // ─────────────────────────────── MANGA ───────────────────────────────
   {
     category: "manga",
@@ -322,7 +369,7 @@ const raw: ContentSeed[] = [
   {
     category: "comics",
     title: "The Breaker: Choreography in a Medium With No Motion",
-    type: "video",
+    type: "article",
     genre: ["Craft", "Breakdown"],
     year: 2025,
     popularity: 83,
@@ -404,7 +451,7 @@ const raw: ContentSeed[] = [
   {
     category: "movies",
     title: "John Wick and the Return of Legible Action",
-    type: "video",
+    type: "article",
     genre: ["Craft", "Action"],
     year: 2025,
     popularity: 96,
@@ -482,6 +529,23 @@ const raw: ContentSeed[] = [
     ],
   },
 
+  {
+    category: "movies",
+    title: "Watch: “Your Idol”, Redrawn in Silhouette",
+    type: "video",
+    genre: ["Animation", "Fan Work"],
+    year: 2026,
+    popularity: 88,
+    summary:
+      "A fan animation of the KPop Demon Hunters number that works almost entirely in silhouette against flat colour. The constraint turns out to be the point.",
+    art: "video-your-idol-fan-animation.jpg",
+    media: "your-idol-kpop-demon-hunters",
+    paragraphs: [
+      "Almost nothing in this is rendered. The performers are black shapes — wide-brimmed hats, long coats, the occasional glint of an eye — thrown against fields of flat teal, red and hot pink. A single animator cannot shade and light a group dance number, so this one simply refuses to try.",
+      "The refusal buys something real. Silhouette is the cheapest way to keep choreography legible, because the eye reads a pose from its outline long before it reads a face. Three figures with identical hats moving in unison are perfectly clear here, where three half-shaded figures would have been a smear. The professional version of this trick is a concert lighting rig; the amateur version is a black shape on a colour field, and they are the same idea.",
+      "The one moment that breaks the rule earns its exception: a close-up of a face, yellow-eyed and lit from below, dropped into a run of pure silhouette. When you have spent a minute refusing detail, a single detailed frame does the work of a whole sequence.",
+    ],
+  },
   // ───────────────────────────── TV SHOWS ──────────────────────────────
   {
     category: "tv-shows",
@@ -550,7 +614,7 @@ const raw: ContentSeed[] = [
   {
     category: "tv-shows",
     title: "The Economics of the Twenty-Two Episode Season",
-    type: "video",
+    type: "article",
     genre: ["Industry", "Breakdown"],
     year: 2025,
     popularity: 84,
@@ -596,6 +660,23 @@ const raw: ContentSeed[] = [
     ],
   },
 
+  {
+    category: "tv-shows",
+    title: "Watch: The Vampire Diaries, Titled Like Teen Wolf",
+    type: "video",
+    genre: ["Fan Work", "Design"],
+    year: 2025,
+    popularity: 86,
+    summary:
+      "Someone rebuilt one show's main titles using a different show's visual grammar. The result proves that a title sequence is a promise about genre, not a summary of plot.",
+    art: "video-vampire-diaries-titles.jpg",
+    media: "vampire-diaries-teen-wolf-titles",
+    paragraphs: [
+      "The formula is borrowed wholesale: a performer stands in a white void, arms opening, body coming apart into smoke and particles, name card in a thin serif. It is Teen Wolf's sequence almost shot for shot, with The Vampire Diaries' cast standing in — Nina Dobrev, Candice Accola King, Michael Malarkey, each dissolving in turn.",
+      "The interesting part is how completely it relabels the show. The series' own titles were brief, moody and soft-focus: a romance that happens to have fangs. This version, with its cold white space and bodies visibly disintegrating, reads as body horror with a cast list. Same performers, same series, entirely different promise about what the next forty minutes contain.",
+      "Main titles are doing genre triage. They tell a viewer which set of expectations to load before a single line is spoken, which is why networks fight over them and why swapping one wholesale is such an efficient prank. Nothing about the show changed. Only the instructions did.",
+    ],
+  },
   // ─────────────────────────────── K-POP ───────────────────────────────
   {
     category: "k-pop",
@@ -616,7 +697,7 @@ const raw: ContentSeed[] = [
   {
     category: "k-pop",
     title: "The Concept Film as a Format",
-    type: "video",
+    type: "article",
     genre: ["Craft", "Video"],
     year: 2025,
     popularity: 93,
@@ -710,6 +791,40 @@ const raw: ContentSeed[] = [
     ],
   },
 
+  {
+    category: "k-pop",
+    title: "Watch: Four Rooms, Four Palettes — “Lovesick Girls”",
+    type: "video",
+    genre: ["Music Video", "Design"],
+    year: 2025,
+    popularity: 95,
+    summary:
+      "The video opens on a date card and then splits into colour-separated worlds, one per member. With the sound off you can still tell whose verse it is.",
+    art: "video-blackpink-lovesick-girls.jpg",
+    media: "blackpink-lovesick-girls",
+    paragraphs: [
+      "It begins the way a release does rather than the way a story does: the wordmark and the date, 2020.10.02, held on black. That is a habit worth noticing — the video is treated as a dated event, not as a film, and everything after it is organised for a viewer who already knows what they came for.",
+      "What follows is sorted by colour. A sickly green garage, a white room full of dried flowers, a red racetrack, a blue-black stretch of night road; each member gets a palette and a set and rarely leaves it. Mute the video and you can still follow the song's structure, because the cut to a new colour is the cut to a new verse. It is the same function a key change serves, done with a gel.",
+      "The group shots then do the opposite job. Four people in one frame, lit uniformly, standing in the garage — after two minutes of separation, the reunion reads as a chorus before a note of it plays. Colour has been doing the arrangement the whole time.",
+    ],
+  },
+  {
+    category: "k-pop",
+    title: "Watch: The Colour-Coded Lyric Video Is a Fan Invention",
+    type: "video",
+    genre: ["Fan Work", "Explainer"],
+    year: 2025,
+    popularity: 89,
+    summary:
+      "Three stacked lines, a strip of tinted member portraits, and a format nobody at a label designed. It solved a problem the official releases never addressed.",
+    art: "video-exo-love-shot.jpg",
+    media: "exo-love-shot-lyrics",
+    paragraphs: [
+      "The layout is rigidly conventional and entirely unofficial. A row of member headshots runs along the top, each one tinted and captioned with a name; beneath it sit three lines of the same lyric — Hangul, romanisation, English — and the member currently singing is lit while the rest are dimmed. Every colour-coded lyric video on the internet looks like this, and no record company drew up the spec.",
+      "It exists because a nine-member group creates a genuine comprehension problem. A listener who does not read Korean and cannot yet distinguish nine voices has no way to know who is singing, and official lyric videos, which are marketing, have never cared. Fans built a teaching format instead, and the three-line stack is the giveaway: it is designed for someone who wants to follow along out loud and understand what they are saying.",
+      "It is worth being clear about what this is. The format is amateur, the labour is unpaid, and it is now the default way most non-Korean listeners meet a song for the first time. “Love Shot” has an expensive official video. This is the version people actually learn the words from.",
+    ],
+  },
   // ─────────────────────────────── GAMING ──────────────────────────────
   {
     category: "gaming",
@@ -778,7 +893,7 @@ const raw: ContentSeed[] = [
   {
     category: "gaming",
     title: "Sekiro's Posture Bar Rewrote the Formula",
-    type: "video",
+    type: "article",
     genre: ["Craft", "Systems"],
     year: 2025,
     popularity: 90,
@@ -824,6 +939,23 @@ const raw: ContentSeed[] = [
     ],
   },
 
+  {
+    category: "gaming",
+    title: "Watch: Assassin's Creed Brotherhood and the CG-Trailer Era",
+    type: "video",
+    genre: ["Trailer", "History"],
+    year: 2025,
+    popularity: 87,
+    summary:
+      "Three minutes of pre-rendered film with no gameplay in it, closing on a release date. For a few years this was how games were sold, and then it stopped working.",
+    art: "video-assassins-creed-brotherhood.jpg",
+    media: "assassins-creed-brotherhood-trailer",
+    paragraphs: [
+      "Nothing in this trailer is the game. Ezio moves through a Roman plaza thick with red-robed guards at a fidelity the 2010 hardware could not produce, in a sequence no player will ever be in, rendered by a studio that does not make the game. It ends on a card: November 16th 2010.",
+      "The logic was sound at the time. A publisher selling an annualised series needs to communicate tone and scale in a slot where competitors are showing menus and HUDs, and a short pre-rendered film does that better than footage of an early build ever could. For a stretch of that console generation the CG trailer was the prestige format, and this series was one of its most fluent users.",
+      "It died because audiences learned to read it. A trailer that shows no gameplay came to signal that there is no gameplay worth showing, and the same viewers who once accepted a CG short as a statement of ambition started treating it as evasion. Watching it now, the craft holds up completely and the persuasion does not — which is a fairly precise description of what changed.",
+    ],
+  },
   // ────────────────────────────── COSPLAY ──────────────────────────────
   {
     category: "cosplay",
@@ -860,7 +992,7 @@ const raw: ContentSeed[] = [
   {
     category: "cosplay",
     title: "Foam Armour: Heat, Patience, Sealing",
-    type: "video",
+    type: "article",
     genre: ["Build", "Fabrication"],
     year: 2026,
     popularity: 89,
