@@ -6,26 +6,42 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Printed buttons: square corners, a hard ink border and a hard offset
- * shadow with no blur — a sticker pressed onto the page. Pressing it pushes
- * the sticker down into its own shadow.
+ * Lit buttons: fully rounded, and either a solid neon plate with the glow
+ * bleeding out of it or a 1.5px neon outline on nothing at all. Hovering
+ * lifts the button a couple of pixels and widens the glow, the way a sign
+ * brightens when the current comes up.
+ *
+ * `--glow` carries the variant's own signal so the shared hover rule does
+ * not need to know which colour it is lighting.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-[1.5px] border-[var(--ink)] font-mono font-semibold uppercase tracking-[0.13em] transition-[transform,box-shadow,background-color,color] duration-150 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--spot)] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[5px_5px_0_var(--ink)] active:translate-x-0 active:translate-y-0 active:shadow-none",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full font-semibold transition-[transform,box-shadow,background-color,color,border-color] duration-200 disabled:pointer-events-none disabled:opacity-45 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--n2)] hover:-translate-y-[2px] active:translate-y-0",
   {
     variants: {
       variant: {
-        primary: "bg-[var(--spot)] text-white shadow-[3px_3px_0_var(--ink)]",
-        ink: "bg-[var(--ink)] text-[var(--paper)] shadow-[3px_3px_0_var(--spot)]",
-        blue: "bg-[var(--spot-2)] text-white shadow-[3px_3px_0_var(--ink)]",
-        outline: "bg-transparent text-[var(--ink)] shadow-[3px_3px_0_var(--ink)]",
+        // The house signal, solid. Display face, because a primary action is
+        // a headline of its own.
+        primary:
+          "[--glow:var(--n1)] bg-[var(--n1)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n1)_55%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n1)_75%,transparent)]",
+        // Cyan outline — the second pass, and the default for anything that
+        // sits beside a primary.
+        outline:
+          "[--glow:var(--n2)] border-[1.5px] border-[var(--n2)] bg-transparent text-[var(--n2)] hover:bg-[color-mix(in_oklch,var(--n2)_14%,transparent)] hover:shadow-[0_0_26px_color-mix(in_oklch,var(--n2)_40%,transparent)]",
+        // Acid, for the alert-shaped action: a drop closing, tickets going.
+        flag:
+          "[--glow:var(--n3)] bg-[var(--n3)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n3)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n3)_70%,transparent)]",
+        // Cyan plate, for the rarer case where two solid actions sit together.
+        blue:
+          "[--glow:var(--n2)] bg-[var(--n2)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n2)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n2)_70%,transparent)]",
+        // A neutral outline that only lights up on hover.
+        ink: "border-[1.5px] border-[var(--edge-strong)] bg-transparent text-[var(--ink)] hover:border-[var(--n1)] hover:text-[var(--n1)]",
         ghost:
-          "border-transparent bg-transparent text-[var(--ink-soft)] shadow-none hover:translate-x-0 hover:translate-y-0 hover:bg-[var(--paper-2)] hover:text-[var(--ink)] hover:shadow-none",
+          "bg-transparent text-[var(--ink-soft)] hover:translate-y-0 hover:bg-[var(--paper-2)] hover:text-[var(--ink)]",
       },
       size: {
-        sm: "h-9 px-3.5 text-[0.68rem]",
-        md: "h-11 px-5 text-[0.74rem]",
-        lg: "h-14 px-8 text-[0.82rem]",
+        sm: "h-9 px-4 text-[0.76rem]",
+        md: "h-11 px-5 text-[0.84rem]",
+        lg: "h-13 px-7 text-[0.92rem]",
         icon: "h-10 w-10 px-0",
       },
     },
@@ -60,7 +76,7 @@ export function Button({
       {loading ? (
         <>
           <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-          <span>Printing…</span>
+          <span>Sending…</span>
         </>
       ) : (
         children

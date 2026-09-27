@@ -59,13 +59,13 @@ export async function toggleBookmark(
       await ActivityLog.create({
         userId: user.id,
         action: "unbookmarked",
-        label: "Removed a clipping",
+        label: "Removed a save",
         targetType: parsed.data.targetType,
         targetId: parsed.data.targetId,
       });
       if (path) revalidatePath(path);
       revalidatePath("/bookmarks");
-      return { ok: true, bookmarked: false, message: "Removed from your clippings." };
+      return { ok: true, bookmarked: false, message: "Removed from your saves." };
     }
 
     await Bookmark.create({
@@ -77,7 +77,7 @@ export async function toggleBookmark(
     await ActivityLog.create({
       userId: user.id,
       action: "bookmarked",
-      label: "Clipped an item",
+      label: "Saved an item",
       targetType: parsed.data.targetType,
       targetId: parsed.data.targetId,
       href: path ?? "",
@@ -85,12 +85,12 @@ export async function toggleBookmark(
 
     if (path) revalidatePath(path);
     revalidatePath("/bookmarks");
-    return { ok: true, bookmarked: true, message: "Clipped." };
+    return { ok: true, bookmarked: true, message: "Saved." };
   } catch (error) {
     // A duplicate-key error means the unique index caught a double click —
     // the bookmark exists, which is the state the user wanted anyway.
     if ((error as { code?: number }).code === 11000) {
-      return { ok: true, bookmarked: true, message: "Clipped." };
+      return { ok: true, bookmarked: true, message: "Saved." };
     }
     console.error("[bookmarks] toggle failed:", error);
     return { ok: false, bookmarked: false, message: "We couldn't save that. Try again." };
@@ -125,7 +125,7 @@ export async function updateBookmarkNote(
     );
 
     if (result.matchedCount === 0) {
-      return { ok: false, message: "That clipping is no longer in your list." };
+      return { ok: false, message: "That item is no longer in your list." };
     }
 
     revalidatePath("/bookmarks");

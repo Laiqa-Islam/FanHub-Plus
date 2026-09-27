@@ -37,7 +37,7 @@ import type { FormState } from "@/app/actions/auth";
 const RESOURCES = {
   content: { model: Content, path: "/admin/content", label: "Piece" },
   character: { model: CharacterProfile, path: "/admin/characters", label: "Character" },
-  merchandise: { model: MerchandiseItem, path: "/admin/merch", label: "Plate" },
+  merchandise: { model: MerchandiseItem, path: "/admin/merch", label: "Item" },
   event: { model: Event, path: "/admin/events", label: "Event" },
   faq: { model: FaqEntry, path: "/admin/faq", label: "FAQ entry" },
 } as const;
@@ -81,12 +81,26 @@ const CharacterSchema = z.object({
   bio: z.string().trim().max(4000).optional(),
   imageUrl: z.string().trim().max(600).optional(),
   traits: z.string().trim().max(200).optional(),
+
+  // The dossier fields the profile page is built around.
+  kanji: z.string().trim().max(60).optional(),
+  role: z.string().trim().max(120).optional(),
+  grade: z.string().trim().max(80).optional(),
+  sealMark: z.string().trim().max(8).optional(),
+  accent: z.string().trim().max(40).optional(),
+  affiliation: z.string().trim().max(200).optional(),
+  status: z.string().trim().max(200).optional(),
+  relationships: z.string().trim().max(600).optional(),
+  skills: z.string().trim().max(600).optional(),
+  troops: z.string().trim().max(200).optional(),
+  weapons: z.string().trim().max(400).optional(),
 });
 
 const MerchSchema = z.object({
   name: z.string().trim().min(2, "Give it a name.").max(160),
   category,
   description: z.string().trim().max(2000).optional(),
+  price: z.coerce.number().min(0, "Price cannot be negative.").max(100_000),
   imageUrl: z.string().trim().max(600).optional(),
   tag: z.enum(MERCH_TAGS as unknown as [string, ...string[]]),
   isUpcoming: z.coerce.boolean(),
@@ -157,6 +171,17 @@ function buildDocument(kind: ResourceKind, data: Record<string, unknown>) {
         bio: d.bio ?? "",
         imageUrl: d.imageUrl ?? "",
         traits: toList(d.traits),
+        kanji: d.kanji ?? "",
+        role: d.role ?? "",
+        grade: d.grade ?? "",
+        sealMark: d.sealMark ?? "",
+        accent: d.accent ?? "",
+        affiliation: d.affiliation ?? "",
+        status: d.status ?? "",
+        relationships: toList(d.relationships),
+        skills: toList(d.skills),
+        troops: d.troops ?? "",
+        weapons: toList(d.weapons),
       };
     }
     case "merchandise": {
@@ -166,6 +191,7 @@ function buildDocument(kind: ResourceKind, data: Record<string, unknown>) {
         slug: slugify(d.name),
         category: d.category,
         description: d.description ?? "",
+        priceCents: Math.round(d.price * 100),
         imageUrl: d.imageUrl ?? "",
         tag: d.tag,
         isUpcoming: d.isUpcoming,

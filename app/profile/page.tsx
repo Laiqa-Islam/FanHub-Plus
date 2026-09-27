@@ -27,7 +27,7 @@ export default async function ProfilePage() {
       </nav>
 
       <header className="mb-10">
-        <h1 className="font-display text-[clamp(2rem,5vw,2.8rem)]">Profile & preferences</h1>
+        <h1 className="font-display text-[clamp(1.65rem,4.2vw,2.3rem)]">Profile & preferences</h1>
         <p className="mt-3 text-[0.96rem] text-[var(--ink-soft)]">
           Member since {formatDate(user.createdAt)}
           {user.emailVerified ? " · email confirmed" : " · email not yet confirmed"}

@@ -35,6 +35,15 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard?denied=admin", request.url));
   }
 
+  // A session whose user no longer exists verifies here but fails in the DAL,
+  // which would bounce /login → /dashboard → /login forever. The DAL flags
+  // that case; clear the dead cookie and let the login page render.
+  if (isAuthPage && request.nextUrl.searchParams.get("session") === "expired") {
+    const response = NextResponse.next();
+    response.cookies.delete(SESSION_COOKIE);
+    return response;
+  }
+
   // Already signed in? The login/register pages have nothing to offer.
   if (isAuthPage && session) {
     return NextResponse.redirect(new URL("/dashboard", request.url));

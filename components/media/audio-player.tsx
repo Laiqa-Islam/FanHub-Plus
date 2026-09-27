@@ -75,8 +75,8 @@ export function AudioPlayer({
 
   if (failed) {
     return (
-      <div className="border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-6 text-center">
-        <p className="font-display text-[1.2rem] uppercase">This track won&apos;t load</p>
+      <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-6 text-center">
+        <p className="font-display text-[0.95rem]">This track won&apos;t load</p>
         <p className="mt-1.5 text-[0.88rem] text-[var(--ink-soft)]">
           The audio source is unreachable right now.
         </p>
@@ -85,7 +85,7 @@ export function AudioPlayer({
   }
 
   return (
-    <figure className="border-[1.5px] border-[var(--ink)] bg-[var(--paper)] shadow-[6px_6px_0_var(--ink)]">
+    <figure className="rounded-2xl border border-[var(--edge)] bg-[var(--paper)] shadow-[var(--lift-md)]">
       <audio ref={audioRef} src={src} preload="metadata" />
 
       <div className="flex items-center gap-4 p-4">
@@ -93,7 +93,7 @@ export function AudioPlayer({
           type="button"
           onClick={toggle}
           aria-label={playing ? `Pause ${title}` : `Play ${title}`}
-          className="grid h-14 w-14 shrink-0 place-items-center border-[1.5px] border-[var(--ink)] text-white transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_var(--ink)]"
+          className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-[var(--edge)] text-[var(--void)] transition-transform duration-150 hover:-translate-y-0.5 hover:shadow-[var(--lift-md)]"
           style={{ background: ink }}
         >
           {playing ? (
@@ -104,7 +104,7 @@ export function AudioPlayer({
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[1.15rem] uppercase leading-none">{title}</p>
+          <p className="truncate font-display text-[0.95rem] leading-none">{title}</p>
 
           {/* Level meters. Bars past the playhead sit flat and grey. */}
           <div aria-hidden className="mt-2.5 flex h-8 items-end gap-[2px]">
@@ -138,7 +138,7 @@ export function AudioPlayer({
             type="button"
             onClick={() => nudge(-15)}
             aria-label="Back 15 seconds"
-            className="grid h-8 w-8 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--paper-2)]"
+            className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--paper-2)]"
           >
             <RotateCcw className="h-3.5 w-3.5" aria-hidden />
           </button>
@@ -146,7 +146,7 @@ export function AudioPlayer({
             type="button"
             onClick={() => nudge(30)}
             aria-label="Forward 30 seconds"
-            className="grid h-8 w-8 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--paper-2)]"
+            className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--paper-2)]"
           >
             <RotateCw className="h-3.5 w-3.5" aria-hidden />
           </button>

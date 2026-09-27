@@ -1,10 +1,7 @@
 import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
 import { CATEGORY_SLUGS, MERCH_TAGS } from "@/lib/constants";
 
-/**
- * Showcase-only merchandise (SRS §1.5): there is deliberately no price field,
- * cart, order or payment path anywhere in the application.
- */
+/** Merchandise catalogue items used by the storefront and cart. */
 const MerchandiseItemSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -12,6 +9,7 @@ const MerchandiseItemSchema = new Schema(
     category: { type: String, enum: CATEGORY_SLUGS, required: true, index: true },
 
     description: { type: String, default: "" },
+    priceCents: { type: Number, min: 0, default: 0 },
     imageUrl: { type: String, default: "" },
     imagePublicId: { type: String, default: "" },
     /** Additional gallery shots. */

@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = {
   title: "Character profiles",
   description:
-    "Card-based character profiles across all eight fandom channels, filterable by channel and franchise.",
+    "Character files across all eight fandom channels, with lit stat meters, filterable by channel and franchise.",
 };
 
 export const dynamic = "force-dynamic";
@@ -42,21 +42,26 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
     ) as unknown as Promise<string[]>,
   ]);
 
+  const total = characters.length;
+
   return (
     <div className="mx-auto max-w-7xl px-5 py-12">
       <Breadcrumbs trail={[{ label: "Characters" }]} />
 
-      <header className="mb-10 max-w-2xl">
-        <p className="mark mb-3">Profiles · {characters.length} characters</p>
-        <h1 className="font-display text-[clamp(2rem,5vw,3rem)]">Character profiles</h1>
+      <header className="mb-9 max-w-2xl">
+        <p className="mark mb-3 text-[var(--n2)]">
+          Character select · {String(total).padStart(2, "0")} files open
+        </p>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3.4rem)] font-black">The crew</h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
-          Who they are, what they&apos;re for, and why the writing works. Filter by channel or
-          by franchise.
+          Who they are, what they&apos;re for, and why the writing works. Every file carries the
+          site&apos;s own read on them — four meters, open to argument. Filter by channel or by
+          franchise.
         </p>
       </header>
 
       {/* Channel filter */}
-      <div className="mb-5 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-2">
         <FilterChip href="/characters" active={!activeCategory} label="All channels" />
         {CATEGORIES.map((category) => (
           <FilterChip
@@ -64,7 +69,7 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
             href={`/characters?category=${category.slug}`}
             active={activeCategory === category.slug}
             label={category.name}
-            dot={`var(--ch-${category.token})`}
+            ink={`var(--ch-${category.token})`}
           />
         ))}
       </div>
@@ -95,19 +100,20 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
         </div>
       )}
 
-      {characters.length === 0 ? (
-        <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
-          No character profiles match that filter yet.
+      {total === 0 ? (
+        <p className="rounded-2xl border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
+          No character files match that filter yet.
         </p>
       ) : (
         <Reveal stagger={0.04} direction="scale" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {characters.map((character) => {
             const category = categoryBySlug(character.category);
+            const ink = character.accent || `var(--ch-${category?.token ?? "anime"})`;
             return (
               <TiltCard key={String(character._id)} className="reveal" intensity={7}>
                 <Link
                   href={`/characters/${character.slug}`}
-                  className="group flex h-full flex-col overflow-hidden border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] transition-colors hover:border-[var(--rule-strong)]"
+                  className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-[var(--edge)] bg-[var(--paper-3)]"
                 >
                   <div className="relative aspect-[4/5] overflow-hidden bg-[var(--paper-2)]">
                     {character.imageUrl && (
@@ -116,30 +122,56 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
                         alt=""
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="plate object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                     )}
 
-                    {/* Channel-hue duotone. The art is atmospheric stock
-                        photography, not official character art, and the wash
-                        makes that read as a deliberate treatment. */}
+                    {/* The channel signal, kept light enough that the face
+                        still reads — see components/duotone.tsx for why the
+                        old multiply pass could not survive a dark ground. */}
                     <div
                       aria-hidden
-                      className="absolute inset-0 mix-blend-color"
-                      style={{ background: `var(--ch-${category?.token ?? "anime"})` }}
+                      className="absolute inset-0 mix-blend-soft-light opacity-50"
+                      style={{ background: ink }}
                     />
                     <div
                       aria-hidden
-                      className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"
+                      className="absolute inset-0"
+                      style={{
+                        background:
+                          "linear-gradient(0deg, color-mix(in oklch, var(--void) 94%, transparent), transparent 62%)",
+                      }}
                     />
 
+                    {/* The character's own script, set vertically down the
+                        left edge — the mockup's signature on this screen. */}
+                    {character.kanji && (
+                      <span
+                        aria-hidden
+                        className="absolute left-3 top-3 font-display text-[0.9rem] font-bold tracking-[0.3em]"
+                        style={{
+                          writingMode: "vertical-rl",
+                          color: ink,
+                          textShadow: `0 0 14px ${ink}`,
+                        }}
+                      >
+                        {character.kanji}
+                      </span>
+                    )}
+
                     <div className="absolute inset-x-0 bottom-0 p-4">
-                      <p className="font-mono text-[0.6rem] uppercase tracking-[0.15em] text-white/70">
-                        {character.franchise}
+                      <p
+                        className="font-mono text-[0.54rem] uppercase tracking-[0.16em]"
+                        style={{ color: ink }}
+                      >
+                        {character.grade || character.role || character.franchise}
                       </p>
-                      <h2 className="mt-1 font-display text-[1.15rem] font-extrabold leading-tight text-white">
+                      <h2 className="mt-1 font-display text-[1.05rem] font-bold leading-tight">
                         {character.name}
                       </h2>
+                      <p className="mt-0.5 font-mono text-[0.56rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+                        {character.franchise}
+                      </p>
                     </div>
                   </div>
 
@@ -151,13 +183,22 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
                       {(character.traits ?? []).slice(0, 2).map((trait) => (
                         <span
                           key={trait}
-                          className="border-[1.5px] border-[var(--rule-strong)] px-2.5 py-1 font-mono text-[0.62rem] uppercase tracking-[0.1em] text-[var(--ink-faint)]"
+                          className="rounded-full border border-[var(--edge)] px-2.5 py-1 font-mono text-[0.56rem] uppercase tracking-[0.1em] text-[var(--ink-faint)]"
                         >
                           {trait}
                         </span>
                       ))}
                     </div>
                   </div>
+
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 rounded-[1.25rem] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                    style={{
+                      border: `1px solid ${ink}`,
+                      boxShadow: `0 0 28px color-mix(in oklch, ${ink} 35%, transparent)`,
+                    }}
+                  />
                 </Link>
               </TiltCard>
             );
@@ -168,31 +209,47 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
   );
 }
 
+/** A lit pill. Active takes the channel's own signal as a solid fill. */
 function FilterChip({
   href,
   active,
   label,
-  dot,
+  ink = "var(--n1)",
   small = false,
 }: {
   href: string;
   active: boolean;
   label: string;
-  dot?: string;
+  ink?: string;
   small?: boolean;
 }) {
   return (
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2 border transition-colors",
-        small ? "px-3 py-1 text-[0.76rem]" : "px-3.5 py-1.5 text-[0.83rem]",
+        "inline-flex items-center gap-2 whitespace-nowrap rounded-full border transition-colors",
+        small ? "px-3 py-1 text-[0.74rem]" : "px-3.5 py-1.5 text-[0.8rem]",
         active
-          ? "border-[var(--spot)] bg-[var(--spot-wash)] text-[var(--spot-deep)]"
-          : "border-[var(--rule)] text-[var(--ink-soft)] hover:border-[var(--rule-strong)] hover:text-[var(--ink)]",
+          ? "text-[var(--void)]"
+          : "border-[var(--edge)] text-[var(--ink-soft)] hover:border-[var(--edge-strong)] hover:text-[var(--ink)]",
       )}
+      style={
+        active
+          ? {
+              background: ink,
+              borderColor: ink,
+              boxShadow: `0 0 18px color-mix(in oklch, ${ink} 50%, transparent)`,
+            }
+          : undefined
+      }
     >
-      {dot && <span aria-hidden className="h-2 w-2" style={{ background: dot }} />}
+      {!active && ink !== "var(--n1)" && (
+        <span
+          aria-hidden
+          className="h-2 w-2 rounded-full"
+          style={{ background: ink, boxShadow: `0 0 8px ${ink}` }}
+        />
+      )}
       {label}
     </Link>
   );

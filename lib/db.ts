@@ -26,8 +26,27 @@ const cached: MongooseCache = globalForMongoose._mongoose ?? {
 };
 globalForMongoose._mongoose = cached;
 
+/**
+ * Mongoose readyState 1 is "connected"; 2 is "connecting", which is fine to
+ * wait on. Anything else means the socket is gone.
+ */
+function isUsable(conn: Mongoose | null): conn is Mongoose {
+  return conn !== null && (conn.connection.readyState === 1 || conn.connection.readyState === 2);
+}
+
 export async function connectToDatabase(): Promise<Mongoose> {
-  if (cached.conn) return cached.conn;
+  // A cached connection is only worth reusing while it is actually open.
+  // Caching `conn` alone was a real trap: if the network dropped the socket
+  // mid-session — a blocked port, a laptop sleeping, a hotspot changing — the
+  // handle stayed truthy forever, and because `bufferCommands` is off every
+  // later query failed instantly with no attempt to reconnect. Sign-in was
+  // the loudest symptom, since it cannot fall back to cached data.
+  if (isUsable(cached.conn)) return cached.conn;
+
+  if (cached.conn) {
+    cached.conn = null;
+    cached.promise = null;
+  }
 
   if (!cached.promise) {
     cached.promise = mongoose.connect(MONGODB_URI!, {

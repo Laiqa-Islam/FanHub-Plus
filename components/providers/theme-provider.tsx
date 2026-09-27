@@ -3,19 +3,20 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 
 /**
- * Theme + accessibility preferences (SRS FR-12).
+ * Display and accessibility preferences.
  *
- * Held in localStorage so a visitor's choice survives reloads; signed-in users
- * also have this persisted to their profile.
+ * Neon Oni is a single-ground theme: there is no light mode, because a neon
+ * sign only reads against the night. The light/dark control the previous
+ * print theme carried is gone with it, and with it goes SRS FR-12's colour
+ * scheme clause — a deliberate trade the design brief asked for. The two
+ * controls that survive are the ones the theme does not fight: text size and
+ * reduced motion.
+ *
+ * Both are held in localStorage so a visitor's choice survives reloads;
+ * signed-in users also have them persisted to their profile.
  */
 
-export type ThemeMode = "light" | "dark" | "system";
-
 type ThemeContextValue = {
-  theme: ThemeMode;
-  resolvedTheme: "light" | "dark";
-  setTheme: (theme: ThemeMode) => void;
-  toggleTheme: () => void;
   fontScale: number;
   setFontScale: (scale: number) => void;
   reducedMotion: boolean;
@@ -24,56 +25,29 @@ type ThemeContextValue = {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export const THEME_KEY = "fanhub:theme";
 export const FONT_KEY = "fanhub:font-scale";
 export const MOTION_KEY = "fanhub:reduced-motion";
 
-function systemPrefersDark() {
-  return window.matchMedia("(prefers-color-scheme: dark)").matches;
-}
-
-function applyTheme(mode: ThemeMode) {
-  const isDark = mode === "dark" || (mode === "system" && systemPrefersDark());
-  document.documentElement.classList.toggle("dark", isDark);
-  return isDark ? "dark" : "light";
-}
-
 export function ThemeProvider({
   children,
-  initialTheme = "system",
   initialFontScale = 100,
   initialReducedMotion = false,
 }: {
   children: React.ReactNode;
-  initialTheme?: ThemeMode;
   initialFontScale?: number;
   initialReducedMotion?: boolean;
 }) {
-  const [theme, setThemeState] = useState<ThemeMode>(initialTheme);
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
   const [fontScale, setFontScaleState] = useState(initialFontScale);
   const [reducedMotion, setReducedMotionState] = useState(initialReducedMotion);
 
   // Hydrate from localStorage, which the blocking script already read.
   useEffect(() => {
-    const stored = (localStorage.getItem(THEME_KEY) as ThemeMode | null) ?? initialTheme;
     const storedScale = Number(localStorage.getItem(FONT_KEY)) || initialFontScale;
     const storedMotion = localStorage.getItem(MOTION_KEY) === "true" || initialReducedMotion;
 
-    setThemeState(stored);
-    setResolvedTheme(applyTheme(stored));
     setFontScaleState(storedScale);
     setReducedMotionState(storedMotion);
-  }, [initialTheme, initialFontScale, initialReducedMotion]);
-
-  // Follow the OS while the user is on "system".
-  useEffect(() => {
-    if (theme !== "system") return;
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => setResolvedTheme(applyTheme("system"));
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
-  }, [theme]);
+  }, [initialFontScale, initialReducedMotion]);
 
   useEffect(() => {
     document.documentElement.style.setProperty("--font-scale", `${fontScale}%`);
@@ -82,23 +56,6 @@ export function ThemeProvider({
   useEffect(() => {
     document.documentElement.dataset.reducedMotion = String(reducedMotion);
   }, [reducedMotion]);
-
-  const setTheme = useCallback((mode: ThemeMode) => {
-    setThemeState(mode);
-    setResolvedTheme(applyTheme(mode));
-    localStorage.setItem(THEME_KEY, mode);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setThemeState((current) => {
-      const isDark =
-        current === "dark" || (current === "system" && systemPrefersDark());
-      const next: ThemeMode = isDark ? "light" : "dark";
-      setResolvedTheme(applyTheme(next));
-      localStorage.setItem(THEME_KEY, next);
-      return next;
-    });
-  }, []);
 
   const setFontScale = useCallback((scale: number) => {
     const clamped = Math.min(130, Math.max(90, scale));
@@ -113,16 +70,7 @@ export function ThemeProvider({
 
   return (
     <ThemeContext.Provider
-      value={{
-        theme,
-        resolvedTheme,
-        setTheme,
-        toggleTheme,
-        fontScale,
-        setFontScale,
-        reducedMotion,
-        setReducedMotion,
-      }}
+      value={{ fontScale, setFontScale, reducedMotion, setReducedMotion }}
     >
       {children}
     </ThemeContext.Provider>
@@ -136,17 +84,16 @@ export function useTheme() {
 }
 
 /**
- * Runs before first paint to stamp the theme class, font scale and motion
- * preference onto <html>, preventing a light-mode flash on a dark-mode load.
+ * Runs before first paint to stamp the font scale and motion preference onto
+ * <html>. The ground is dark in the stylesheet itself, so there is no colour
+ * scheme to resolve here any more — only the two preferences that would
+ * otherwise flash at their defaults before React hydrates.
  */
 export const themeScript = `
 (function(){
   try {
     var d = document.documentElement;
     d.classList.remove('no-js');
-    var t = localStorage.getItem('${THEME_KEY}') || 'system';
-    var dark = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-    d.classList.toggle('dark', dark);
     var f = localStorage.getItem('${FONT_KEY}');
     if (f) d.style.setProperty('--font-scale', f + '%');
     d.dataset.reducedMotion = localStorage.getItem('${MOTION_KEY}') === 'true';

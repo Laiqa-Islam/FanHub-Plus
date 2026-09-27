@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Pencil, Check, X, Scissors } from "lucide-react";
+import { Pencil, Check, X, Bookmark } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { updateBookmarkNote, toggleBookmark } from "@/app/actions/bookmarks";
@@ -70,7 +70,7 @@ export function ClippingRow({ row }: { row: Row }) {
       <div className="flex gap-4">
         <Link
           href={row.href}
-          className="relative hidden h-20 w-24 shrink-0 overflow-hidden border-[1.5px] border-[var(--ink)] sm:block"
+          className="relative hidden h-20 w-24 shrink-0 overflow-hidden rounded-2xl border border-[var(--edge)] sm:block"
         >
           {row.imageUrl && (
             <Image src={row.imageUrl} alt="" fill sizes="96px" className="plate object-cover" />
@@ -93,7 +93,7 @@ export function ClippingRow({ row }: { row: Row }) {
           </p>
 
           <Link href={row.href} className="group mt-1 block">
-            <h3 className="font-display text-[1.45rem] uppercase leading-[0.95] transition-colors group-hover:text-[var(--spot-deep)]">
+            <h3 className="font-display text-[1.04rem] leading-[0.95] transition-colors group-hover:text-[var(--spot-deep)]">
               {row.title}
             </h3>
           </Link>
@@ -115,14 +115,14 @@ export function ClippingRow({ row }: { row: Row }) {
                 onChange={(event) => setDraft(event.target.value)}
                 rows={3}
                 placeholder="Why did you keep this?"
-                className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-3 text-[0.9rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none"
+                className="w-full rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-3 text-[0.9rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none"
               />
               <div className="mt-2 flex items-center gap-2">
                 <button
                   type="button"
                   onClick={save}
                   disabled={isPending}
-                  className="inline-flex items-center gap-1.5 border-[1.5px] border-[var(--ink)] bg-[var(--spot)] px-3 py-1.5 font-mono text-[0.64rem] uppercase tracking-[0.13em] text-white disabled:opacity-60"
+                  className="inline-flex items-center gap-1.5 rounded-2xl border border-[var(--edge)] bg-[var(--spot)] px-3 py-1.5 font-mono text-[0.64rem] uppercase tracking-[0.13em] text-[var(--void)] disabled:opacity-60"
                 >
                   <Check className="h-3.5 w-3.5" aria-hidden />
                   Save note
@@ -133,7 +133,7 @@ export function ClippingRow({ row }: { row: Row }) {
                     setDraft(note);
                     setEditing(false);
                   }}
-                  className="inline-flex items-center gap-1.5 border-[1.5px] border-[var(--ink)] px-3 py-1.5 font-mono text-[0.64rem] uppercase tracking-[0.13em]"
+                  className="inline-flex items-center gap-1.5 rounded-2xl border border-[var(--edge)] px-3 py-1.5 font-mono text-[0.64rem] uppercase tracking-[0.13em]"
                 >
                   <X className="h-3.5 w-3.5" aria-hidden />
                   Cancel
@@ -167,10 +167,10 @@ export function ClippingRow({ row }: { row: Row }) {
           onClick={remove}
           disabled={isPending}
           aria-label={`Remove ${row.title} from clippings`}
-          title="Remove clipping"
-          className="grid h-9 w-9 shrink-0 self-start place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--spot)] hover:text-white disabled:opacity-60"
+          title="Remove save"
+          className="grid h-9 w-9 shrink-0 self-start place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--spot)] hover:text-[var(--void)] disabled:opacity-60"
         >
-          <Scissors className="h-4 w-4" aria-hidden />
+          <Bookmark className="h-4 w-4" aria-hidden />
         </button>
       </div>
     </li>

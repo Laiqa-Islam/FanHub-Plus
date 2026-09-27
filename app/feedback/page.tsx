@@ -24,14 +24,14 @@ export default async function FeedbackPage() {
 
   return (
     <div>
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-3xl px-5 pb-8 pt-8">
           <Breadcrumbs trail={[{ label: "Feedback" }]} />
           <p className="mark mb-3">Letters page</p>
-          <Misreg as="h1" className="text-[clamp(2.4rem,7vw,4.4rem)]" ghostInk="var(--ch-comics)">
+          <Misreg as="h1" className="text-[clamp(1.85rem,5vw,3.2rem)]" ghostInk="var(--ch-comics)">
             Write in
           </Misreg>
-          <p className="mt-5 max-w-lg border-l-4 border-[var(--ch-comics)] pl-5 text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
+          <p className="mt-5 max-w-lg border-l-2 border-[var(--ch-comics)] pl-5 text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
             Found a bug, got an idea, or just want to ask something? Everything sent here is
             read by an administrator.
           </p>
@@ -40,11 +40,11 @@ export default async function FeedbackPage() {
       </header>
 
       <div className="mx-auto max-w-3xl px-5 py-10">
-        <div className="mb-10 grid gap-px border-[1.5px] border-[var(--ink)] bg-[var(--ink)] sm:grid-cols-3">
+        <div className="mb-10 grid gap-2.5 sm:grid-cols-3">
           {KINDS.map((kind) => (
-            <div key={kind.title} className="bg-[var(--paper)] p-4">
+            <div key={kind.title} className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4">
               <kind.icon className="h-4 w-4 text-[var(--spot)]" aria-hidden />
-              <p className="mt-3 font-display text-[1.25rem] uppercase leading-none">
+              <p className="mt-3 font-display text-[0.95rem] leading-none">
                 {kind.title}
               </p>
               <p className="mt-1.5 text-[0.85rem] leading-snug text-[var(--ink-soft)]">

@@ -14,21 +14,19 @@ import type { CurrentUser } from "@/lib/dal";
 
 export function ProfileForm({ user }: { user: CurrentUser }) {
   const [state, action, pending] = useActionState(updateProfile, undefined);
-  const { setTheme, setFontScale, setReducedMotion } = useTheme();
+  const { setFontScale, setReducedMotion } = useTheme();
 
   const [selected, setSelected] = useState<string[]>(user.favoriteCategories);
   const [preview, setPreview] = useState<string>(user.avatarUrl);
   const [fontScale, setLocalFontScale] = useState(user.preferences.fontScale);
-  const [theme, setLocalTheme] = useState(user.preferences.theme);
   const [reducedMotion, setLocalReducedMotion] = useState(user.preferences.reducedMotion);
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (state?.success) {
       toast.success(state.message ?? "Profile saved.");
-      // Mirror the saved preferences into the live client theme so the page
+      // Mirror the saved preferences into the live client state so the page
       // reflects them without a reload.
-      setTheme(theme as "light" | "dark" | "system");
       setFontScale(fontScale);
       setReducedMotion(reducedMotion);
     } else if (state?.message) {
@@ -62,7 +60,7 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
         <h2 className="mb-5 font-display text-[1.3rem]">Profile picture</h2>
         <div className="flex flex-wrap items-center gap-6">
           <div className="relative">
-            <div className="grid h-24 w-24 place-items-center overflow-hidden border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] font-display text-[1.6rem] font-extrabold">
+            <div className="grid h-24 w-24 place-items-center overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] font-display text-[1.6rem] font-extrabold">
               {preview ? (
                 // A local blob or an already-optimised Cloudinary URL.
                 // eslint-disable-next-line @next/next/no-img-element
@@ -75,7 +73,7 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
               type="button"
               onClick={() => fileInput.current?.click()}
               aria-label="Choose a profile picture"
-              className="absolute -bottom-2 -right-2 grid h-9 w-9 place-items-center bg-[var(--spot)] text-white shadow-[var(--shadow-md)] transition-transform hover:scale-110"
+              className="absolute -bottom-2 -right-2 grid h-9 w-9 place-items-center rounded-full bg-[var(--n1)] text-[var(--void)] shadow-[0_0_20px_color-mix(in_oklch,var(--n1)_60%,transparent)] transition-transform hover:scale-110"
             >
               <Camera className="h-4 w-4" aria-hidden />
             </button>
@@ -158,7 +156,7 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
                   className={cn(
                     "grid h-5 w-5 shrink-0 place-items-center border transition-colors",
                     isSelected
-                      ? "border-[var(--spot)] bg-[var(--spot)] text-white"
+                      ? "border-[var(--spot)] bg-[var(--spot)] text-[var(--void)]"
                       : "border-[var(--rule-strong)]",
                   )}
                 >
@@ -179,32 +177,11 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
       <section>
         <h2 className="font-display text-[1.3rem]">Display preferences</h2>
         <p className="mt-2 text-[0.88rem] text-[var(--ink-soft)]">
-          Saved to your account, so they follow you to any device.
+          Saved to your account, so they follow you to any device. Neon Oni runs on
+          one ground — there is no light mode to choose.
         </p>
 
-        <div className="mt-5 grid gap-5 sm:grid-cols-2">
-          <Field label="Theme">
-            <div className="grid grid-cols-3 gap-1.5">
-              {(["light", "dark", "system"] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  onClick={() => setLocalTheme(option)}
-                  aria-pressed={theme === option}
-                  className={cn(
-                    "border px-2 py-2.5 text-[0.82rem] capitalize transition-colors",
-                    theme === option
-                      ? "border-[var(--spot)] bg-[var(--spot-wash)] text-[var(--spot-deep)]"
-                      : "border-[var(--rule)] text-[var(--ink-soft)] hover:border-[var(--rule-strong)]",
-                  )}
-                >
-                  {option}
-                </button>
-              ))}
-            </div>
-            <input type="hidden" name="theme" value={theme} />
-          </Field>
-
+        <div className="mt-5">
           <Field label={`Text size — ${fontScale}%`}>
             <input
               type="range"
@@ -214,12 +191,12 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
               step={5}
               value={fontScale}
               onChange={(event) => setLocalFontScale(Number(event.target.value))}
-              className="h-2 w-full cursor-pointer appearance-none bg-[var(--paper-2)] accent-[var(--spot)]"
+              className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[var(--paper-2)] accent-[var(--n1)]"
             />
           </Field>
         </div>
 
-        <label className="mt-5 flex cursor-pointer items-center justify-between border-[1.5px] border-[var(--rule-strong)] p-4">
+        <label className="mt-5 flex cursor-pointer items-center justify-between rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4 transition-colors hover:border-[var(--n2)]">
           <span>
             <span className="block text-[0.92rem] font-semibold">Reduce motion</span>
             <span className="block text-[0.82rem] text-[var(--ink-soft)]">
@@ -231,7 +208,7 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
             name="reducedMotion"
             checked={reducedMotion}
             onChange={(event) => setLocalReducedMotion(event.target.checked)}
-            className="h-5 w-5 shrink-0 accent-[var(--spot)]"
+            className="h-5 w-5 shrink-0 accent-[var(--n1)]"
           />
         </label>
       </section>

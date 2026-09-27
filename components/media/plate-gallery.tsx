@@ -104,7 +104,7 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Open plate ${active + 1} of ${plates.length} at full size`}
-          className="group relative block w-full overflow-hidden border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] shadow-[6px_6px_0_var(--ink)]"
+          className="group relative block w-full overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] shadow-[var(--lift-md)]"
           style={{
             aspectRatio: ratio,
             // A blurred 28px version stands in until the real file decodes.
@@ -121,10 +121,10 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
             sizes="(max-width: 768px) 100vw, 768px"
             className="object-cover"
           />
-          <span className="absolute right-0 top-0 grid h-9 w-9 place-items-center border-b-[1.5px] border-l-[1.5px] border-[var(--ink)] bg-[var(--paper)] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+          <span className="absolute right-0 top-0 grid h-9 w-9 place-items-center border-b-[1.5px] border-l border-[var(--rule-strong)] bg-[var(--paper)] opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
             <Expand className="h-4 w-4" aria-hidden />
           </span>
-          <span className="absolute bottom-0 right-0 border-l-[1.5px] border-t-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.14em] tabular-nums">
+          <span className="absolute bottom-0 right-0 border-l-[1.5px] border-t border-[var(--rule-strong)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.14em] tabular-nums">
             Plate {active + 1} / {plates.length}
           </span>
         </button>
@@ -150,7 +150,7 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
                 onClick={() => setActive(index)}
                 aria-label={`Show plate ${index + 1}`}
                 className={cn(
-                  "relative h-16 w-20 shrink-0 overflow-hidden border-[1.5px] transition-colors",
+                  "relative h-16 w-20 shrink-0 overflow-hidden border transition-colors",
                   index === active
                     ? "border-[var(--spot)]"
                     : "border-[var(--rule-strong)] opacity-70 hover:opacity-100",
@@ -171,13 +171,13 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
           aria-label={`${title} — plate ${active + 1} of ${plates.length}`}
           tabIndex={-1}
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-[90] grid place-items-center bg-[var(--ink)]/92 p-5 outline-none"
+          className="fixed inset-0 z-[90] grid place-items-center bg-[var(--paper-3)]/92 p-5 outline-none"
         >
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Close gallery"
-            className="absolute right-5 top-5 grid h-11 w-11 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+            className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
           >
             <X className="h-5 w-5" aria-hidden />
           </button>
@@ -187,7 +187,7 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
             onClick={(event) => event.stopPropagation()}
           >
             <div
-              className="relative w-full border-[1.5px] border-[var(--paper)]"
+              className="relative w-full border border-[var(--edge-strong)]"
               style={{ aspectRatio: ratio, maxHeight: "72vh" }}
             >
               <Image
@@ -201,7 +201,7 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
             </div>
 
             {current.caption && (
-              <p className="mt-3 text-center text-[0.9rem] leading-relaxed text-[var(--paper)]">
+              <p className="mt-3 text-center text-[0.9rem] leading-relaxed text-[var(--ink)]">
                 {current.caption}
               </p>
             )}
@@ -211,19 +211,19 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
                 <button
                   type="button"
                   onClick={() => step(-1)}
-                  aria-label="Previous plate"
-                  className="grid h-10 w-10 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+                  aria-label="Previous image"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
                 >
                   <ChevronLeft className="h-5 w-5" aria-hidden />
                 </button>
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] tabular-nums text-[var(--paper)]">
+                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] tabular-nums text-[var(--ink)]">
                   {active + 1} / {plates.length}
                 </span>
                 <button
                   type="button"
                   onClick={() => step(1)}
-                  aria-label="Next plate"
-                  className="grid h-10 w-10 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+                  aria-label="Next image"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
                 >
                   <ChevronRight className="h-5 w-5" aria-hidden />
                 </button>

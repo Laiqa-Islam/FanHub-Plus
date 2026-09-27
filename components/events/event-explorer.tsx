@@ -16,7 +16,7 @@ const EventMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid h-[26rem] w-full place-items-center border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] lg:h-[34rem]">
+      <div className="grid h-[26rem] w-full place-items-center rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] lg:h-[34rem]">
         <p className="mark">Loading map…</p>
       </div>
     ),
@@ -130,7 +130,7 @@ export function EventExplorer({
             type="button"
             onClick={locate}
             disabled={locating}
-            className="inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] bg-[var(--spot)] px-4 py-2.5 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-white transition-[transform,box-shadow] duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_var(--ink)] disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] bg-[var(--spot)] px-4 py-2.5 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.14em] text-[var(--void)] transition-[transform,box-shadow] duration-150 hover:-translate-y-[2px] hover:shadow-[var(--lift-md)] disabled:opacity-60"
           >
             {locating ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
@@ -156,7 +156,7 @@ export function EventExplorer({
                 }
               }}
               placeholder="Or search a city…"
-              className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper)] py-2.5 pl-10 pr-3 font-mono text-[0.72rem] uppercase tracking-[0.1em] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none"
+              className="w-full rounded-2xl border border-[var(--edge)] bg-[var(--paper)] py-2.5 pl-10 pr-3 font-mono text-[0.72rem] uppercase tracking-[0.1em] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:outline-none"
             />
             <Search
               className="pointer-events-none absolute left-3.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-[var(--ink-faint)]"
@@ -170,7 +170,7 @@ export function EventExplorer({
             )}
 
             {results.length > 0 && (
-              <ul className="absolute left-0 right-0 top-full z-30 border-[1.5px] border-t-0 border-[var(--ink)] bg-[var(--paper)] shadow-[4px_4px_0_var(--ink)]">
+              <ul className="absolute left-0 right-0 top-full z-30 border border-t-0 border-[var(--edge)] bg-[var(--paper)] shadow-[var(--lift-md)]">
                 {results.map((place) => (
                   <li key={`${place.lat},${place.lng}`}>
                     <button
@@ -193,7 +193,7 @@ export function EventExplorer({
             <button
               type="button"
               onClick={clearOrigin}
-              className="inline-flex items-center gap-1.5 border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-3 py-2 font-mono text-[0.66rem] uppercase tracking-[0.12em]"
+              className="inline-flex items-center gap-1.5 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] px-3 py-2 font-mono text-[0.66rem] uppercase tracking-[0.12em]"
             >
               Near {originLabel}
               <X className="h-3 w-3" aria-hidden />
@@ -231,11 +231,11 @@ export function EventExplorer({
           </p>
 
           {visible.length === 0 ? (
-            <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-5 py-12 text-center text-[var(--ink-soft)]">
+            <p className="border border-dashed border-[var(--edge-strong)] px-5 py-12 text-center text-[var(--ink-soft)]">
               Nothing scheduled there yet.
             </p>
           ) : (
-            <ul className="border-t-2 border-[var(--ink)]">
+            <ul className="border-t border-[var(--rule-strong)]">
               {visible.map((event) => {
                 const km = distances.get(event.slug);
                 const active = activeSlug === event.slug;
@@ -266,7 +266,7 @@ export function EventExplorer({
                           )}
                         </span>
 
-                        <span className="mt-1 block font-display text-[1.3rem] uppercase leading-[0.95]">
+                        <span className="mt-1 block font-display text-[0.95rem] leading-[0.95]">
                           {event.title}
                         </span>
 
@@ -294,7 +294,7 @@ export function EventExplorer({
                             target="_blank"
                             rel="noopener noreferrer"
                             aria-label={`Tickets for ${event.title}`}
-                            className="grid h-8 w-8 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+                            className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)]"
                           >
                             <Ticket className="h-4 w-4" aria-hidden />
                           </a>
@@ -327,9 +327,9 @@ function CityChip({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        "-ml-[1.5px] border-[1.5px] border-[var(--ink)] px-3 py-1.5 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.12em] transition-colors first:ml-0",
+        "-ml-[1.5px] rounded-2xl border border-[var(--edge)] px-3 py-1.5 font-mono text-[0.64rem] font-semibold uppercase tracking-[0.12em] transition-colors first:ml-0",
         active
-          ? "bg-[var(--ink)] text-[var(--paper)]"
+          ? "bg-[var(--n1)] text-[var(--void)]"
           : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
       )}
     >

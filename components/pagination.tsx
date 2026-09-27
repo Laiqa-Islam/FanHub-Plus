@@ -43,8 +43,8 @@ export function Pagination({
             className={cn(
               "grid h-10 min-w-10 place-items-center px-3 font-mono text-[0.8rem] tabular-nums transition-colors",
               p === page
-                ? "bg-[var(--spot)] text-white"
-                : "border-[1.5px] border-[var(--rule-strong)] text-[var(--ink-soft)] hover:border-[var(--rule-strong)] hover:text-[var(--ink)]",
+                ? "bg-[var(--spot)] text-[var(--void)]"
+                : "border border-[var(--rule-strong)] text-[var(--ink-soft)] hover:border-[var(--rule-strong)] hover:text-[var(--ink)]",
             )}
           >
             {p}
@@ -74,7 +74,7 @@ function PageLink({
   icon: React.ReactNode;
 }) {
   const className =
-    "grid h-10 w-10 place-items-center border-[1.5px] border-[var(--rule-strong)] transition-colors";
+    "grid h-10 w-10 place-items-center border border-[var(--rule-strong)] transition-colors";
 
   if (disabled) {
     return (

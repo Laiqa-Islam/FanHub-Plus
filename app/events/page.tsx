@@ -37,17 +37,17 @@ export default async function EventsPage(props: PageProps<"/events">) {
 
   return (
     <div>
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-10 pt-8 sm:px-8">
           <Breadcrumbs trail={[{ label: "Events" }]} />
 
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="mark mb-3">Listings · {events.length} scheduled</p>
-              <Misreg as="h1" className="text-[clamp(2.4rem,8vw,5.2rem)]" ghostInk="var(--ch-tv)">
+              <Misreg as="h1" className="text-[clamp(1.85rem,5.5vw,3.6rem)]" ghostInk="var(--ch-tv)">
                 Where to go
               </Misreg>
-              <p className="mt-5 max-w-xl border-l-4 border-[var(--ch-tv)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
+              <p className="mt-5 max-w-xl border-l-2 border-[var(--ch-tv)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
                 Conventions, meetups, screenings and premieres. Share your location to sort by
                 distance, search any city, or browse the whole calendar.
               </p>
@@ -103,9 +103,9 @@ function Chip({
     <Link
       href={href}
       className={cn(
-        "-ml-[1.5px] inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] px-4 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors first:ml-0",
+        "-ml-[1.5px] inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] px-4 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors first:ml-0",
         active
-          ? "bg-[var(--ink)] text-[var(--paper)]"
+          ? "bg-[var(--n1)] text-[var(--void)]"
           : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
       )}
     >

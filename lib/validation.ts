@@ -44,7 +44,6 @@ export const ProfileSchema = z.object({
   name: z.string().trim().min(2, "Tell us what to call you.").max(60),
   bio: z.string().trim().max(280, "Keep your bio under 280 characters.").optional(),
   favoriteCategories: z.array(z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]])).max(8),
-  theme: z.enum(["light", "dark", "system"]),
   fontScale: z.coerce.number().min(90).max(130),
   reducedMotion: z.boolean(),
 });

@@ -4,7 +4,6 @@ import { FileText, Play, Headphones, ImageIcon, Star } from "lucide-react";
 
 import { categoryBySlug } from "@/lib/constants";
 import { formatDate, cn } from "@/lib/utils";
-import { Duotone } from "@/components/duotone";
 import type { ContentListItem } from "@/lib/queries";
 
 const TYPE_ICON = {
@@ -15,12 +14,13 @@ const TYPE_ICON = {
 } as const;
 
 /**
- * A clipping from the issue.
+ * A tile on the board.
  *
- * Square corners, a hard ink rule, and a duotone image printed in the
- * channel's spot ink — the image is *part of* the print, not a photograph
- * dropped into a rounded card. On hover the whole clipping lifts off the page
- * into its own hard shadow.
+ * The art fills the card and the copy sits on top of it, held legible by a
+ * gradient that runs from clear at the top to near-opaque at the foot —
+ * cheaper than a scrim over the whole image, and it keeps the subject's face
+ * visible. The channel's signal shows as a badge and, on hover, as the card's
+ * own edge and glow.
  */
 export function ContentCard({
   item,
@@ -41,50 +41,58 @@ export function ContentCard({
     <article className={cn("reveal group", className)}>
       <Link
         href={`/content/${item.slug}`}
-        className="flex h-full flex-col border-[1.5px] border-[var(--ink)] bg-[var(--paper)] transition-[transform,box-shadow] duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_var(--ink)]"
+        className="relative flex h-full min-h-[19rem] flex-col justify-end overflow-hidden rounded-[1.25rem] border border-[var(--edge)] bg-[var(--paper-2)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1"
+        style={{ ["--glow" as string]: ink }}
       >
-        <div className="relative aspect-[5/3] overflow-hidden border-b-[1.5px] border-[var(--ink)] bg-[var(--paper-2)]">
-          {item.coverImage && (
-            <Image
-              src={item.coverImage}
-              alt=""
-              fill
-              priority={priority}
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="plate object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-          )}
+        {item.coverImage && (
+          <Image
+            src={item.coverImage}
+            alt=""
+            fill
+            priority={priority}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            className="plate object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        )}
 
-          <Duotone ink={ink} />
+        {/* Clear at the top, solid at the foot. */}
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg, transparent 32%, color-mix(in oklch, var(--void) 92%, transparent))",
+          }}
+        />
 
-          <span
-            className="absolute left-0 top-0 inline-flex items-center gap-1.5 border-b-[1.5px] border-r-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[0.6rem] font-semibold uppercase tracking-[0.16em]"
-            style={{ color: ink }}
-          >
-            <Icon className="h-3 w-3" aria-hidden />
-            {item.type}
-          </span>
+        {/* The channel signal, lit, top left. */}
+        <span
+          className="absolute left-3.5 top-3.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[var(--void)]"
+          style={{ background: ink, boxShadow: `0 0 14px color-mix(in oklch, ${ink} 45%, transparent)` }}
+        >
+          <Icon className="h-3 w-3" aria-hidden />
+          {item.type}
+        </span>
 
-          <span className="absolute bottom-0 right-0 border-l-[1.5px] border-t-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-2 py-0.5 font-mono text-[0.58rem] tabular-nums text-[var(--ink-faint)]">
-            {String(index + 1).padStart(3, "0")}
-          </span>
-        </div>
+        <span className="absolute right-3.5 top-3.5 rounded-full bg-[color-mix(in_oklch,var(--void)_70%,transparent)] px-2 py-0.5 font-mono text-[0.56rem] tabular-nums text-[var(--ink-soft)] backdrop-blur-sm">
+          {String(index + 1).padStart(3, "0")}
+        </span>
 
-        <div className="flex flex-1 flex-col p-4">
-          <p className="mark mb-2.5 !text-[0.6rem]">
-            <span style={{ color: ink }}>{category?.name}</span>
-            {item.releaseDate && <> · {formatDate(item.releaseDate)}</>}
+        <div className="relative z-10 flex flex-col gap-2 p-4">
+          <p className="font-mono text-[0.56rem] uppercase tracking-[0.16em]" style={{ color: ink }}>
+            {category?.name}
+            {item.releaseDate && (
+              <span className="text-[var(--ink-faint)]"> · {formatDate(item.releaseDate)}</span>
+            )}
           </p>
 
-          <h3 className="font-display text-[1.5rem] uppercase leading-[0.95] transition-colors group-hover:text-[var(--spot-deep)]">
-            {item.title}
-          </h3>
+          <h3 className="font-display text-[1.02rem] font-bold leading-[1.15]">{item.title}</h3>
 
-          <p className="mt-2.5 line-clamp-3 text-[0.92rem] leading-snug text-[var(--ink-soft)]">
+          <p className="line-clamp-2 text-[0.86rem] leading-snug text-[var(--ink-soft)]">
             {item.summary}
           </p>
 
-          <div className="mt-auto flex items-center gap-3 border-t border-[var(--rule)] pt-3 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+          <div className="mt-1 flex items-center gap-3 font-mono text-[0.58rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
             {item.ratingCount > 0 && (
               <span className="inline-flex items-center gap-1 tabular-nums">
                 <Star className="h-3 w-3 fill-current" style={{ color: ink }} aria-hidden />
@@ -95,6 +103,17 @@ export function ContentCard({
             {item.genre[0] && <span className="ml-auto truncate">{item.genre[0]}</span>}
           </div>
         </div>
+
+        {/* The hover edge. Kept as its own layer so the colour can come from
+            the channel without a second set of Tailwind arbitrary variants. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[1.25rem] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            border: `1px solid ${ink}`,
+            boxShadow: `0 0 28px color-mix(in oklch, ${ink} 35%, transparent)`,
+          }}
+        />
       </Link>
     </article>
   );

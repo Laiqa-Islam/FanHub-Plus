@@ -55,10 +55,10 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
       <div className="flex flex-wrap items-start gap-4">
         <span
           aria-hidden
-          className="mt-1 grid h-8 w-8 shrink-0 place-items-center border-[1.5px] border-[var(--ink)]"
+          className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-2xl border border-[var(--edge)]"
           style={{ background: STATUS_INK[status] ?? "var(--paper-2)" }}
         >
-          <Icon className="h-4 w-4 text-white" />
+          <Icon className="h-4 w-4 text-[var(--void)]" />
         </span>
 
         <div className="min-w-0 flex-1">
@@ -68,7 +68,7 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
             <span>{item.at}</span>
           </p>
 
-          <p className="mt-1.5 font-display text-[1.3rem] uppercase leading-[0.95]">
+          <p className="mt-1.5 font-display text-[0.95rem] leading-[0.95]">
             {item.subject}
           </p>
 
@@ -92,7 +92,7 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
 
           {expanded && (
             <>
-              <p className="mt-3 whitespace-pre-line border-l-4 border-[var(--rule-strong)] bg-[var(--paper-2)] p-4 text-[0.92rem] leading-relaxed">
+              <p className="mt-3 whitespace-pre-line border-l-2 border-[var(--rule-strong)] bg-[var(--paper-2)] p-4 text-[0.92rem] leading-relaxed">
                 {item.message}
               </p>
 
@@ -105,7 +105,7 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
                 maxLength={500}
                 onChange={(event) => setNote(event.target.value)}
                 placeholder="Internal note…"
-                className="mt-3 w-full border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2 text-[0.86rem] focus:border-[var(--spot)] focus:outline-none"
+                className="mt-3 w-full border border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2 text-[0.86rem] focus:border-[var(--spot)] focus:outline-none"
               />
             </>
           )}
@@ -120,9 +120,9 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
               disabled={isPending || status === value}
               aria-pressed={status === value}
               className={cn(
-                "-ml-[1.5px] border-[1.5px] border-[var(--ink)] px-2.5 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] transition-colors first:ml-0 disabled:cursor-default",
+                "-ml-[1.5px] rounded-2xl border border-[var(--edge)] px-2.5 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] transition-colors first:ml-0 disabled:cursor-default",
                 status === value
-                  ? "bg-[var(--ink)] text-[var(--paper)]"
+                  ? "bg-[var(--n1)] text-[var(--void)]"
                   : "bg-[var(--paper)] hover:bg-[var(--paper-2)]",
               )}
             >

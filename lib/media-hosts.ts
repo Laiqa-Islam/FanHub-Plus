@@ -30,6 +30,10 @@ export const MEDIA_SOURCE_HOSTS = [
  */
 export const IMAGE_SOURCE_HOSTS = [
   "res.cloudinary.com",
+  // The editorial art library moved to local files under `public/content/`
+  // with the Neon Oni theme, so nothing new points here. It stays on the
+  // allowlist because records seeded before that change still carry Unsplash
+  // URLs, and dropping it would break their images until the next reseed.
   "images.unsplash.com",
   "i.ytimg.com",
   ...MEDIA_SOURCE_HOSTS,

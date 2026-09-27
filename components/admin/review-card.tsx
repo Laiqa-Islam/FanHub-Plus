@@ -73,7 +73,7 @@ export function ReviewCard({
   const playable = media.find((asset) => asset.kind === "audio" || asset.kind === "video");
 
   return (
-    <article className="relative overflow-hidden border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)]">
+    <article className="relative overflow-hidden border border-[var(--rule-strong)] bg-[var(--paper)]">
       <span
         aria-hidden
         className="absolute inset-x-0 top-0 h-[3px]"
@@ -120,7 +120,7 @@ export function ReviewCard({
         )}
 
         {playable?.kind === "video" && (
-          <div className="mt-4 border-[1.5px] border-[var(--rule-strong)] bg-black">
+          <div className="mt-4 overflow-hidden rounded-xl border border-[var(--edge)] bg-[var(--void)]">
             {/* Native controls: moderation is scrubbing and skipping, not an
                 occasion for custom player chrome. */}
             <video src={playable.url} controls preload="metadata" className="max-h-72 w-full" />
@@ -128,7 +128,7 @@ export function ReviewCard({
         )}
 
         {playable?.kind === "audio" && (
-          <div className="mt-4 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)] p-3">
+          <div className="mt-4 border border-[var(--rule-strong)] bg-[var(--paper-2)] p-3">
             <audio src={playable.url} controls preload="metadata" className="w-full" />
           </div>
         )}
@@ -143,7 +143,7 @@ export function ReviewCard({
             {images.map((asset, index) => (
               <figure
                 key={asset.url + index}
-                className="overflow-hidden border-[1.5px] border-[var(--rule-strong)]"
+                className="overflow-hidden border border-[var(--rule-strong)]"
               >
                 {/* Freshly uploaded Cloudinary asset; already sized on upload. */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -181,12 +181,12 @@ export function ReviewCard({
         {expanded && (
           <div className="mt-5 flex flex-col gap-4">
             <div
-              className="prose-fanhub max-h-96 overflow-y-auto border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)] p-5 text-[0.95rem]"
+              className="prose-fanhub max-h-96 overflow-y-auto border border-[var(--rule-strong)] bg-[var(--paper-2)] p-5 text-[0.95rem]"
               dangerouslySetInnerHTML={{ __html: body }}
             />
 
             {transcript && (
-              <div className="border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)] p-5">
+              <div className="border border-[var(--rule-strong)] bg-[var(--paper-2)] p-5">
                 <p className="mb-2 font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
                   Transcript
                 </p>
@@ -210,7 +210,7 @@ export function ReviewCard({
             name="note"
             maxLength={500}
             placeholder="Optional note for the author…"
-            className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-4 py-2.5 text-[0.88rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:outline-none"
+            className="w-full rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] px-4 py-2.5 text-[0.88rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:outline-none"
           />
 
           <div className="flex flex-wrap gap-2">

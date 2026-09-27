@@ -65,7 +65,7 @@ export function RatingWidget({
   const shown = hover ?? mine ?? 0;
 
   return (
-    <div className="border-[1.5px] border-[var(--ink)] bg-[var(--paper)] p-5">
+    <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper)] p-5">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="mark mb-2">Rate this</p>
@@ -123,8 +123,8 @@ export function RatingWidget({
               disabled={isPending}
               onClick={() => submit(mine ?? (value === "up" ? 4 : 2), value)}
               className={cn(
-                "grid h-9 w-9 place-items-center border-[1.5px] border-[var(--ink)] transition-colors",
-                thumb === value ? "text-white" : "hover:bg-[var(--paper-2)]",
+                "grid h-9 w-9 place-items-center rounded-2xl border border-[var(--edge)] transition-colors",
+                thumb === value ? "text-[var(--void)]" : "hover:bg-[var(--paper-2)]",
               )}
               style={thumb === value ? { background: ink } : undefined}
             >

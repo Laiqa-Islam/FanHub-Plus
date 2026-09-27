@@ -33,9 +33,9 @@ export default async function AdminFaqPage() {
 
   return (
     <div>
-      <div className="mb-8 border-t-2 border-[var(--ink)] pt-4">
+      <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Assistant knowledge base</p>
-        <Misreg as="h1" className="text-[clamp(2rem,5vw,3.2rem)]" ghostInk="var(--ch-gaming)">
+        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-gaming)">
           FAQ
         </Misreg>
         <p className="mt-4 max-w-xl text-[0.95rem] leading-relaxed text-[var(--ink-soft)]">

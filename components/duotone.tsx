@@ -1,45 +1,55 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Spot-ink duotone, the way a riso lays one colour over a greyscale plate.
+ * The signal wash — the treatment that makes a photograph belong to its
+ * channel.
  *
- * The image itself must already be `grayscale`; this renders the ink layers
- * on top of it.
+ * This replaced a riso duotone, and the change is worth recording because
+ * the failure mode reverses on a dark ground. The print version laid a
+ * `multiply` ink over a greyscale plate; on Neon Oni's ground `multiply`
+ * simply crushes an already-dark image to black and the subject disappears.
+ * What works here is the opposite operator at a much lower strength:
+ * `soft-light` tints the midtones toward the signal while leaving the
+ * highlights — an anime character's face, the thing you actually want to
+ * see — more or less untouched.
  *
- * Getting the blend right took a correction worth recording: a full-opacity
- * `screen` layer over a light photograph lightens every pixel toward the ink
- * and erases the picture completely. `multiply` is the correct operator on a
- * pale ground — it darkens toward the ink while keeping tonal separation —
- * and `screen` is its counterpart on a dark ground. So each theme gets one
- * blend at a moderate opacity, never both at full strength.
+ * The bottom-anchored gradient does the real legibility work; the wash is
+ * only there to say which channel this is.
  */
 export function Duotone({
   ink,
-  strength = 0.72,
-  halftone = true,
+  strength = 0.45,
+  /** A vignette from the foot of the frame, for art carrying copy over it. */
+  scrim = true,
   className,
 }: {
-  /** CSS colour for the ink pass. */
+  /** CSS colour for the signal pass. */
   ink: string;
-  /** 0–1. Higher prints heavier and loses more detail. */
+  /** 0–1. Above about 0.6 the subject starts to read as a flat colour field. */
   strength?: number;
-  halftone?: boolean;
+  scrim?: boolean;
   className?: string;
 }) {
   return (
     <span aria-hidden className={cn("pointer-events-none absolute inset-0", className)}>
-      {/* Light ground: darken toward the ink. */}
       <span
-        className="absolute inset-0 mix-blend-multiply dark:hidden"
+        className="absolute inset-0 mix-blend-soft-light"
         style={{ background: ink, opacity: strength }}
       />
-      {/* Dark ground: lighten toward the ink. */}
+      {/* A second, much lighter screen pass lifts the signal into the
+          shadows so the tint survives in the darkest corners of the frame. */}
       <span
-        className="absolute inset-0 hidden mix-blend-screen dark:block"
-        style={{ background: ink, opacity: strength * 0.8 }}
+        className="absolute inset-0 mix-blend-screen"
+        style={{ background: ink, opacity: strength * 0.16 }}
       />
-      {halftone && (
-        <span className="halftone absolute inset-0 text-[var(--ink)] opacity-[0.18] mix-blend-multiply" />
+      {scrim && (
+        <span
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(0deg, color-mix(in oklch, var(--void) 88%, transparent), transparent 58%)",
+          }}
+        />
       )}
     </span>
   );

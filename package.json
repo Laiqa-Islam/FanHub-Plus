@@ -8,10 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "seed:merch": "tsx --env-file=.env.local scripts/seed-merch.ts",
     "schema": "tsx --env-file=.env.local scripts/export-schema.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "fetch-art": "tsx scripts/fetch-art.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",

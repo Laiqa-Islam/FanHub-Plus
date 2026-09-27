@@ -44,8 +44,10 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
       <Breadcrumbs trail={[{ label: "Explore" }]} />
 
       <header className="mb-10 max-w-2xl">
-        <p className="mark mb-3">Content explorer</p>
-        <h1 className="font-display text-[clamp(2rem,5vw,3rem)]">Everything, searchable</h1>
+        <p className="mark mb-3 text-[var(--n2)]">Content explorer</p>
+        <h1 className="font-display text-[clamp(1.8rem,4.6vw,3rem)] font-black">
+          Everything, searchable
+        </h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
           Filter by channel, format, genre and release year at once, then sort by what&apos;s
           newest, most popular, or alphabetical.
@@ -80,9 +82,11 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
 
 function EmptyResults() {
   return (
-    <div className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-20 text-center">
+    <div className="rounded-2xl border border-dashed border-[var(--edge-strong)] px-6 py-20 text-center">
       <SearchX className="mx-auto h-8 w-8 text-[var(--ink-faint)]" aria-hidden />
-      <h2 className="mt-5 font-display text-[1.4rem]">Nothing matches that combination</h2>
+      <h2 className="mt-5 font-display text-[1.25rem] font-bold">
+        Nothing matches that combination
+      </h2>
       <p className="mx-auto mt-3 max-w-sm text-[0.92rem] leading-relaxed text-[var(--ink-soft)]">
         Try removing a filter, or widen the search to a different channel.
       </p>

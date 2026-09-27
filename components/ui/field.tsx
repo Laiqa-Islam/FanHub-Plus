@@ -4,8 +4,10 @@ import { useId } from "react";
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+// Focus lights the cyan signal rather than drawing a browser ring; the
+// global :focus-visible rule still covers keyboard traversal elsewhere.
 const controlStyles =
-  "w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-4 py-3 text-[0.95rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] transition-colors duration-200 focus:border-[var(--spot)] focus:bg-[var(--paper)] focus:outline-none disabled:opacity-60";
+  "w-full rounded-xl border border-[var(--edge)] bg-[var(--paper-2)] px-4 py-3 text-[0.95rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] transition-[border-color,box-shadow,background-color] duration-200 focus:border-[var(--n2)] focus:bg-[var(--paper-3)] focus:shadow-[0_0_18px_color-mix(in_oklch,var(--n2)_25%,transparent)] focus:outline-none disabled:opacity-45";
 
 export function Field({
   label,
@@ -24,7 +26,7 @@ export function Field({
     <div className="flex flex-col gap-2">
       <label
         htmlFor={htmlFor}
-        className="font-mono text-[0.7rem] uppercase tracking-[0.18em] text-[var(--ink-soft)]"
+        className="font-mono text-[0.64rem] uppercase tracking-[0.16em] text-[var(--ink-faint)]"
       >
         {label}
       </label>
@@ -33,7 +35,7 @@ export function Field({
       {error && (
         <p
           role="alert"
-          className="flex items-center gap-1.5 text-[0.8rem] font-medium text-[var(--spot)]"
+          className="flex items-center gap-1.5 text-[0.8rem] font-medium text-[var(--spot-deep)]"
         >
           <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden />
           {error}
@@ -62,7 +64,7 @@ export function Input({
       <input
         id={inputId}
         aria-invalid={Boolean(error)}
-        className={cn(controlStyles, error && "border-[var(--spot)]", className)}
+        className={cn(controlStyles, error && "border-[var(--n1)]", className)}
         {...props}
       />
     </Field>
@@ -88,7 +90,7 @@ export function Textarea({
       <textarea
         id={inputId}
         aria-invalid={Boolean(error)}
-        className={cn(controlStyles, "min-h-28 resize-y", error && "border-[var(--spot)]", className)}
+        className={cn(controlStyles, "min-h-28 resize-y", error && "border-[var(--n1)]", className)}
         {...props}
       />
     </Field>

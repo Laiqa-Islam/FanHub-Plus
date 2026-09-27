@@ -20,10 +20,10 @@ export function FeedbackForm({ signedIn }: { signedIn: boolean }) {
 
   if (state?.success) {
     return (
-      <div className="flex items-start gap-3 border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-6">
+      <div className="flex items-start gap-3 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-6">
         <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]" aria-hidden />
         <div>
-          <p className="font-display text-[1.4rem] uppercase leading-none">Sent</p>
+          <p className="font-display text-[1.01rem] leading-none">Sent</p>
           <p className="mt-2 text-[0.92rem] leading-relaxed text-[var(--ink-soft)]">
             {state.message}
           </p>

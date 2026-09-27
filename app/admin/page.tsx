@@ -15,9 +15,9 @@ export default async function AdminOverviewPage() {
 
   return (
     <div>
-      <div className="mb-8 border-t-2 border-[var(--ink)] pt-4">
+      <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Usage statistics</p>
-        <Misreg as="h1" className="text-[clamp(2.2rem,6vw,3.6rem)]" ghostInk="var(--spot-2)">
+        <Misreg as="h1" className="text-[clamp(1.75rem,4.5vw,2.8rem)]" ghostInk="var(--spot-2)">
           Overview
         </Misreg>
       </div>
@@ -28,7 +28,7 @@ export default async function AdminOverviewPage() {
           {stats.pending.submissions > 0 && (
             <Link
               href="/admin/submissions"
-              className="inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] bg-[var(--spot)] px-4 py-2.5 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-white transition-[transform,box-shadow] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_var(--ink)]"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] bg-[var(--spot)] px-4 py-2.5 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-[var(--void)] transition-[transform,box-shadow] hover:-translate-y-[2px] hover:shadow-[var(--lift-md)]"
             >
               <Inbox className="h-3.5 w-3.5" aria-hidden />
               {stats.pending.submissions} submission
@@ -38,7 +38,7 @@ export default async function AdminOverviewPage() {
           {stats.pending.feedback > 0 && (
             <Link
               href="/admin/feedback"
-              className="inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] bg-[var(--flag)] px-4 py-2.5 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-white transition-[transform,box-shadow] hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[4px_4px_0_var(--ink)]"
+              className="inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] bg-[var(--flag)] px-4 py-2.5 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.13em] text-[var(--void)] transition-[transform,box-shadow] hover:-translate-y-[2px] hover:shadow-[var(--lift-md)]"
             >
               <MessageSquare className="h-3.5 w-3.5" aria-hidden />
               {stats.pending.feedback} open report
@@ -49,7 +49,7 @@ export default async function AdminOverviewPage() {
       )}
 
       {/* Headline counters */}
-      <section className="grid gap-px border-[1.5px] border-[var(--ink)] bg-[var(--ink)] sm:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Members" value={stats.totals.users} />
         <Stat
           label="Active · 30 days"
@@ -57,9 +57,9 @@ export default async function AdminOverviewPage() {
           hint={`${stats.activeUsers.last7} in the last 7`}
         />
         <Stat label="Published pieces" value={stats.totals.content} />
-        <Stat label="Clippings saved" value={stats.totals.bookmarks} />
+        <Stat label="Items saved" value={stats.totals.bookmarks} />
         <Stat label="Characters" value={stats.totals.characters} />
-        <Stat label="Catalogue plates" value={stats.totals.merch} />
+        <Stat label="Showcase items" value={stats.totals.merch} />
         <Stat label="Events" value={stats.totals.events} />
         <Stat
           label="Chatbot messages"
@@ -71,7 +71,7 @@ export default async function AdminOverviewPage() {
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
         {/* Popular categories — a bar chart drawn with rules, not a library */}
         <section>
-          <h2 className="mb-5 border-t-2 border-[var(--ink)] pt-3 font-display text-[1.8rem] uppercase leading-none">
+          <h2 className="mb-5 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.30rem] leading-none">
             Popular channels
           </h2>
           <ul className="flex flex-col gap-3">
@@ -81,8 +81,11 @@ export default async function AdminOverviewPage() {
                   <span className="flex items-center gap-2">
                     <span
                       aria-hidden
-                      className="h-2.5 w-2.5"
-                      style={{ background: `var(--ch-${category.token})` }}
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{
+                    background: `var(--ch-${category.token})`,
+                    boxShadow: `0 0 9px var(--ch-${category.token})`,
+                  }}
                     />
                     {category.name}
                   </span>
@@ -90,7 +93,7 @@ export default async function AdminOverviewPage() {
                     {category.views.toLocaleString()} views · {category.count} pieces
                   </span>
                 </div>
-                <div className="h-3 w-full border border-[var(--ink)] bg-[var(--paper-2)]">
+                <div className="h-3 w-full border border-[var(--edge)] bg-[var(--paper-2)]">
                   <div
                     className="h-full"
                     style={{
@@ -108,7 +111,7 @@ export default async function AdminOverviewPage() {
         <div className="flex flex-col gap-10">
           {/* Most-read */}
           <section>
-            <h2 className="mb-4 border-t-2 border-[var(--ink)] pt-3 font-display text-[1.8rem] uppercase leading-none">
+            <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.30rem] leading-none">
               Most read
             </h2>
             <ol className="flex flex-col">
@@ -142,7 +145,7 @@ export default async function AdminOverviewPage() {
 
           {/* Recent activity across all members */}
           <section>
-            <h2 className="mb-4 border-t-2 border-[var(--ink)] pt-3 font-display text-[1.8rem] uppercase leading-none">
+            <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.30rem] leading-none">
               Latest activity
             </h2>
             <ol className="flex flex-col">
@@ -168,7 +171,7 @@ export default async function AdminOverviewPage() {
 
 function Stat({ label, value, hint }: { label: string; value: number; hint?: string }) {
   return (
-    <div className="bg-[var(--paper)] p-5">
+    <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5">
       <p className="font-display text-[2.6rem] leading-none tabular-nums">
         {value.toLocaleString()}
       </p>

@@ -22,6 +22,9 @@ export function LoginForm() {
     if (searchParams.get("verified") === "1") {
       toast.success("Email confirmed. Welcome aboard.");
     }
+    if (searchParams.get("session") === "expired") {
+      toast.info("Your session is no longer valid. Please sign in again.");
+    }
   }, [searchParams]);
 
   useEffect(() => {

@@ -100,10 +100,10 @@ export function ResourceManager({
       {open && (
         <form
           action={action}
-          className="mb-8 border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-6 shadow-[6px_6px_0_var(--ink)]"
+          className="mb-8 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-6 shadow-[var(--lift-md)]"
         >
           <div className="mb-5 flex items-center justify-between">
-            <h2 className="font-display text-[1.6rem] uppercase leading-none">
+            <h2 className="font-display text-[1.15rem] leading-none">
               {editing ? `Edit ${singular}` : `New ${singular}`}
             </h2>
             <button
@@ -113,7 +113,7 @@ export function ResourceManager({
                 setCreating(false);
               }}
               aria-label="Close editor"
-              className="grid h-8 w-8 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+              className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)]"
             >
               <X className="h-4 w-4" aria-hidden />
             </button>
@@ -131,7 +131,7 @@ export function ResourceManager({
                   <label
                     key={field.name}
                     className={cn(
-                      "flex cursor-pointer items-center justify-between border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-4",
+                      "flex cursor-pointer items-center justify-between border border-[var(--rule-strong)] bg-[var(--paper)] p-4",
                       wrapper,
                     )}
                   >
@@ -228,11 +228,11 @@ export function ResourceManager({
 
       {/* Listing */}
       {rows.length === 0 ? (
-        <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
+        <p className="border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
           Nothing here yet. Create the first one.
         </p>
       ) : (
-        <ul className="border-t-2 border-[var(--ink)]">
+        <ul className="border-t border-[var(--rule-strong)]">
           {rows.map((row) => (
             <li
               key={row.id}
@@ -242,7 +242,7 @@ export function ResourceManager({
                 <span aria-hidden className="h-4 w-4 shrink-0" style={{ background: row.ink }} />
               )}
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-[1.2rem] uppercase leading-none">
+                <p className="truncate font-display text-[0.95rem] leading-none">
                   {row.title}
                 </p>
                 <p className="mt-1 truncate font-mono text-[0.62rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
@@ -259,7 +259,7 @@ export function ResourceManager({
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   }}
                   aria-label={`Edit ${row.title}`}
-                  className="grid h-9 w-9 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+                  className="grid h-9 w-9 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)]"
                 >
                   <Pencil className="h-4 w-4" aria-hidden />
                 </button>
@@ -268,7 +268,7 @@ export function ResourceManager({
                   onClick={() => remove(row)}
                   disabled={deletingId === row.id}
                   aria-label={`Delete ${row.title}`}
-                  className="grid h-9 w-9 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--spot)] hover:text-white disabled:opacity-50"
+                  className="grid h-9 w-9 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--spot)] hover:text-[var(--void)] disabled:opacity-50"
                 >
                   <Trash2 className="h-4 w-4" aria-hidden />
                 </button>

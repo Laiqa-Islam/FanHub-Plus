@@ -113,7 +113,7 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
               · {item.type}
             </p>
 
-            <h1 className="font-display text-[clamp(2rem,5.5vw,3.2rem)]">{item.title}</h1>
+            <h1 className="font-display text-[clamp(1.7rem,4.4vw,2.6rem)]">{item.title}</h1>
 
             <p className="mt-5 text-[1.08rem] leading-relaxed text-[var(--ink-soft)]">
               {item.summary}
@@ -206,7 +206,7 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
             playing anything. Rendered as text — React escapes it, so unlike the
             body above this needs no sanitising pass. */}
         {item.transcript && (
-          <details className="mt-10 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)]">
+          <details className="mt-10 border border-[var(--rule-strong)] bg-[var(--paper-2)]">
             <summary className="cursor-pointer px-5 py-3.5 font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot)]">
               Read the transcript
             </summary>
@@ -239,7 +239,7 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
               <Link
                 key={genre}
                 href={`/explore?genre=${encodeURIComponent(genre)}`}
-                className="border-[1.5px] border-[var(--rule-strong)] px-3 py-1.5 text-[0.8rem] text-[var(--ink-soft)] transition-colors hover:border-[var(--spot)] hover:text-[var(--spot)]"
+                className="border border-[var(--rule-strong)] px-3 py-1.5 text-[0.8rem] text-[var(--ink-soft)] transition-colors hover:border-[var(--spot)] hover:text-[var(--spot)]"
               >
                 {genre}
               </Link>
@@ -276,7 +276,7 @@ function MediaCaption({ credit, tags }: { credit: string; tags: string[] }) {
       {tags.map((tag) => (
         <span
           key={tag}
-          className="border border-[var(--ink)] px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.14em]"
+          className="border border-[var(--edge)] px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.14em]"
         >
           {tag}
         </span>

@@ -21,14 +21,13 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
     name: formData.get("name"),
     bio: formData.get("bio") ?? "",
     favoriteCategories: formData.getAll("favoriteCategories").map(String),
-    theme: formData.get("theme") ?? "system",
     fontScale: formData.get("fontScale") ?? 100,
     reducedMotion: formData.get("reducedMotion") === "on",
   });
 
   if (!parsed.success) return { errors: fieldErrors(parsed.error) };
 
-  const { name, bio, favoriteCategories, theme, fontScale, reducedMotion } = parsed.data;
+  const { name, bio, favoriteCategories, fontScale, reducedMotion } = parsed.data;
 
   try {
     await connectToDatabase();
@@ -37,7 +36,7 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
       name,
       bio: bio ?? "",
       favoriteCategories,
-      preferences: { theme, fontScale, reducedMotion },
+      preferences: { fontScale, reducedMotion },
     };
 
     // Avatar is optional — an empty file input yields a 0-byte File.

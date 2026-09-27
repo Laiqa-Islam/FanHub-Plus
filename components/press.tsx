@@ -1,13 +1,14 @@
-﻿import { CATEGORIES } from "@/lib/constants";
+import { CATEGORIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 /**
- * The channel key: eight spot inks laid side by side, the way a print shop
- * pulls a colour bar along the edge of a sheet to check the run.
+ * The channel key: eight neon signals laid side by side, the way a mixing
+ * desk shows every channel lit at once. It runs under the masthead and
+ * along the foot of the page as the site's colour legend.
  */
 export function InkStrip({
   className,
-  height = 6,
+  height = 3,
   animated = false,
 }: {
   className?: string;
@@ -22,6 +23,7 @@ export function InkStrip({
           className={cn("block h-full w-full origin-left", animated && "animate-[ink-roll_.5s_both]")}
           style={{
             background: `var(--ch-${category.token})`,
+            boxShadow: `0 0 12px var(--ch-${category.token})`,
             animationDelay: animated ? `${index * 60}ms` : undefined,
           }}
         />
@@ -31,8 +33,8 @@ export function InkStrip({
 }
 
 /**
- * A heading printed twice — the ink layer, and a spot-ink ghost sitting
- * slightly out of register behind it.
+ * A word split into its colour channels, the way a cheap screen separates
+ * them: the word itself, and a cyan ghost a few pixels off behind it.
  *
  * The ghost is generated from `data-ghost` in CSS rather than as a real
  * element, so it never reaches the accessibility tree and the word is
@@ -45,7 +47,7 @@ export function Misreg({
   as: Tag = "span",
 }: {
   children: string;
-  /** CSS colour for the offset layer. Defaults to the house spot ink. */
+  /** CSS colour for the offset layer. Defaults to the cyan signal. */
   ghostInk?: string;
   className?: string;
   as?: "span" | "h1" | "h2" | "h3";
@@ -59,29 +61,45 @@ export function Misreg({
   );
 }
 
-/** Printer's registration crosshair. Pure ornament, and it knows it. */
+/** A HUD reticle. Pure ornament, and it knows it. */
 export function RegMark({ className }: { className?: string }) {
   return <span aria-hidden className={cn("reg-mark", className)} />;
 }
 
-/** A gummed label, rotated slightly off-square. */
+/**
+ * A lit pill. The one place a neon is a solid fill rather than a line, so
+ * it is kept small and the text on it drops to `--void`.
+ */
 export function Sticker({
   children,
-  ink = "var(--spot)",
+  ink = "var(--n1)",
+  outline = false,
   className,
 }: {
   children: React.ReactNode;
   ink?: string;
+  /** Outlined instead of filled, for a second badge beside a solid one. */
+  outline?: boolean;
   className?: string;
 }) {
   return (
-    <span className={cn("sticker", className)} style={{ background: ink }}>
+    <span
+      className={cn("sticker", outline && "sticker-outline", className)}
+      style={
+        outline
+          ? { color: ink }
+          : {
+              background: ink,
+              boxShadow: `0 0 16px color-mix(in oklch, ${ink} 45%, transparent)`,
+            }
+      }
+    >
       {children}
     </span>
   );
 }
 
-/** Section heading: rule, number, title — a contents-page convention. */
+/** Section heading: a mono code above a lit title, flush left. */
 export function PressHeading({
   mark,
   title,
@@ -94,20 +112,30 @@ export function PressHeading({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-10 border-t-2 border-[var(--ink)] pt-4">
+    <div className="mb-10">
       <div className="flex flex-wrap items-end justify-between gap-5">
         <div>
-          <p className="mark mb-3">{mark}</p>
+          <p className="mark mb-3 text-[var(--n2)]">{mark}</p>
           <Misreg
             as="h2"
             ghostInk={ghostInk}
-            className="text-[clamp(2.2rem,5.5vw,3.8rem)]"
+            className="text-[clamp(1.6rem,4vw,2.7rem)]"
           >
             {title}
           </Misreg>
         </div>
         {action}
       </div>
+      {/* A rule that fades out at both ends rather than stopping cleanly —
+          Nocturne's edge treatment, carried into the neon theme. */}
+      <div
+        aria-hidden
+        className="mt-5 h-px w-full"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, var(--rule-strong) 48px, var(--rule-strong) calc(100% - 48px), transparent)",
+        }}
+      />
     </div>
   );
 }

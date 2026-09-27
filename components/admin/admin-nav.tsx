@@ -40,9 +40,9 @@ export function AdminNav() {
             href={link.href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "-ml-[1.5px] inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] px-3.5 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.13em] transition-colors first:ml-0",
+              "-ml-[1.5px] inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] px-3.5 py-2 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.13em] transition-colors first:ml-0",
               active
-                ? "bg-[var(--ink)] text-[var(--paper)]"
+                ? "bg-[var(--n1)] text-[var(--void)]"
                 : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
             )}
           >

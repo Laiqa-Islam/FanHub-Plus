@@ -39,7 +39,7 @@ export function AuthShell({
         {footer && <div className="mt-7 text-[0.88rem] text-[var(--ink-soft)]">{footer}</div>}
       </div>
 
-      <aside className="relative hidden overflow-hidden rounded-3xl border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-10 lg:block">
+      <aside className="relative hidden overflow-hidden rounded-3xl border border-[var(--rule-strong)] bg-[var(--paper)] p-10 lg:block">
         <div
           aria-hidden
           className="signal-glow pointer-events-none absolute -right-24 -top-24 h-80 w-80 blur-[90px]"

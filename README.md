@@ -48,6 +48,29 @@ Production build:
 npm run build && npm run start
 ```
 
+### If the database will not connect
+
+Atlas serves the database on **TCP 27017**, and plenty of networks — mobile
+hotspots and carrier NAT especially — silently drop that port while leaving
+ordinary web traffic alone. The symptom is a *timeout* rather than a refusal,
+and `cloud.mongodb.com` still loading fine in a browser, because the Atlas web
+console is just HTTPS on 443.
+
+Check the port rather than guessing at Atlas:
+
+```bash
+node -e "const s=require('net').connect({host:'portquiz.net',port:27017});s.on('connect',()=>{console.log('27017 open');s.destroy()});s.on('error',e=>console.log('27017',e.code));setTimeout(()=>{console.log('27017 blocked (timeout)');process.exit()},7000)"
+```
+
+`portquiz.net` answers on every port, so a timeout there means the network is
+blocking 27017 and nothing in this project or in Atlas will fix it. Move to a
+different network, use a VPN, or run MongoDB locally and point `MONGODB_URI` at
+`mongodb://127.0.0.1:27017/fanhub` — loopback is unaffected.
+
+If DNS is the problem instead, the SRV lookup (`mongodb+srv://`) fails while
+plain A records still resolve; the non-SRV connection string form is the
+workaround, and `.env.local` keeps one commented out for that case.
+
 ---
 
 ## User credentials
@@ -74,6 +97,7 @@ requires an account.
 | `npm run build` | Production build |
 | `npm run start` | Serve the production build |
 | `npm run seed` | Populate demo content + evaluation accounts (safe to re-run) |
+| `npm run fetch-art` | Fetch the channel art library into `public/content/` (skips what it already has; `-- --force` re-fetches) |
 | `npm run typecheck` | TypeScript check with no emit |
 | `npm run lint` | ESLint |
 
@@ -84,7 +108,7 @@ requires an account.
 ```
 app/
   actions/        Server actions (auth, profile)
-  layout.tsx      Root layout: fonts, theme, header/footer, toasts
+  layout.tsx      Root layout: fonts, preferences, header/footer, toasts
   page.tsx        Landing page
   login/ register/ forgot-password/ reset-password/ verify-email/
   dashboard/ profile/
@@ -137,32 +161,50 @@ permanently. The hero timeline, the scroll reveals and the decode-text effect ea
 `setTimeout` failsafe that snaps to the finished state, since timers keep firing where frames do
 not. `prefers-reduced-motion` and the in-app "Reduce motion" toggle disable them outright.
 
-**No commerce.** Per SRS §1.5 the merchandise showcase is for display and discovery only. There
-is no cart, checkout, payment or order model anywhere in the schema or the code.
+**Demo commerce.** The merch catalogue now has prices, persistent browser cart state and a
+complete delivery/payment checkout interface. Checkout is intentionally demonstrative: it does
+not transmit card details, charge a payment method or create fulfilment records until a real
+merchant provider is connected.
 
 ---
 
 ## Design language
 
-The interface is built as a **fanzine press**: doujinshi, convention zines and risograph
-pamphlets are where fandom's own print culture actually lives, so the properties of that
-process drive the visual system rather than generic web-app conventions.
+The interface is **Neon Oni**: the fandom undercity after dark. It is built on the *Nocturne*
+design system supplied with the mockup — a near-neutral blue-grey ground, compact spacing and
+elevation drawn as an edge plus ambient darkness — with three neon signals laid over the top.
 
-- **Spot inks, not a gradient palette.** Each of the eight channels is one Riso ink, and that
-  ink identifies the channel everywhere it appears — strip, card rule, duotone, heading ghost.
-- **Misregistration is the signature.** Headings print twice: the ink layer, and a spot-ink
-  ghost a few pixels out of register behind it. The page-load sequence animates those layers
-  *into* register, like a sheet going through a second pass.
-- **Halftone, not smooth fills.** Photographs are greyscaled, duotoned in the channel ink and
-  overlaid with a dot screen, so images read as printed rather than dropped in.
-- **Square corners, hard shadows.** A trimmed page has no border radius and a printed object
-  casts a hard offset shadow, not a blur.
-- **Type**: Big Shoulders (condensed display, poster voice), Newsreader (editorial serif for
-  reading), JetBrains Mono (the printer's voice — labels, counts, registration marks).
+- **One ground, always dark.** There is no light mode: a neon sign only reads against the
+  night. See *Theme and accessibility* below for what that trades away.
+- **Three signals, never four.** Magenta `#ff2fb4`, cyan `#25f4ee`, acid `#d4ff3a`. Colour is a
+  line, a glow and a small solid mark — never a flood. The eight channels each get their own
+  neon, tuned to a similar luminance so no channel shouts over the others in the rail.
+- **Glow is the shadow.** Elevation on a dark ground is an edge with light bleeding out of it.
+  Hover lifts an element straight up and widens its glow, the way a sign brightens when the
+  current comes up.
+- **Round, not trimmed.** Generous radii throughout; the sharp corner was the old print
+  theme's signature and went with it.
+- **Chromatic split.** Headings print twice — the word, and a cyan ghost a few pixels off
+  behind it, the way a cheap screen separates its channels. (This reuses the `.misreg`
+  mechanism the print theme used for ink misregistration; same `data-ghost` API, new meaning.)
+- **Scanlines.** A fixed 1-in-3px multiply overlay across the page, the one texture that says
+  "screen" rather than "paper".
+- **Type**: Unbounded (wide geometric display, the voice of a neon sign), Inter (body, per
+  Nocturne), JetBrains Mono (codes, counts, timestamps, badges).
 
-Motion follows the same logic: scroll reveals are an **ink roll** (a left-to-right clip-path
-wipe) rather than a fade-up, and the loading state is eight ink passes rolling on in sequence.
-All of it is disabled by `prefers-reduced-motion` and by the in-app "Reduce motion" toggle.
+Motion follows the same logic: scroll reveals are a left-to-right clip-path wipe, like a signal
+resolving; the hero's headline wipes on line by line and its plate comes up out of the dark.
+All of it is disabled by `prefers-reduced-motion` and by the in-app "Reduce motion" toggle —
+and nothing starts hidden in CSS, so a reader with motion off gets the finished layout rather
+than a frozen one.
+
+### Theme and accessibility
+
+Neon Oni is single-ground by design, so the light/dark toggle the print theme carried has been
+removed along with the stored `preferences.theme` field. **This drops the colour-scheme clause
+of SRS FR-12** — a deliberate trade made when the theme was chosen, recorded here rather than
+left to be discovered. The rest of FR-12 is intact: text scaling (90–130%) and the reduce-motion
+switch both survive, still persisted per account and mirrored to `localStorage`.
 
 ## Media
 
@@ -188,16 +230,34 @@ player says so and offers a retry.
 ## Content and image licensing
 
 The seed carries a real editorial library rather than placeholder text: 56 written pieces, 32
-character profiles, 25 showcase items and 16 events, all authored for this project.
+character profiles, 41 merchandise items and 16 events, all authored for this project.
 
-Photography is **licensed Unsplash stock**, hot-linked through `images.unsplash.com`. Every id
-in `lib/stock-images.ts` was fetched and visually checked before being used, so the subject
-matches the channel it appears under. No copyrighted franchise artwork is hosted or hot-linked
-anywhere, which is what keeps the project clear of the licensing constraint in SRS §1.5.
+> **⚠ This build hosts franchise fan art.** Editorial and character imagery is served from
+> `public/content/` — a pool of anime fan art supplied for the Neon Oni build, wired up through
+> `lib/stock-images.ts`. It replaced a curated Unsplash pool that existed specifically to honour
+> **SRS §1.5**, which asks the project not to host copyrighted franchise art. That constraint no
+> longer holds for this build. The decision was deliberate; this note exists so nobody later
+> reads §1.5 and assumes the code still follows it. **If this project goes anywhere beyond
+> coursework, `public/content/` is the first thing to clear.**
 
-Character cards deliberately use atmospheric stock photography under a channel-hue duotone
-rather than character art — the treatment reads as design, not as a portrait claim, and the
-detail page says so in as many words.
+`scripts/fetch-art.ts` builds most of that pool: official series covers, film
+posters and character portraits from **AniList** (no API key) and game capsule
+art from **Steam**. Every file's origin is recorded in
+`public/content/_sources.json`, so provenance is never guesswork. Re-run it with
+`npm run fetch-art`; it only fetches what is missing.
+
+Live-action film and TV posters are the one gap — TMDB is the right source and
+needs a free API key. Set `TMDB_API_KEY` and extend the manifest in
+`scripts/fetch-art.ts`. Until then the four Marvel dossiers fall back to the
+channel pool.
+
+Art is assigned to a record by cycling the channel's pool by position, not by hashing the slug —
+hashing collided often enough that the same picture appeared two or three times in one listing.
+Cycling exhausts the pool before anything repeats and stays deterministic across reseeds.
+
+Because the assignment is positional, a character card will not always show that exact
+character; the profile page says so in as many words. The merch catalogue also uses the product
+photographs supplied in the project content folder, under `public/merch/`.
 
 `npm run seed` prunes any record whose slug has left the library, so re-running it converges on
 the current content rather than accumulating older runs. Approved fan submissions are exempt
@@ -241,11 +301,9 @@ The assistant (SRS FR-4) answers questions about the site, walks new readers thr
 recommends real content. It uses Gemini via the REST API — no SDK, since we call exactly one
 endpoint.
 
-**It is grounded, not free-running.** Asked "can I buy the merchandise?", a bare model
-cheerfully invented a Store tab and told the reader to start shopping — which directly
-contradicts the no-commerce constraint in SRS §1.5. So every answer is assembled from the
-database first (FAQ entries, content, events, showcase items, the real site map), and the
-system instruction forbids going beyond it. The same question now answers correctly.
+**It is grounded, not free-running.** Every answer is assembled from the database first (FAQ
+entries, content, events, catalogue items and the real site map), and the system instruction
+forbids going beyond it. Store answers now reflect the cart and demo-checkout flow.
 
 Other things worth knowing:
 
@@ -303,24 +361,26 @@ component, differing only in their field list; the server still validates each k
 its own Zod schema. Administrators cannot change their own role — without that guard, one
 click could lock every administrator out of the panel.
 
-## Clippings
+## Saved items
 
-Bookmarking is called *clipping* throughout the interface — you cut something out of a
-magazine, you don't bookmark it — and the control is a pair of scissors.
+Bookmarking is called *saving* in the interface — you keep something off a board rather than
+marking your place in it. (The print theme called it *clipping*, and the internal identifiers
+still do: `getClippings`, `ClippingRow`. Only the words a reader sees changed, because renaming
+the data layer is a refactor rather than a theme change.)
 
-A clipping can point at four different collections, so the target is stored as a
+A save can point at four different collections, so the target is stored as a
 `(targetType, targetId)` pair rather than a typed foreign key. Two details make that safe:
 
 - A **unique compound index** on `(userId, targetType, targetId)` is what actually guarantees
-  one clipping per member per item. The toggle reads before it writes, so without the index a
+  one save per member per item. The toggle reads before it writes, so without the index a
   double click could race into duplicates; the action treats a duplicate-key error as success,
   because the row existing is the state the member wanted.
 - Note updates are **scoped by `userId` in the query itself**, so guessing another member's
   bookmark id cannot edit their note.
 
-Resolving a saved list batches one query per collection rather than one per clipping — forty
-saved items is five queries, not forty-one — and targets deleted since they were clipped are
-dropped from the results rather than rendering as blanks.
+Resolving a saved list batches one query per collection rather than one per row — forty saved
+items is five queries, not forty-one — and targets deleted since they were saved are dropped
+from the results rather than rendering as blanks.
 
 ---
 

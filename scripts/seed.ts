@@ -62,7 +62,7 @@ const ACCOUNTS = [
 const FAQS: [string, string][] = [
   [
     "What is Fan Hub Plus?",
-    "A single hub for eight fandoms — anime, gaming, movies, TV shows, K-Pop, comics, manga and cosplay — with curated articles, media, character profiles, merchandise discovery and an events calendar.",
+    "A single hub for eight fandoms — anime, gaming, movies, TV shows, K-Pop, comics, manga and cosplay — with curated articles, media, character files, merchandise discovery and an events calendar. Eight channels, one undercity, open all night.",
   ],
   [
     "Do I need an account?",
@@ -70,15 +70,15 @@ const FAQS: [string, string][] = [
   ],
   [
     "Can I buy the merchandise?",
-    "No. Merchandise is showcase-only, for discovery. Fan Hub Plus has no cart, checkout or payment processing of any kind.",
+    "Yes. Add items from the merch catalogue to your cart and continue through checkout. The current academic build uses a demo checkout, so it never charges a real payment method or creates a shipment.",
   ],
   [
     "How do I find events near me?",
     "Open Events and allow location access to see conventions, meetups and screenings sorted by distance, or filter the calendar by city.",
   ],
   [
-    "How do I change the text size or theme?",
-    "Use the accessibility menu in the header. Signed-in members can save the preference to their account from Profile so it follows them across devices.",
+    "How do I change the text size?",
+    "Use the accessibility menu in the header, which also carries the reduce-motion switch. Signed-in members can save both preferences to their account from Profile so they follow them across devices. There is no light mode: Fan Hub Plus runs on a single dark ground by design.",
   ],
   [
     "Can I submit my own article?",
@@ -206,10 +206,14 @@ async function seed() {
           type: item.type,
           summary: item.summary,
           body: toHtml(item.paragraphs),
-          coverImage: pickStock(
-            item.category as keyof typeof STOCK,
-            contentImageIndex(item.category),
-          ),
+          // A piece that names its own art gets it, so the picture on the
+          // card is the thing the piece is about; the rest cycle the pool.
+          coverImage: item.art
+            ? stock(item.art)
+            : pickStock(
+                item.category as keyof typeof STOCK,
+                contentImageIndex(item.category),
+              ),
           ...media,
           genre: item.genre,
           tags: [...item.genre, item.type],
@@ -243,12 +247,29 @@ async function seed() {
           slug,
           category: character.category,
           franchise: character.franchise,
+          kanji: character.kanji,
+          role: character.role,
+          signature: character.signature,
+          grade: character.grade,
+          sealMark: character.sealMark,
+          accent: character.accent,
+          affiliation: character.affiliation,
+          status: character.status,
+          relationships: character.relationships,
+          skills: character.skills,
+          troops: character.troops,
+          weapons: character.weapons,
+          stats: character.stats,
           bio: character.bio,
-          imageUrl: pickStock(
-            character.category as keyof typeof STOCK,
-            characterImageIndex(character.category),
-            1,
-          ),
+          // A character that names its own art gets it; the rest fall back to
+          // cycling the channel pool, and the profile page says so.
+          imageUrl: character.art
+            ? stock(character.art)
+            : pickStock(
+                character.category as keyof typeof STOCK,
+                characterImageIndex(character.category),
+                1,
+              ),
           traits: character.traits,
           debutYear: character.debutYear,
           popularityScore: 55 + (slug.length % 45),
@@ -276,8 +297,9 @@ async function seed() {
           tag: item.tag,
           isUpcoming: item.isUpcoming,
           description: item.description,
-          imageUrl: pickStock(item.category as keyof typeof STOCK, imagePosition, 2),
-          gallery: [
+          priceCents: item.priceCents ?? 2_499 + (index % 6) * 500,
+          imageUrl: item.imageUrl ?? pickStock(item.category as keyof typeof STOCK, imagePosition, 2),
+          gallery: item.gallery ?? [
             pickStock(item.category as keyof typeof STOCK, imagePosition, 3),
             pickStock(item.category as keyof typeof STOCK, imagePosition, 4),
           ],

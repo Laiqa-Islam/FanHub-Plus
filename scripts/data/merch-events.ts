@@ -1,9 +1,9 @@
 /**
  * Merchandise showcase and event listings.
  *
- * Merchandise carries no price field anywhere by design — SRS §1.5 puts
- * purchase, ordering and payment out of scope, so these exist purely for
- * discovery.
+ * Merchandise can carry a local storefront image and price. Older editorial
+ * showcase entries fall back to licensed stock art and a deterministic demo
+ * price in the seeder.
  *
  * Events use real conventions with genuine host cities and coordinates so the
  * map and the city filter have something truthful to work with. Dates are
@@ -19,6 +19,9 @@ export type MerchSeed = {
   /** Days from today; negative is in the past. */
   releaseOffset: number;
   description: string;
+  priceCents?: number;
+  imageUrl?: string;
+  gallery?: string[];
 };
 
 export const MERCH_SEED: MerchSeed[] = [
@@ -246,6 +249,183 @@ export const MERCH_SEED: MerchSeed[] = [
     releaseOffset: 40,
     description:
       "Addressable strip, diffusion sheet in three densities, a battery pack sized for a convention day, and an inline fuse — the component most builds omit.",
+  },
+  {
+    category: "k-pop",
+    name: "BLACKPINK Fan Essentials Set",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -1,
+    priceCents: 4900,
+    imageUrl: "/merch/blackpink-fan-kit.jpg",
+    description:
+      "A coordinated fan set with apparel, lightstick-style accessory, mini bag and tote in the group’s signature black-and-pink palette.",
+  },
+  {
+    category: "k-pop",
+    name: "BLACKPINK Hammer Lightstick",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -2,
+    priceCents: 6900,
+    imageUrl: "/merch/blackpink-lightstick.jpg",
+    description:
+      "The instantly recognisable twin-heart hammer silhouette, made for concert nights, shelf displays and fan photos.",
+  },
+  {
+    category: "k-pop",
+    name: "Stray Kids Utility Backpack",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -3,
+    priceCents: 4600,
+    imageUrl: "/merch/stray-kids-backpack.jpg",
+    gallery: ["/merch/stray-kids-backpack-alt.jpg"],
+    description:
+      "A black everyday backpack with graphic front panel, roomy compartments and fan-detail hardware for school, travel or concert queues.",
+  },
+  {
+    category: "k-pop",
+    name: "BTS Chain Detail Backpack",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -4,
+    priceCents: 4800,
+    imageUrl: "/merch/bts-backpack.jpg",
+    description:
+      "Compact black BTS-inspired backpack with a blue-red logo panel, chain detail and multiple front storage sections.",
+  },
+  {
+    category: "k-pop",
+    name: "Hand-Painted BTS Stage Jacket",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -5,
+    priceCents: 8900,
+    imageUrl: "/merch/bts-painted-jacket.jpg",
+    description:
+      "A one-off black denim statement jacket finished with a hand-painted group portrait across the back panel.",
+  },
+  {
+    category: "anime",
+    name: "Demon Slayer Character Keychain Set",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -1,
+    priceCents: 1600,
+    imageUrl: "/merch/demon-slayer-keychains.jpg",
+    description:
+      "A seven-piece chibi character keychain set, sized for bags, convention lanyards and display boards.",
+  },
+  {
+    category: "anime",
+    name: "Jujutsu Kaisen Plush Pair",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -2,
+    priceCents: 2600,
+    imageUrl: "/merch/jujutsu-kaisen-plush-pair.jpg",
+    description:
+      "A soft seated duo with embroidered uniform details, designed to display together on a desk or shelf.",
+  },
+  {
+    category: "anime",
+    name: "Jujutsu Kaisen Mini Figure Pair",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -3,
+    priceCents: 2900,
+    imageUrl: "/merch/jujutsu-kaisen-figure-pair.jpg",
+    description:
+      "Two compact stylised figures with oversized expressions and stable display bases for small shelf spaces.",
+  },
+  {
+    category: "anime",
+    name: "Demon Slayer Cup Collection",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -4,
+    priceCents: 3200,
+    imageUrl: "/merch/demon-slayer-cups.jpg",
+    description:
+      "A mix-and-match collection of character-print cups with vivid artwork for desks, watch parties and gifting.",
+  },
+  {
+    category: "anime",
+    name: "Anime Character Keychain Roll",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -5,
+    priceCents: 1400,
+    imageUrl: "/merch/anime-keychain-set.jpg",
+    description:
+      "A bright assortment of illustrated character straps, ready for backpacks, keys and ita-bag layouts.",
+  },
+  {
+    category: "anime",
+    name: "Spider-Verse Mini Plush",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -6,
+    priceCents: 2400,
+    imageUrl: "/merch/spiderverse-plush.jpg",
+    description:
+      "A pocket-sized black-and-red masked plush with soft dimensional details and a display-friendly seated pose.",
+  },
+  {
+    category: "anime",
+    name: "Dual Orbit Anime Ring",
+    tag: "Exclusive",
+    isUpcoming: false,
+    releaseOffset: -7,
+    priceCents: 1800,
+    imageUrl: "/merch/anime-ring.jpg",
+    description:
+      "A sculptural silver-tone ring with intersecting bands and a compact geometric centrepiece.",
+  },
+  {
+    category: "comics",
+    name: "Spider-Man Pendant Necklace",
+    tag: "Collectible",
+    isUpcoming: false,
+    releaseOffset: -1,
+    priceCents: 2200,
+    imageUrl: "/merch/spider-man-necklace.jpg",
+    description:
+      "A polished spider-emblem pendant on a fine chain, subtle enough for everyday wear while still reading clearly to fans.",
+  },
+  {
+    category: "comics",
+    name: "Black Panther Kimoyo Replica Set",
+    tag: "Limited Edition",
+    isUpcoming: false,
+    releaseOffset: -2,
+    priceCents: 7800,
+    imageUrl: "/merch/black-panther-replica.jpg",
+    description:
+      "A boxed collector display pairing Kimoyo-style beads with a detailed Black Panther necklace replica.",
+  },
+  {
+    category: "comics",
+    name: "Avengers Logo Street Tee",
+    tag: "Restock",
+    isUpcoming: false,
+    releaseOffset: -3,
+    priceCents: 2800,
+    imageUrl: "/merch/avengers-tee.jpg",
+    description:
+      "A black graphic T-shirt with a circular Avengers emblem and colourful hero marks across the chest.",
+  },
+  {
+    category: "comics",
+    name: "Avengers Logo Hoodie",
+    tag: "Pre-Order",
+    isUpcoming: true,
+    releaseOffset: 14,
+    priceCents: 6400,
+    imageUrl: "/merch/avengers-hoodie.jpg",
+    description:
+      "A light-grey pullover hoodie with a large front emblem, contrast hood lining and relaxed everyday fit.",
   },
 ];
 

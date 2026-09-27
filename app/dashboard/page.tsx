@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { MailWarning, ShieldAlert, Sparkles, Scissors, Compass, Activity } from "lucide-react";
+import { MailWarning, ShieldAlert, Sparkles, Bookmark, Compass, Activity } from "lucide-react";
 
 import { requireUser } from "@/lib/dal";
 import { connectToDatabase } from "@/lib/db";
@@ -51,7 +51,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
   return (
     <div>
       {/* Masthead — this issue is addressed to one reader */}
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-8 pt-8 sm:px-8">
           <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-[var(--rule)] pb-3 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--ink-faint)]">
             <RegMark className="text-[var(--ink)]" />
@@ -61,7 +61,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           </div>
 
           <p className="mark mb-3">{greeting()}</p>
-          <Misreg as="h1" className="text-[clamp(2.6rem,8vw,5rem)]" ghostInk="var(--spot-2)">
+          <Misreg as="h1" className="text-[clamp(1.9rem,5.5vw,3.5rem)]" ghostInk="var(--spot-2)">
             {firstName}
           </Misreg>
         </div>
@@ -81,7 +81,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             <Notice
               icon={MailWarning}
               title="Confirm your email"
-              body="Clippings, ratings and submissions unlock once your address is verified."
+              body="Saves, ratings and submissions unlock once your address is verified."
               action={{ href: "/verify-email", label: "Send a link" }}
             />
           )}
@@ -97,17 +97,17 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
 
         <Reveal
           stagger={0.06}
-          className="mt-8 grid gap-px border-[1.5px] border-[var(--ink)] bg-[var(--ink)] sm:grid-cols-3"
+          className="mt-8 grid gap-2.5 sm:grid-cols-3"
         >
-          <Stat label="Clippings" value={counts.all ?? 0} href="/bookmarks" icon={Scissors} />
+          <Stat label="Saved" value={counts.all ?? 0} href="/bookmarks" icon={Bookmark} />
           <Stat label="Channels followed" value={favorites.length} href="/profile" icon={Compass} />
           <Stat label="Recent actions" value={activity.length} icon={Activity} />
         </Reveal>
 
         <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
           <section>
-            <div className="mb-6 flex items-end justify-between border-t-2 border-[var(--ink)] pt-3">
-              <h2 className="font-display text-[2rem] uppercase leading-none">
+            <div className="mb-6 flex items-end justify-between border-t border-[var(--rule-strong)] pt-3">
+              <h2 className="font-display text-[1.44rem] leading-none">
                 {favorites.length > 0 ? "From your channels" : "Most read"}
               </h2>
               <Link
@@ -139,11 +139,14 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                       </span>
                       <span
                         aria-hidden
-                        className="h-2.5 w-2.5 shrink-0"
-                        style={{ background: `var(--ch-${category?.token ?? "anime"})` }}
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{
+                    background: `var(--ch-${category?.token ?? "anime"})`,
+                    boxShadow: `0 0 9px var(--ch-${category?.token ?? "anime"})`,
+                  }}
                       />
                       <span className="min-w-0 flex-1">
-                        <span className="block font-display text-[1.35rem] uppercase leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
+                        <span className="block font-display text-[0.97rem] leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
                           {item.title}
                         </span>
                         <span className="mt-1 block font-mono text-[0.6rem] uppercase tracking-[0.13em] text-[var(--ink-faint)]">
@@ -157,8 +160,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             )}
 
             <div className="mt-12">
-              <div className="mb-5 flex items-end justify-between border-t-2 border-[var(--ink)] pt-3">
-                <h2 className="font-display text-[2rem] uppercase leading-none">
+              <div className="mb-5 flex items-end justify-between border-t border-[var(--rule-strong)] pt-3">
+                <h2 className="font-display text-[1.44rem] leading-none">
                   Recent clippings
                 </h2>
                 <Link
@@ -171,8 +174,8 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
 
               {clippings.length === 0 ? (
                 <Empty
-                  title="Nothing clipped yet"
-                  body="Hit the scissors on anything worth keeping and it lands in your file."
+                  title="Nothing saved yet"
+                  body="Hit the save mark on anything worth keeping and it lands in your file."
                   action={{ href: "/explore", label: "Find something" }}
                 />
               ) : (
@@ -184,9 +187,9 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                       <Link
                         key={row.bookmarkId}
                         href={row.href}
-                        className="group flex gap-3 border-[1.5px] border-[var(--ink)] bg-[var(--paper)] p-3 transition-[transform,box-shadow] duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[5px_5px_0_var(--ink)]"
+                        className="group flex gap-3 rounded-2xl border border-[var(--edge)] bg-[var(--paper)] p-3 transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-[var(--lift-md)]"
                       >
-                        <span className="relative h-16 w-16 shrink-0 overflow-hidden border border-[var(--ink)]">
+                        <span className="relative h-16 w-16 shrink-0 overflow-hidden border border-[var(--edge)]">
                           {row.imageUrl && (
                             <Image
                               src={row.imageUrl}
@@ -206,7 +209,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                           <span className="block font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
                             {row.kindLabel}
                           </span>
-                          <span className="mt-0.5 block font-display text-[1.05rem] uppercase leading-[0.98] group-hover:text-[var(--spot-deep)]">
+                          <span className="mt-0.5 block font-display text-[0.95rem] leading-[0.98] group-hover:text-[var(--spot-deep)]">
                             {row.title}
                           </span>
                           {row.note && (
@@ -225,7 +228,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
 
           <aside className="flex flex-col gap-10">
             <section>
-              <h2 className="mb-4 border-t-2 border-[var(--ink)] pt-3 font-display text-[1.7rem] uppercase leading-none">
+              <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.22rem] leading-none">
                 Your channels
               </h2>
               {favorites.length === 0 ? (
@@ -244,10 +247,13 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                       >
                         <span
                           aria-hidden
-                          className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-125"
-                          style={{ background: `var(--ch-${category.token})` }}
+                          className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-125 rounded-full"
+                          style={{
+                    background: `var(--ch-${category.token})`,
+                    boxShadow: `0 0 9px var(--ch-${category.token})`,
+                  }}
                         />
-                        <span className="font-display text-[1.3rem] uppercase leading-none">
+                        <span className="font-display text-[0.95rem] leading-none">
                           {category.name}
                         </span>
                       </Link>
@@ -258,7 +264,7 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
             </section>
 
             <section>
-              <h2 className="mb-4 border-t-2 border-[var(--ink)] pt-3 font-display text-[1.7rem] uppercase leading-none">
+              <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.22rem] leading-none">
                 Activity
               </h2>
               {activity.length === 0 ? (
@@ -309,7 +315,8 @@ function Stat({
       <p className="mark mt-1 !text-[0.58rem]">{label}</p>
     </>
   );
-  const className = "reveal bg-[var(--paper)] p-5 transition-colors hover:bg-[var(--paper-2)]";
+  const className =
+    "reveal rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5 transition-colors hover:border-[var(--n2)]";
 
   return href ? (
     <Link href={href} className={className}>
@@ -330,8 +337,8 @@ function Empty({
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="border-[1.5px] border-dashed border-[var(--rule-strong)] p-6 text-center">
-      <p className="font-display text-[1.3rem] uppercase leading-none">{title}</p>
+    <div className="border border-dashed border-[var(--edge-strong)] p-6 text-center">
+      <p className="font-display text-[0.95rem] leading-none">{title}</p>
       <p className="mx-auto mt-2.5 max-w-xs text-[0.88rem] leading-relaxed text-[var(--ink-soft)]">
         {body}
       </p>
@@ -356,10 +363,10 @@ function Notice({
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-4 border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-4">
+    <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-4">
       <Icon className="h-5 w-5 shrink-0 text-[var(--flag)]" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="font-display text-[1.2rem] uppercase leading-none">{title}</p>
+        <p className="font-display text-[0.95rem] leading-none">{title}</p>
         <p className="mt-1.5 text-[0.88rem] text-[var(--ink-soft)]">{body}</p>
       </div>
       {action && (

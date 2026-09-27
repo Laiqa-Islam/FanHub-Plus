@@ -22,7 +22,7 @@ export type CurrentUser = {
   avatarUrl: string;
   bio: string;
   favoriteCategories: string[];
-  preferences: { theme: string; fontScale: number; reducedMotion: boolean };
+  preferences: { fontScale: number; reducedMotion: boolean };
   emailVerified: boolean;
   createdAt: string;
 };
@@ -57,7 +57,6 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
       bio: user.bio ?? "",
       favoriteCategories: (user.favoriteCategories ?? []) as string[],
       preferences: {
-        theme: user.preferences?.theme ?? "system",
         fontScale: user.preferences?.fontScale ?? 100,
         reducedMotion: user.preferences?.reducedMotion ?? false,
       },
@@ -70,10 +69,24 @@ export const getCurrentUser = cache(async (): Promise<CurrentUser | null> => {
   }
 });
 
-/** Requires any signed-in user; bounces to /login otherwise. */
+/**
+ * Requires any signed-in user; bounces to /login otherwise.
+ *
+ * The `session=expired` marker matters: a cookie can outlive the user it
+ * points at — the record is deleted, or the database is swapped or reseeded
+ * underneath it. The signature still verifies, so the optimistic gate in
+ * `proxy.ts` sends /login to /dashboard while this sends /dashboard back to
+ * /login, and the two bounce forever with no way to reach the form. The
+ * marker tells the proxy to stand down and drop the stale cookie.
+ */
 export async function requireUser(): Promise<CurrentUser> {
   const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  if (!user) {
+    // Distinguish "no cookie at all" from "cookie pointing at nobody": only
+    // the latter can loop, and only it should force the cookie to be cleared.
+    const stale = Boolean(await verifySession());
+    redirect(stale ? "/login?session=expired" : "/login");
+  }
   return user;
 }
 

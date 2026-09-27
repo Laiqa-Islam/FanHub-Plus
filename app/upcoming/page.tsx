@@ -46,15 +46,15 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
 
   return (
     <div>
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-10 pt-8 sm:px-8">
           <Breadcrumbs trail={[{ href: "/merch", label: "Merch" }, { label: "Upcoming" }]} />
 
           <p className="mark mb-3">Release schedule · {entries.length} entries</p>
-          <Misreg as="h1" className="text-[clamp(2.4rem,8vw,5.2rem)]" ghostInk="var(--ch-gaming)">
+          <Misreg as="h1" className="text-[clamp(1.85rem,5.5vw,3.6rem)]" ghostInk="var(--ch-gaming)">
             Coming next
           </Misreg>
-          <p className="mt-5 max-w-xl border-l-4 border-[var(--ch-gaming)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
+          <p className="mt-5 max-w-xl border-l-2 border-[var(--ch-gaming)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
             Anticipated releases and merchandise drops across every channel, in date order.
           </p>
 
@@ -76,15 +76,15 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
 
       <div className="mx-auto max-w-[88rem] px-5 py-12 sm:px-8">
         {entries.length === 0 ? (
-          <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
+          <p className="border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
             Nothing scheduled in that channel yet.
           </p>
         ) : (
           <div className="flex flex-col gap-14">
             {[...months.entries()].map(([month, bucket]) => (
               <section key={month}>
-                <div className="mb-5 flex items-baseline gap-4 border-t-2 border-[var(--ink)] pt-3">
-                  <h2 className="font-display text-[2rem] uppercase leading-none">{month}</h2>
+                <div className="mb-5 flex items-baseline gap-4 border-t border-[var(--rule-strong)] pt-3">
+                  <h2 className="font-display text-[1.44rem] leading-none">{month}</h2>
                   <span className="mark !text-[0.6rem]">{bucket.length}</span>
                 </div>
 
@@ -101,7 +101,7 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
                         className="reveal group grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 border-b border-[var(--rule)] py-4 transition-colors hover:bg-[var(--paper-2)] sm:grid-cols-[92px_84px_minmax(0,1fr)_auto]"
                       >
                         {/* Plate */}
-                        <div className="relative hidden h-16 w-[84px] shrink-0 overflow-hidden border-[1.5px] border-[var(--ink)] sm:block sm:order-2">
+                        <div className="relative hidden h-16 w-[84px] shrink-0 overflow-hidden rounded-2xl border border-[var(--edge)] sm:block sm:order-2">
                           {entry.imageUrl && (
                             <Image
                               src={entry.imageUrl}
@@ -136,7 +136,7 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
                             <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />
                             {category?.name} · {entry.kind === "merchandise" ? "Merch" : entry.tag}
                           </p>
-                          <h3 className="mt-1 font-display text-[1.4rem] uppercase leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
+                          <h3 className="mt-1 font-display text-[1.01rem] leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
                             {entry.title}
                           </h3>
                           <p className="mt-1 line-clamp-1 text-[0.88rem] text-[var(--ink-soft)]">
@@ -144,7 +144,7 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
                           </p>
                         </div>
 
-                        <span className="hidden border-[1.5px] border-[var(--ink)] px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.13em] sm:order-4 sm:block">
+                        <span className="hidden rounded-2xl border border-[var(--edge)] px-2.5 py-1 font-mono text-[0.58rem] uppercase tracking-[0.13em] sm:order-4 sm:block">
                           {entry.tag}
                         </span>
                       </Link>
@@ -175,9 +175,9 @@ function Chip({
     <Link
       href={href}
       className={cn(
-        "-ml-[1.5px] inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] px-4 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors first:ml-0",
+        "-ml-[1.5px] inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] px-4 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors first:ml-0",
         active
-          ? "bg-[var(--ink)] text-[var(--paper)]"
+          ? "bg-[var(--n1)] text-[var(--void)]"
           : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
       )}
     >

@@ -137,8 +137,8 @@ export function AssistantWidget() {
         aria-expanded={open}
         aria-label={open ? "Close the assistant" : "Ask the assistant"}
         className={cn(
-          "fixed bottom-5 right-5 z-[80] inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] px-4 py-3 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.14em] shadow-[4px_4px_0_var(--ink)] transition-[transform,box-shadow] duration-150 hover:-translate-x-[2px] hover:-translate-y-[2px] hover:shadow-[6px_6px_0_var(--ink)]",
-          open ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--spot)] text-white",
+          "fixed bottom-5 right-5 z-[80] inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] px-4 py-3 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.14em] shadow-[var(--lift-md)] transition-[transform,box-shadow] duration-150 hover:-translate-y-[2px] hover:shadow-[var(--lift-md)]",
+          open ? "bg-[var(--n1)] text-[var(--void)]" : "bg-[var(--spot)] text-[var(--void)]",
         )}
       >
         {open ? (
@@ -152,11 +152,11 @@ export function AssistantWidget() {
       {open && (
         <aside
           aria-label="Assistant"
-          className="fixed bottom-20 right-5 z-[80] flex h-[min(34rem,calc(100dvh-8rem))] w-[min(26rem,calc(100vw-2.5rem))] flex-col border-[1.5px] border-[var(--ink)] bg-[var(--paper)] shadow-[8px_8px_0_var(--ink)]"
+          className="fixed bottom-20 right-5 z-[80] flex h-[min(34rem,calc(100dvh-8rem))] w-[min(26rem,calc(100vw-2.5rem))] flex-col rounded-2xl border border-[var(--edge)] bg-[var(--paper)] shadow-[var(--lift-md)]"
         >
           {/* Masthead */}
-          <header className="shrink-0 border-b-[1.5px] border-[var(--ink)] bg-[var(--ink)] px-4 py-2.5">
-            <p className="flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--paper)]">
+          <header className="shrink-0 border-b border-[var(--rule-strong)] bg-[var(--paper-3)] px-4 py-2.5">
+            <p className="flex items-center gap-2 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--ink)]">
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
               The desk assistant
             </p>
@@ -166,7 +166,7 @@ export function AssistantWidget() {
           <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
             {messages.length === 0 ? (
               <div>
-                <p className="font-display text-[1.5rem] uppercase leading-[0.95]">
+                <p className="font-display text-[1.08rem] leading-[0.95]">
                   Ask me about the issue
                 </p>
                 <p className="mt-2 text-[0.88rem] leading-snug text-[var(--ink-soft)]">
@@ -180,7 +180,7 @@ export function AssistantWidget() {
                       <button
                         type="button"
                         onClick={() => send(step.prompt)}
-                        className="flex w-full items-center gap-3 border-[1.5px] border-[var(--rule-strong)] px-3 py-2 text-left transition-colors hover:border-[var(--ink)] hover:bg-[var(--paper-2)]"
+                        className="flex w-full items-center gap-3 border border-[var(--rule-strong)] px-3 py-2 text-left transition-colors hover:border-[var(--edge)] hover:bg-[var(--paper-2)]"
                       >
                         <span className="font-mono text-[0.6rem] tabular-nums text-[var(--ink-faint)]">
                           {String(index + 1).padStart(2, "0")}
@@ -208,9 +208,9 @@ export function AssistantWidget() {
                     {/* Plain text only: model output is never rendered as HTML. */}
                     <p
                       className={cn(
-                        "max-w-[92%] whitespace-pre-line border-[1.5px] px-3 py-2 text-[0.9rem] leading-snug",
+                        "max-w-[92%] whitespace-pre-line border px-3 py-2 text-[0.9rem] leading-snug",
                         message.role === "user"
-                          ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
+                          ? "border-[var(--edge)] bg-[var(--n1)] text-[var(--void)]"
                           : "border-[var(--rule-strong)] bg-[var(--paper-2)]",
                       )}
                     >
@@ -231,7 +231,7 @@ export function AssistantWidget() {
                                 <span className="font-mono text-[0.54rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
                                   {item.channel}
                                 </span>
-                                <span className="min-w-0 flex-1 truncate font-display text-[0.98rem] uppercase leading-none transition-colors group-hover:text-[var(--spot-deep)]">
+                                <span className="min-w-0 flex-1 truncate font-display text-[0.95rem] leading-none transition-colors group-hover:text-[var(--spot-deep)]">
                                   {item.title}
                                 </span>
                               </Link>
@@ -259,7 +259,7 @@ export function AssistantWidget() {
               event.preventDefault();
               send(input);
             }}
-            className="flex shrink-0 gap-0 border-t-[1.5px] border-[var(--ink)]"
+            className="flex shrink-0 gap-0 border-t border-[var(--rule-strong)]"
           >
             <label className="sr-only" htmlFor="assistant-input">
               Ask a question
@@ -277,7 +277,7 @@ export function AssistantWidget() {
               type="submit"
               disabled={sending || !input.trim()}
               aria-label="Send"
-              className="grid w-12 shrink-0 place-items-center border-l-[1.5px] border-[var(--ink)] bg-[var(--spot)] text-white transition-opacity disabled:opacity-40"
+              className="grid w-12 shrink-0 place-items-center border-l border-[var(--rule-strong)] bg-[var(--spot)] text-[var(--void)] transition-opacity disabled:opacity-40"
             >
               <Send className="h-4 w-4" aria-hidden />
             </button>

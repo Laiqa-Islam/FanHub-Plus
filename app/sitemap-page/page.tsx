@@ -22,12 +22,14 @@ export const metadata: Metadata = {
 type Node = { href: string; label: string; note: string };
 
 const PUBLIC_PAGES: Node[] = [
-  { href: "/", label: "Front page", note: "Masthead, contents, feature spread" },
+  { href: "/", label: "Front page", note: "Hero, channel index, latest drops" },
   { href: "/explore", label: "Explore", note: "Search, filter and sort everything" },
   { href: "/media", label: "Multimedia Center", note: "Watch, listen, galleries, ratings" },
   { href: "/characters", label: "Characters", note: "Profile cards, filter by channel" },
   { href: "/events", label: "Events", note: "OpenStreetMap map + calendar" },
-  { href: "/merch", label: "Merch", note: "Showcase catalogue, grouped by fandom" },
+  { href: "/merch", label: "Merch", note: "Shop catalogue, grouped by fandom" },
+  { href: "/cart", label: "Cart", note: "Persistent bag, quantities and totals" },
+  { href: "/checkout", label: "Checkout", note: "Delivery and demo payment flow" },
   { href: "/upcoming", label: "Upcoming", note: "Release schedule by month" },
   { href: "/feedback", label: "Feedback", note: "Bug, suggestion or query" },
   { href: "/sitemap-page", label: "Sitemap", note: "This page" },
@@ -37,7 +39,7 @@ const DETAIL_PAGES: Node[] = [
   { href: "/category/anime", label: "/category/[slug]", note: "One channel, filtered" },
   { href: "/explore", label: "/content/[slug]", note: "Article or media, with rating" },
   { href: "/characters", label: "/characters/[slug]", note: "One character profile" },
-  { href: "/merch", label: "/merch/[slug]", note: "Plate gallery + lightbox" },
+  { href: "/merch", label: "/merch/[slug]", note: "Product gallery + add to cart" },
 ];
 
 const AUTH_PAGES: Node[] = [
@@ -49,8 +51,8 @@ const AUTH_PAGES: Node[] = [
 ];
 
 const MEMBER_PAGES: Node[] = [
-  { href: "/dashboard", label: "Dashboard", note: "Your channels, clippings, activity" },
-  { href: "/bookmarks", label: "Clippings", note: "Saved items with private notes" },
+  { href: "/dashboard", label: "Dashboard", note: "Your channels, saves, activity" },
+  { href: "/bookmarks", label: "Saved", note: "Saved items with private notes" },
   { href: "/profile", label: "Profile", note: "Fandoms, avatar, display preferences" },
   { href: "/submit", label: "Submit content", note: "Fan article, pending review" },
 ];
@@ -70,16 +72,16 @@ const ADMIN_PAGES: Node[] = [
 export default function SitemapPage() {
   return (
     <div>
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-10 pt-8 sm:px-8">
           <Breadcrumbs trail={[{ label: "Sitemap" }]} />
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="mark mb-3">Application flow</p>
-              <Misreg as="h1" className="text-[clamp(2.4rem,8vw,5.2rem)]" ghostInk="var(--ch-manga)">
+              <Misreg as="h1" className="text-[clamp(1.85rem,5.5vw,3.6rem)]" ghostInk="var(--ch-manga)">
                 Sitemap
               </Misreg>
-              <p className="mt-5 max-w-xl border-l-4 border-[var(--ch-manga)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
+              <p className="mt-5 max-w-xl border-l-2 border-[var(--ch-manga)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
                 Every page in Fan Hub Plus, grouped by who can reach it. Access level is what
                 shapes the flow: most of the site is open to anyone, a band of it needs a free
                 account, and one corner is administrators only.
@@ -93,17 +95,17 @@ export default function SitemapPage() {
 
       <div className="mx-auto max-w-[88rem] px-5 py-12 sm:px-8">
         {/* Access tiers, as a flow */}
-        <div className="mb-12 grid gap-px border-[1.5px] border-[var(--ink)] bg-[var(--ink)] sm:grid-cols-3">
+        <div className="mb-12 grid gap-2.5 sm:grid-cols-3">
           {[
             { tier: "Visitor", body: "Browse and read everything. No account needed." },
-            { tier: "Member", body: "Adds clippings, notes, ratings and submissions." },
+            { tier: "Member", body: "Adds saves, notes, ratings and submissions." },
             { tier: "Administrator", body: "Adds the control panel and moderation." },
           ].map((step, index) => (
-            <div key={step.tier} className="bg-[var(--paper)] p-5">
+            <div key={step.tier} className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5">
               <p className="font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
                 {String(index + 1).padStart(2, "0")}
               </p>
-              <p className="mt-2 font-display text-[1.6rem] uppercase leading-none">
+              <p className="mt-2 font-display text-[1.15rem] leading-none">
                 {step.tier}
               </p>
               <p className="mt-2 text-[0.88rem] leading-snug text-[var(--ink-soft)]">
@@ -127,8 +129,8 @@ export default function SitemapPage() {
         </div>
 
         {/* Channels */}
-        <section className="mt-14 border-t-2 border-[var(--ink)] pt-5">
-          <h2 className="mb-5 font-display text-[1.9rem] uppercase leading-none">
+        <section className="mt-14 border-t border-[var(--rule-strong)] pt-5">
+          <h2 className="mb-5 font-display text-[1.37rem] leading-none">
             The eight channels
           </h2>
           <div className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -143,10 +145,13 @@ export default function SitemapPage() {
                 </span>
                 <span
                   aria-hidden
-                  className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-125"
-                  style={{ background: `var(--ch-${category.token})` }}
+                  className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-125 rounded-full"
+                  style={{
+                    background: `var(--ch-${category.token})`,
+                    boxShadow: `0 0 9px var(--ch-${category.token})`,
+                  }}
                 />
-                <span className="font-display text-[1.2rem] uppercase leading-none">
+                <span className="font-display text-[0.95rem] leading-none">
                   {category.name}
                 </span>
               </Link>
@@ -155,8 +160,8 @@ export default function SitemapPage() {
         </section>
 
         {/* API surface, for the report */}
-        <section className="mt-14 border-t-2 border-[var(--ink)] pt-5">
-          <h2 className="mb-5 font-display text-[1.9rem] uppercase leading-none">
+        <section className="mt-14 border-t border-[var(--rule-strong)] pt-5">
+          <h2 className="mb-5 font-display text-[1.37rem] leading-none">
             Server endpoints
           </h2>
           <ul className="grid gap-x-8 sm:grid-cols-2">
@@ -194,9 +199,9 @@ function Section({
 }) {
   return (
     <section className={className}>
-      <div className="mb-4 flex items-center gap-3 border-t-2 border-[var(--ink)] pt-3">
+      <div className="mb-4 flex items-center gap-3 border-t border-[var(--rule-strong)] pt-3">
         <span aria-hidden className="h-5 w-5" style={{ background: ink }} />
-        <h2 className="font-display text-[1.7rem] uppercase leading-none">{title}</h2>
+        <h2 className="font-display text-[1.22rem] leading-none">{title}</h2>
         <span className="mark !text-[0.58rem]">{nodes.length}</span>
       </div>
       <ul className="flex flex-col">
@@ -206,7 +211,7 @@ function Section({
               href={node.href}
               className="group flex flex-wrap items-baseline gap-x-3 border-b border-[var(--rule)] py-2.5 transition-colors hover:bg-[var(--paper-2)]"
             >
-              <span className="font-display text-[1.15rem] uppercase leading-none transition-transform duration-200 group-hover:translate-x-1">
+              <span className="font-display text-[0.95rem] leading-none transition-transform duration-200 group-hover:translate-x-1">
                 {node.label}
               </span>
               <span className="font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--ink-faint)]">

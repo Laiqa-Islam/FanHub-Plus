@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 
 import { categoryBySlug } from "@/lib/constants";
@@ -9,6 +8,7 @@ import { CharacterProfile } from "@/models";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { ShareButton } from "@/components/share-button";
 import { BookmarkButton } from "@/components/bookmark-button";
+import { CharacterDossier } from "@/components/characters/character-dossier";
 import { isBookmarked } from "@/app/actions/bookmarks";
 import { getCurrentUser } from "@/lib/dal";
 
@@ -39,8 +39,10 @@ export default async function CharacterDetailPage(
   if (!character) notFound();
 
   const category = categoryBySlug(character.category);
+  // The character's own signal leads; the channel's is the fallback, so a
+  // record seeded before `accent` existed still opens in a sensible colour.
+  const accent = character.accent || `var(--ch-${category?.token ?? "anime"})`;
 
-  // Others from the same franchise, which is usually the most useful next step.
   await connectToDatabase();
   const [siblings, user, clipped] = await Promise.all([
     CharacterProfile.find({ franchise: character.franchise, slug: { $ne: slug } })
@@ -51,7 +53,7 @@ export default async function CharacterDetailPage(
   ]);
 
   return (
-    <div className="mx-auto max-w-5xl px-5 py-12">
+    <div className="mx-auto max-w-[80rem] px-5 py-8 sm:px-8">
       <Breadcrumbs
         trail={[
           { href: "/characters", label: "Characters" },
@@ -60,66 +62,30 @@ export default async function CharacterDetailPage(
         ]}
       />
 
-      <div className="grid gap-10 md:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
-        {/* Portrait card */}
-        <div className="relative aspect-[4/5] overflow-hidden border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper-2)]">
-          {character.imageUrl && (
-            <Image
-              src={character.imageUrl}
-              alt=""
-              fill
-              priority
-              sizes="(max-width: 768px) 100vw, 320px"
-              className="object-cover"
-            />
-          )}
-          <div
-            aria-hidden
-            className="absolute inset-0 mix-blend-color"
-            style={{ background: `var(--ch-${category?.token ?? "anime"})` }}
-          />
-          <div
-            aria-hidden
-            className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"
-          />
-          <span
-            aria-hidden
-            className="absolute inset-x-0 top-0 h-1"
-            style={{ background: `var(--ch-${category?.token ?? "anime"})` }}
-          />
-        </div>
-
-        <div>
-          <p className="mark mb-4">
-            <span style={{ color: `var(--ch-${category?.token ?? "anime"})` }}>
-              {category?.name}
-            </span>{" "}
-            · {character.franchise}
-            {character.debutYear ? ` · debut ${character.debutYear}` : ""}
-          </p>
-
-          <h1 className="font-display text-[clamp(2rem,5vw,3rem)]">{character.name}</h1>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {(character.traits ?? []).map((trait) => (
-              <span
-                key={trait}
-                className="border-[1.5px] border-[var(--rule-strong)] px-3 py-1 font-mono text-[0.68rem] uppercase tracking-[0.11em] text-[var(--ink-soft)]"
-              >
-                {trait}
-              </span>
-            ))}
-          </div>
-
-          <p className="mt-7 text-[1.04rem] leading-relaxed text-[var(--ink)]">{character.bio}</p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-5 border-t border-[var(--rule)] pt-6">
-            <Link
-              href={`/category/${character.category}`}
-              className="font-mono text-[0.74rem] uppercase tracking-[0.12em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot)]"
-            >
-              Browse {category?.name}
-            </Link>
+      <CharacterDossier
+        data={{
+          name: character.name,
+          kanji: character.kanji,
+          grade: character.grade,
+          sealMark: character.sealMark,
+          accent,
+          bio: character.bio ?? "",
+          imageUrl: character.imageUrl,
+          signature: character.signature,
+          debutYear: character.debutYear,
+          stats: (character.stats ?? []) as number[],
+          // The six rows of the reference layout, in its order.
+          rows: [
+            { id: "affiliation", label: "Affiliation", value: character.affiliation },
+            { id: "status", label: "Status", value: character.status },
+            { id: "relationships", label: "Relationships", list: character.relationships },
+            { id: "skills", label: "Skills", list: character.skills },
+            { id: "troops", label: "Troops", value: character.troops },
+            { id: "weapons", label: "Weapons & EQS", list: character.weapons },
+          ],
+        }}
+        actions={
+          <>
             <BookmarkButton
               targetType="character"
               targetId={String(character._id)}
@@ -127,35 +93,65 @@ export default async function CharacterDetailPage(
               signedIn={Boolean(user)}
             />
             <ShareButton title={character.name} />
-          </div>
+          </>
+        }
+      />
 
-          <p className="mt-6 text-[0.78rem] leading-relaxed text-[var(--ink-faint)]">
-            Card art is licensed stock photography under a channel-hue treatment, not official
-            character artwork.
-          </p>
+      {(character.traits ?? []).length > 0 && (
+        <div className="mt-6 flex flex-wrap items-center gap-2">
+          {(character.traits ?? []).map((trait) => (
+            <span
+              key={trait}
+              className="rounded-full border border-[var(--edge)] px-3 py-1 font-mono text-[0.6rem] uppercase tracking-[0.11em] text-[var(--ink-soft)]"
+            >
+              {trait}
+            </span>
+          ))}
+          <Link
+            href={`/category/${character.category}`}
+            className="ml-auto font-mono text-[0.66rem] uppercase tracking-[0.12em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
+          >
+            Browse {category?.name} →
+          </Link>
         </div>
-      </div>
+      )}
+
+      <p className="mt-6 max-w-3xl text-[0.76rem] leading-relaxed text-[var(--ink-faint)]">
+        Card art comes from the site&apos;s shared fan-art pool. Where a dossier does not name its
+        own art, the image is assigned by channel position and is representative rather than a
+        portrait of this specific character.
+      </p>
 
       {siblings.length > 0 && (
-        <section className="mt-16 border-t border-[var(--rule)] pt-12">
-          <h2 className="mb-6 font-display text-[1.4rem]">
+        <section className="mt-14 border-t border-[var(--rule)] pt-10">
+          <h2 className="mb-6 font-display text-[1.25rem] font-bold">
             Also from {character.franchise}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {siblings.map((sibling) => (
-              <Link
-                key={String(sibling._id)}
-                href={`/characters/${sibling.slug}`}
-                className="group border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-4 transition-colors hover:border-[var(--rule-strong)]"
-              >
-                <h3 className="font-display text-[1rem] font-bold transition-colors group-hover:text-[var(--spot)]">
-                  {sibling.name}
-                </h3>
-                <p className="mt-1.5 line-clamp-2 text-[0.82rem] leading-relaxed text-[var(--ink-soft)]">
-                  {sibling.bio}
-                </p>
-              </Link>
-            ))}
+            {siblings.map((sibling) => {
+              const siblingAccent =
+                sibling.accent || `var(--ch-${category?.token ?? "anime"})`;
+              return (
+                <Link
+                  key={String(sibling._id)}
+                  href={`/characters/${sibling.slug}`}
+                  className="group rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4 transition-colors hover:border-[var(--n2)]"
+                >
+                  <p
+                    className="font-mono text-[0.54rem] uppercase tracking-[0.14em]"
+                    style={{ color: siblingAccent }}
+                  >
+                    {sibling.grade || sibling.role || "Profile"}
+                  </p>
+                  <h3 className="mt-1.5 font-display text-[0.95rem] font-bold transition-colors group-hover:text-[var(--n2)]">
+                    {sibling.name}
+                  </h3>
+                  <p className="mt-1.5 line-clamp-2 text-[0.82rem] leading-relaxed text-[var(--ink-soft)]">
+                    {sibling.bio}
+                  </p>
+                </Link>
+              );
+            })}
           </div>
         </section>
       )}

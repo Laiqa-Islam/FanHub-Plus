@@ -273,10 +273,10 @@ export function MediaUploader({
             accept(event.dataTransfer.files);
           }}
           className={cn(
-            "flex cursor-pointer flex-col items-center gap-2 border-[1.5px] border-dashed px-5 py-8 text-center transition-colors",
+            "flex cursor-pointer flex-col items-center gap-2 border border-dashed px-5 py-8 text-center transition-colors",
             dragging
               ? "border-[var(--spot)] bg-[var(--spot)]/8"
-              : "border-[var(--rule-strong)] bg-[var(--paper-2)] hover:border-[var(--ink)]",
+              : "border-[var(--rule-strong)] bg-[var(--paper-2)] hover:border-[var(--edge)]",
             error && "border-[var(--spot)]",
           )}
         >
@@ -320,7 +320,7 @@ export function MediaUploader({
           {items.map((item, index) => (
             <li
               key={item.localId}
-              className="flex items-start gap-3 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-3"
+              className="flex items-start gap-3 border border-[var(--rule-strong)] bg-[var(--paper)] p-3"
             >
               <span className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden border border-[var(--rule)] bg-[var(--paper-2)]">
                 {item.previewUrl ? (
@@ -377,7 +377,7 @@ export function MediaUploader({
                       id={`caption-${item.localId}`}
                       value={item.caption}
                       maxLength={200}
-                      placeholder="Caption this plate…"
+                      placeholder="Caption this image…"
                       onChange={(event) => patch(item.localId, { caption: event.target.value })}
                       className="mt-2 w-full border border-[var(--rule-strong)] bg-[var(--paper-2)] px-2.5 py-1.5 text-[0.84rem] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:outline-none"
                     />

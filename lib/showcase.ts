@@ -2,12 +2,7 @@ import "server-only";
 import { connectToDatabase } from "@/lib/db";
 import { MerchandiseItem, Content } from "@/models";
 
-/**
- * Merchandise showcase and upcoming releases (SRS FR-7).
- *
- * Nothing here carries a price, a stock level or an order path — §1.5 puts
- * purchasing out of scope, so the data model has no room for it by design.
- */
+/** Merchandise storefront and upcoming releases (SRS FR-7). */
 
 export type MerchItem = {
   id: string;
@@ -15,6 +10,7 @@ export type MerchItem = {
   slug: string;
   category: string;
   description: string;
+  priceCents: number;
   imageUrl: string;
   gallery: string[];
   tag: string;
@@ -34,6 +30,7 @@ function toMerchItem(doc: Record<string, unknown>): MerchItem {
     slug: String(doc.slug ?? ""),
     category: String(doc.category ?? ""),
     description: String(doc.description ?? ""),
+    priceCents: Number(doc.priceCents ?? 0),
     imageUrl: String(doc.imageUrl ?? ""),
     gallery: (doc.gallery as string[]) ?? [],
     tag: String(doc.tag ?? ""),

@@ -11,7 +11,9 @@ import {
   User as UserIcon,
   Shield,
   PenLine,
-  Scissors,
+  Bookmark,
+  ChevronDown,
+  ArrowUpRight,
 } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 
@@ -19,9 +21,13 @@ import { CATEGORIES } from "@/lib/constants";
 import { cn, initials } from "@/lib/utils";
 import { InkStrip } from "@/components/press";
 import { AccessibilityMenu } from "@/components/layout/accessibility-menu";
+import { CartButton } from "@/components/cart/cart-button";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/app/actions/auth";
 import type { CurrentUser } from "@/lib/dal";
+
+/** The three signals, cycled across the nav so the bar reads as a strip. */
+const NAV_INKS = ["var(--n1)", "var(--n2)", "var(--n3)"];
 
 const NAV_LINKS = [
   { href: "/explore", label: "Explore" },
@@ -32,7 +38,16 @@ const NAV_LINKS = [
   { href: "/upcoming", label: "Upcoming" },
 ];
 
-/** The masthead bar: a printed banner, ruled off from the page below it. */
+/**
+ * The sign over the door: a capsule that floats over the page rather than a
+ * bar ruled across it.
+ *
+ * The outer element stays full-width and sticky so the hit area and the
+ * stacking context behave normally; the visible pill is the inner rounded
+ * surface, inset from the page edge. `backdrop-blur` is doing real work —
+ * the page's own neon gradients sit behind it, so a solid fill would cut a
+ * flat rectangle out of the glow.
+ */
 export function SiteHeader({ user }: { user: CurrentUser | null }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -40,60 +55,85 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
   useEffect(() => setMobileOpen(false), [pathname]);
 
   return (
-    <header className="sticky top-0 z-50 border-b-2 border-[var(--ink)] bg-[var(--paper)]">
-      <div className="mx-auto flex h-16 max-w-[88rem] items-center gap-6 px-5 sm:px-8">
-        <Link href="/" className="group flex shrink-0 items-baseline gap-1.5">
-          <span className="font-display text-[1.7rem] uppercase leading-none tracking-tight">
-            Fan Hub
-          </span>
+    <header className="sticky top-0 z-50 px-3 pb-2 pt-3 sm:px-5 sm:pt-4">
+      <div
+        className="mx-auto flex h-14 max-w-[80rem] items-center gap-3 rounded-full border px-3 backdrop-blur-xl sm:gap-4 sm:pl-4 sm:pr-3"
+        style={{
+          background: "color-mix(in oklch, var(--paper-2) 82%, transparent)",
+          borderColor: "color-mix(in oklch, var(--n1) 28%, transparent)",
+          // One soft magenta bloom under the capsule, plus an inner highlight
+          // along its top edge so it reads as a lit object rather than a cut-out.
+          boxShadow:
+            "0 10px 34px rgba(0,0,0,0.55), 0 0 30px color-mix(in oklch, var(--n1) 14%, transparent), inset 0 1px 0 color-mix(in oklch, var(--ink) 10%, transparent)",
+        }}
+      >
+        <Link href="/" className="group flex shrink-0 items-center gap-2.5">
+          {/* The reference puts a round mark at the left end of the pill; this
+              is the site's own, lit rather than filled. */}
           <span
-            className="grid h-5 w-5 place-items-center bg-[var(--spot)] font-mono text-[0.8rem] font-bold leading-none text-white transition-transform duration-200 group-hover:rotate-12"
             aria-hidden
+            className="grid h-9 w-9 place-items-center rounded-full border-2 border-[var(--n1)] font-display text-[0.8rem] font-black leading-none text-[var(--n1)] shadow-[0_0_16px_color-mix(in_oklch,var(--n1)_55%,transparent),inset_0_0_12px_color-mix(in_oklch,var(--n1)_35%,transparent)] transition-transform duration-300 group-hover:rotate-90"
           >
             +
           </span>
+          <span className="hidden font-display text-[0.95rem] font-black leading-none tracking-[0.01em] sm:block">
+            FAN<span className="text-[var(--n2)]">{"//"}</span>HUB
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Primary">
+        <nav className="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Primary">
           <ChannelMenu pathname={pathname} />
-          {NAV_LINKS.map((link) => {
+          {NAV_LINKS.map((link, index) => {
             const active = pathname.startsWith(link.href);
+            // The active pill cycles the three signals by position, so no two
+            // neighbouring screens ever light up in the same colour.
+            const ink = NAV_INKS[index % NAV_INKS.length];
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "relative font-mono text-[0.72rem] font-semibold uppercase tracking-[0.16em] transition-colors",
-                  active ? "text-[var(--ink)]" : "text-[var(--ink-soft)] hover:text-[var(--ink)]",
+                  "whitespace-nowrap rounded-full px-3.5 py-2 text-[0.82rem] font-medium transition-colors",
+                  active
+                    ? "text-[var(--void)]"
+                    : "text-[var(--ink-soft)] hover:bg-[color-mix(in_oklch,var(--ink)_8%,transparent)] hover:text-[var(--ink)]",
                 )}
+                style={
+                  active
+                    ? {
+                        background: ink,
+                        boxShadow: `0 0 18px color-mix(in oklch, ${ink} 45%, transparent)`,
+                      }
+                    : undefined
+                }
               >
                 {link.label}
-                {/* Active state is an underprint rule, not a pill. */}
-                <span
-                  aria-hidden
-                  className={cn(
-                    "absolute -bottom-1.5 left-0 h-[3px] bg-[var(--spot)] transition-all duration-200",
-                    active ? "w-full" : "w-0",
-                  )}
-                />
               </Link>
             );
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex items-center gap-1.5">
           <AccessibilityMenu />
+          <CartButton />
 
           {user ? (
             <AccountMenu user={user} />
           ) : (
-            <div className="hidden items-center gap-2 sm:flex">
-              <Button asChild variant="ghost" size="sm">
-                <Link href="/login">Sign in</Link>
-              </Button>
-              <Button asChild size="sm">
-                <Link href="/register">Join</Link>
-              </Button>
+            // The reference ends its pill with one filled capsule; this is it.
+            <div className="hidden items-center gap-1 sm:flex">
+              <Link
+                href="/login"
+                className="rounded-full px-3 py-2 text-[0.82rem] font-medium text-[var(--ink-soft)] transition-colors hover:text-[var(--ink)]"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/register"
+                className="rounded-full bg-[var(--ink)] px-4 py-2 text-[0.82rem] font-semibold text-[var(--void)] transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-[0_0_22px_color-mix(in_oklch,var(--ink)_35%,transparent)]"
+              >
+                Join
+              </Link>
             </div>
           )}
 
@@ -102,14 +142,14 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
             onClick={() => setMobileOpen((open) => !open)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
-            className="grid h-10 w-10 place-items-center border-[1.5px] border-[var(--ink)] lg:hidden"
+            className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink-soft)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)] lg:hidden"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      <InkStrip height={5} />
+      <InkStrip height={2} />
 
       {mobileOpen && <MobileNav user={user} pathname={pathname} />}
     </header>
@@ -124,46 +164,84 @@ function ChannelMenu({ pathname }: { pathname: string }) {
         <button
           type="button"
           className={cn(
-            "relative font-mono text-[0.72rem] font-semibold uppercase tracking-[0.16em] transition-colors",
-            active ? "text-[var(--ink)]" : "text-[var(--ink-soft)] hover:text-[var(--ink)]",
+            "group inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3.5 py-2 text-[0.82rem] font-medium transition-colors",
+            active
+              ? "bg-[var(--n1)] text-[var(--void)] shadow-[0_0_18px_color-mix(in_oklch,var(--n1)_45%,transparent)]"
+              : "text-[var(--ink-soft)] hover:bg-[color-mix(in_oklch,var(--ink)_8%,transparent)] hover:text-[var(--ink)]",
           )}
         >
           Channels
-          <span
+          <ChevronDown
+            className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]:rotate-180"
             aria-hidden
-            className={cn(
-              "absolute -bottom-1.5 left-0 h-[3px] bg-[var(--spot)] transition-all duration-200",
-              active ? "w-full" : "w-0",
-            )}
           />
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
         <DropdownMenu.Content
-          sideOffset={16}
+          sideOffset={14}
           align="start"
-          className="z-[70] w-[26rem] border-[1.5px] border-[var(--ink)] bg-[var(--paper)] p-0 shadow-[6px_6px_0_var(--ink)]"
+          className="z-[70] w-[min(42rem,calc(100vw-2rem))] overflow-hidden rounded-[1.5rem] border border-[var(--edge)] p-2 shadow-[var(--lift-lg)] backdrop-blur-xl data-[state=open]:motion-safe:animate-[menu-in_.16s_ease-out]"
+          style={{ background: "color-mix(in oklch, var(--paper-2) 94%, transparent)" }}
         >
-          {CATEGORIES.map((category, index) => (
-            <DropdownMenu.Item key={category.slug} asChild>
+          <div className="flex items-center justify-between px-3 pb-2 pt-1.5">
+            <p className="mark !text-[0.58rem] text-[var(--n2)]">Eight channels</p>
+            <DropdownMenu.Item asChild>
               <Link
-                href={`/category/${category.slug}`}
-                className="group flex items-center gap-4 border-b border-[var(--rule)] px-4 py-2.5 outline-none transition-colors last:border-b-0 hover:bg-[var(--paper-2)] focus-visible:bg-[var(--paper-2)]"
+                href="/explore"
+                className="inline-flex items-center gap-1 rounded-full px-2 py-1 font-mono text-[0.58rem] uppercase tracking-[0.14em] text-[var(--ink-faint)] outline-none transition-colors hover:text-[var(--ink)] focus-visible:text-[var(--ink)]"
               >
-                <span className="w-5 font-mono text-[0.64rem] tabular-nums text-[var(--ink-faint)]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span
-                  aria-hidden
-                  className="h-4 w-4 shrink-0"
-                  style={{ background: `var(--ch-${category.token})` }}
-                />
-                <span className="font-display text-[1.25rem] uppercase leading-none transition-transform duration-200 group-hover:translate-x-1">
-                  {category.name}
-                </span>
+                Browse all
+                <ArrowUpRight className="h-3 w-3" aria-hidden />
               </Link>
             </DropdownMenu.Item>
-          ))}
+          </div>
+
+          {/* Two columns of tiles rather than eight ruled rows: each channel
+              gets its own surface, its tagline, and a reason for its colour
+              to be on screen. */}
+          <div className="grid gap-1.5 sm:grid-cols-2">
+            {CATEGORIES.map((category, index) => {
+              const ink = `var(--ch-${category.token})`;
+              return (
+                <DropdownMenu.Item key={category.slug} asChild>
+                  <Link
+                    href={`/category/${category.slug}`}
+                    className="group relative flex items-start gap-3 rounded-2xl border border-transparent p-3 outline-none transition-colors hover:bg-[color-mix(in_oklch,var(--ink)_6%,transparent)] focus-visible:bg-[color-mix(in_oklch,var(--ink)_6%,transparent)]"
+                  >
+                    {/* The channel's signal as a lit chip carrying its number,
+                        which is what makes the eight tiles tell themselves
+                        apart at a glance. */}
+                    <span
+                      aria-hidden
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-xl font-mono text-[0.6rem] font-semibold tabular-nums text-[var(--void)] transition-transform duration-200 group-hover:scale-105"
+                      style={{
+                        background: ink,
+                        boxShadow: `0 0 14px color-mix(in oklch, ${ink} 45%, transparent)`,
+                      }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-display text-[0.88rem] font-bold leading-none">
+                        {category.name}
+                      </span>
+                      <span className="mt-1.5 block line-clamp-2 text-[0.76rem] leading-snug text-[var(--ink-faint)]">
+                        {category.tagline}
+                      </span>
+                    </span>
+
+                    <ArrowUpRight
+                      className="h-3.5 w-3.5 shrink-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+                      style={{ color: ink }}
+                      aria-hidden
+                    />
+                  </Link>
+                </DropdownMenu.Item>
+              );
+            })}
+          </div>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
@@ -177,7 +255,7 @@ function AccountMenu({ user }: { user: CurrentUser }) {
         <button
           type="button"
           aria-label="Account menu"
-          className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] font-mono text-[0.72rem] font-bold uppercase transition-shadow hover:shadow-[3px_3px_0_var(--spot)]"
+          className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full border border-[var(--edge-strong)] bg-[var(--paper-2)] font-mono text-[0.7rem] font-bold uppercase transition-[border-color,box-shadow] hover:border-[var(--n1)] hover:shadow-[0_0_20px_color-mix(in_oklch,var(--n1)_45%,transparent)]"
         >
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -191,10 +269,10 @@ function AccountMenu({ user }: { user: CurrentUser }) {
         <DropdownMenu.Content
           sideOffset={12}
           align="end"
-          className="z-[70] w-60 border-[1.5px] border-[var(--ink)] bg-[var(--paper)] shadow-[6px_6px_0_var(--ink)]"
+          className="z-[70] w-60 overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] shadow-[var(--lift-lg)]"
         >
-          <div className="border-b-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-4 py-3">
-            <p className="truncate font-display text-[1.15rem] uppercase leading-none">
+          <div className="border-b border-[var(--rule)] bg-[var(--paper-2)] px-4 py-3">
+            <p className="truncate font-display text-[0.9rem] font-bold leading-none">
               {user.name}
             </p>
             <p className="mt-1 truncate font-mono text-[0.62rem] text-[var(--ink-faint)]">
@@ -203,7 +281,7 @@ function AccountMenu({ user }: { user: CurrentUser }) {
             {!user.emailVerified && (
               <Link
                 href="/verify-email"
-                className="mt-2 inline-block bg-[var(--flag)] px-2 py-0.5 font-mono text-[0.58rem] font-semibold uppercase tracking-[0.12em] text-white"
+                className="mt-2 inline-block rounded-full bg-[var(--n3)] px-2.5 py-0.5 font-mono text-[0.55rem] font-semibold uppercase tracking-[0.12em] text-[var(--void)]"
               >
                 Confirm email
               </Link>
@@ -211,17 +289,17 @@ function AccountMenu({ user }: { user: CurrentUser }) {
           </div>
 
           <MenuLink href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
-          <MenuLink href="/bookmarks" icon={Scissors} label="Clippings" />
+          <MenuLink href="/bookmarks" icon={Bookmark} label="Saved" />
           <MenuLink href="/profile" icon={UserIcon} label="Profile" />
           <MenuLink href="/submit" icon={PenLine} label="Submit content" />
           {user.role === "admin" && (
             <MenuLink href="/admin/submissions" icon={Shield} label="Review queue" />
           )}
 
-          <form action={logout} className="border-t-[1.5px] border-[var(--ink)]">
+          <form action={logout} className="border-t border-[var(--rule)]">
             <button
               type="submit"
-              className="flex w-full items-center gap-2.5 px-4 py-2.5 font-mono text-[0.68rem] uppercase tracking-[0.13em] text-[var(--ink-soft)] transition-colors hover:bg-[var(--spot)] hover:text-white"
+              className="flex w-full items-center gap-2.5 px-4 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.13em] text-[var(--ink-soft)] transition-colors hover:bg-[var(--n1)] hover:text-[var(--void)]"
             >
               <LogOut className="h-3.5 w-3.5" aria-hidden />
               Sign out
@@ -246,7 +324,7 @@ function MenuLink({
     <DropdownMenu.Item asChild>
       <Link
         href={href}
-        className="flex items-center gap-2.5 border-b border-[var(--rule)] px-4 py-2.5 font-mono text-[0.68rem] uppercase tracking-[0.13em] outline-none transition-colors hover:bg-[var(--paper-2)] focus-visible:bg-[var(--paper-2)]"
+        className="flex items-center gap-2.5 border-b border-[var(--rule)] px-4 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.13em] outline-none transition-colors hover:bg-[var(--paper-2)] hover:text-[var(--n2)] focus-visible:bg-[var(--paper-2)]"
       >
         <Icon className="h-3.5 w-3.5 text-[var(--ink-faint)]" />
         {label}
@@ -257,15 +335,15 @@ function MenuLink({
 
 function MobileNav({ user, pathname }: { user: CurrentUser | null; pathname: string }) {
   return (
-    <div className="border-t-2 border-[var(--ink)] bg-[var(--paper)] px-5 py-5 lg:hidden">
+    <div className="border-t border-[var(--rule)] bg-[var(--paper-2)] px-5 py-5 lg:hidden">
       <nav className="flex flex-col" aria-label="Mobile">
         {NAV_LINKS.map((link) => (
           <Link
             key={link.href}
             href={link.href}
             className={cn(
-              "border-b border-[var(--rule)] py-3 font-display text-[1.5rem] uppercase leading-none",
-              pathname.startsWith(link.href) && "text-[var(--spot-deep)]",
+              "border-b border-[var(--rule)] py-3 font-display text-[1.05rem] font-bold leading-none transition-colors",
+              pathname.startsWith(link.href) ? "text-[var(--n1)]" : "hover:text-[var(--n2)]",
             )}
           >
             {link.label}
@@ -273,18 +351,21 @@ function MobileNav({ user, pathname }: { user: CurrentUser | null; pathname: str
         ))}
       </nav>
 
-      <p className="mark mt-6 mb-3">Channels</p>
+      <p className="mark mt-6 mb-3 text-[var(--n2)]">Channels</p>
       <div className="grid grid-cols-2 gap-x-4">
         {CATEGORIES.map((category) => (
           <Link
             key={category.slug}
             href={`/category/${category.slug}`}
-            className="flex items-center gap-2.5 border-b border-[var(--rule)] py-2.5 font-mono text-[0.72rem] uppercase tracking-[0.1em]"
+            className="flex items-center gap-2.5 border-b border-[var(--rule)] py-2.5 font-mono text-[0.66rem] uppercase tracking-[0.1em] text-[var(--ink-soft)]"
           >
             <span
               aria-hidden
-              className="h-3 w-3 shrink-0"
-              style={{ background: `var(--ch-${category.token})` }}
+              className="h-2 w-2 shrink-0 rounded-full"
+              style={{
+                background: `var(--ch-${category.token})`,
+                boxShadow: `0 0 8px var(--ch-${category.token})`,
+              }}
             />
             {category.name}
           </Link>

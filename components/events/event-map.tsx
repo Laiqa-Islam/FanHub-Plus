@@ -149,7 +149,7 @@ export function EventMap({
       ref={containerRef}
       role="application"
       aria-label="Map of upcoming events"
-      className="h-[26rem] w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] lg:h-[34rem]"
+      className="h-[26rem] w-full rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] lg:h-[34rem]"
     />
   );
 }

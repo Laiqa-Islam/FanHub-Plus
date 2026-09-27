@@ -85,11 +85,11 @@ export function FilterBar({
             onChange={(event) => setTerm(event.target.value)}
             placeholder="Search titles, summaries and tags…"
             aria-label="Search content"
-            className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper)] py-3 pl-11 pr-11 text-[0.92rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+            className="w-full rounded-full border border-[var(--edge)] bg-[var(--paper-3)] py-3 pl-11 pr-11 text-[0.92rem] text-[var(--ink)] placeholder:text-[var(--ink-faint)] transition-[border-color,box-shadow] focus:border-[var(--n2)] focus:shadow-[0_0_18px_color-mix(in_oklch,var(--n2)_25%,transparent)] focus:outline-none"
           />
           {isPending && (
             <Loader2
-              className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--spot)]"
+              className="absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-[var(--n2)]"
               aria-hidden
             />
           )}
@@ -103,7 +103,7 @@ export function FilterBar({
             id="sort"
             value={current("sort") || "latest"}
             onChange={(event) => setParam("sort", event.target.value)}
-            className="cursor-pointer border-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-4 py-3 text-[0.88rem] text-[var(--ink)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+            className="cursor-pointer rounded-full border border-[var(--edge)] bg-[var(--paper-3)] px-4 py-3 text-[0.88rem] text-[var(--ink)] transition-colors focus:border-[var(--n2)] focus:outline-none"
           >
             {SORT_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -117,16 +117,16 @@ export function FilterBar({
             onClick={() => setShowAdvanced((open) => !open)}
             aria-expanded={showAdvanced}
             className={cn(
-              "inline-flex items-center gap-2 border px-4 py-3 text-[0.88rem] transition-colors",
+              "inline-flex items-center gap-2 rounded-full border px-4 py-3 text-[0.88rem] transition-colors",
               showAdvanced || activeCount > 0
-                ? "border-[var(--spot)] text-[var(--spot)]"
-                : "border-[var(--rule-strong)] text-[var(--ink-soft)] hover:text-[var(--ink)]",
+                ? "border-[var(--n1)] text-[var(--n1)]"
+                : "border-[var(--edge)] text-[var(--ink-soft)] hover:border-[var(--edge-strong)] hover:text-[var(--ink)]",
             )}
           >
             <SlidersHorizontal className="h-4 w-4" aria-hidden />
             Filters
             {activeCount > 0 && (
-              <span className="grid h-5 min-w-5 place-items-center bg-[var(--spot)] px-1 font-mono text-[0.65rem] text-white">
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--n1)] px-1 font-mono text-[0.62rem] text-[var(--void)]">
                 {activeCount}
               </span>
             )}
@@ -136,7 +136,7 @@ export function FilterBar({
 
       {/* Advanced filters */}
       {showAdvanced && (
-        <div className="mt-4 grid gap-4 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-4 rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5 sm:grid-cols-2 lg:grid-cols-4">
           {!lockedCategory && (
             <FilterSelect
               label="Channel"
@@ -175,7 +175,7 @@ export function FilterBar({
 
       {/* Result count + active filter chips */}
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <p className="font-mono text-[0.72rem] uppercase tracking-[0.13em] text-[var(--ink-faint)]">
+        <p className="font-mono text-[0.66rem] uppercase tracking-[0.13em] text-[var(--ink-faint)]">
           {total} {total === 1 ? "result" : "results"}
         </p>
 
@@ -191,7 +191,7 @@ export function FilterBar({
               key={key}
               type="button"
               onClick={() => setParam(key, "")}
-              className="inline-flex items-center gap-1.5 border border-[var(--spot)] bg-[var(--spot-wash)] px-3 py-1 text-[0.78rem] text-[var(--spot-deep)] transition-opacity hover:opacity-80"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--n1)] bg-[var(--spot-wash)] px-3 py-1 text-[0.76rem] text-[var(--spot-deep)] transition-opacity hover:opacity-80"
             >
               {label}
               <X className="h-3 w-3" aria-hidden />
@@ -204,7 +204,7 @@ export function FilterBar({
           <button
             type="button"
             onClick={clearAll}
-            className="text-[0.78rem] text-[var(--ink-soft)] underline-offset-4 transition-colors hover:text-[var(--spot)] hover:underline"
+            className="text-[0.76rem] text-[var(--ink-soft)] underline-offset-4 transition-colors hover:text-[var(--n2)] hover:underline"
           >
             Clear all
           </button>
@@ -229,13 +229,13 @@ function FilterSelect({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--ink-soft)]">
+      <label className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--ink-faint)]">
         {label}
       </label>
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="cursor-pointer border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] px-3 py-2.5 text-[0.88rem] capitalize text-[var(--ink)] transition-colors focus:border-[var(--spot)] focus:outline-none"
+        className="cursor-pointer rounded-xl border border-[var(--edge)] bg-[var(--paper-2)] px-3 py-2.5 text-[0.88rem] capitalize text-[var(--ink)] transition-colors focus:border-[var(--n2)] focus:outline-none"
       >
         <option value="">{allLabel}</option>
         {options.map((option) => (

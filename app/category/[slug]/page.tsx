@@ -89,7 +89,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
                 />
                 <p className="mark">Channel · {total} items</p>
               </div>
-              <h1 className="font-display text-[clamp(2.2rem,6vw,3.6rem)]">{category.name}</h1>
+              <h1 className="font-display text-[clamp(1.75rem,4.5vw,2.8rem)]">{category.name}</h1>
               <p className="mt-4 text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
                 {category.tagline}
               </p>
@@ -102,12 +102,15 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
                   <Link
                     key={other.slug}
                     href={`/category/${other.slug}`}
-                    className="flex items-center gap-2 border-[1.5px] border-[var(--rule-strong)] px-3.5 py-1.5 text-[0.8rem] text-[var(--ink-soft)] transition-colors hover:border-[var(--rule-strong)] hover:text-[var(--ink)]"
+                    className="flex items-center gap-2 border border-[var(--rule-strong)] px-3.5 py-1.5 text-[0.8rem] text-[var(--ink-soft)] transition-colors hover:border-[var(--rule-strong)] hover:text-[var(--ink)]"
                   >
                     <span
                       aria-hidden
-                      className="h-2 w-2"
-                      style={{ background: `var(--ch-${other.token})` }}
+                      className="h-2 w-2 rounded-full"
+                      style={{
+                    background: `var(--ch-${other.token})`,
+                    boxShadow: `0 0 9px var(--ch-${other.token})`,
+                  }}
                     />
                     {other.name}
                   </Link>
@@ -128,7 +131,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
         </Suspense>
 
         {items.length === 0 ? (
-          <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
+          <p className="border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
             Nothing in this channel matches those filters yet.
           </p>
         ) : (
@@ -168,7 +171,7 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
                 <Link
                   key={String(character._id)}
                   href={`/characters/${character.slug}`}
-                  className="group border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-5 transition-colors hover:border-[var(--rule-strong)]"
+                  className="group border border-[var(--rule-strong)] bg-[var(--paper)] p-5 transition-colors hover:border-[var(--rule-strong)]"
                 >
                   <p className="font-mono text-[0.64rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
                     {character.franchise}

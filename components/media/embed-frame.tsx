@@ -35,9 +35,9 @@ export function EmbedFrame({
   const fixedHeight = "height" in spec.frame ? spec.frame.height : null;
 
   return (
-    <figure className="border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] shadow-[6px_6px_0_var(--ink)]">
+    <figure className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] shadow-[var(--lift-md)]">
       <div
-        className="relative w-full overflow-hidden bg-[#0c0b10]"
+        className="relative w-full overflow-hidden rounded-2xl bg-[var(--void)]"
         style={
           fixedHeight
             ? { height: `${fixedHeight}px` }
@@ -58,10 +58,10 @@ export function EmbedFrame({
         />
       </div>
 
-      <figcaption className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-3 py-2">
+      <figcaption className="flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2">
         <span
-          className="border border-[var(--ink)] px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.14em]"
-          style={{ background: ink, color: "#fff" }}
+          className="border border-[var(--edge)] px-2 py-0.5 font-mono text-[0.58rem] uppercase tracking-[0.14em]"
+          style={{ background: ink, color: "var(--void)" }}
         >
           {spec.label}
         </span>

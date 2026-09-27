@@ -10,7 +10,7 @@ const COLUMNS = [
       { href: "/media", label: "Multimedia" },
       { href: "/characters", label: "Characters" },
       { href: "/events", label: "Events" },
-      { href: "/merch", label: "Merch showcase" },
+      { href: "/merch", label: "Shop merch" },
     ],
   },
   {
@@ -23,7 +23,7 @@ const COLUMNS = [
     ],
   },
   {
-    heading: "Colophon",
+    heading: "The rest",
     links: [
       { href: "/sitemap-page", label: "Sitemap" },
       { href: "/feedback", label: "Send feedback" },
@@ -33,40 +33,46 @@ const COLUMNS = [
   },
 ];
 
-/** The back cover: colophon, index and imprint. */
+/** The foot of the sign: the channel rail, the index, and the imprint. */
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t-2 border-[var(--ink)] bg-[var(--paper-2)]">
-      <InkStrip height={5} />
+    <footer className="relative mt-auto border-t border-[var(--rule)] bg-[var(--paper-2)]">
+      {/* The rail sits on the seam, so the eight signals read as the light
+          under the footer rather than a band inside it. */}
+      <InkStrip height={2} className="absolute inset-x-0 top-0" />
 
       <div className="mx-auto max-w-[88rem] px-5 py-14 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.5fr_repeat(3,1fr)]">
           <div>
             <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="font-display text-[2rem] uppercase leading-none">Fan Hub</span>
+              <span className="font-display text-[1.25rem] font-black leading-none">
+                FAN<span className="text-[var(--n2)]">{"//"}</span>HUB
+              </span>
               <span
                 aria-hidden
-                className="grid h-5 w-5 place-items-center bg-[var(--spot)] font-mono text-[0.8rem] font-bold leading-none text-white"
+                className="grid h-5 w-5 place-items-center rounded-md bg-[var(--n1)] font-mono text-[0.78rem] font-bold leading-none text-[var(--void)] shadow-[0_0_14px_color-mix(in_oklch,var(--n1)_55%,transparent)]"
               >
                 +
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-[0.95rem] leading-relaxed text-[var(--ink-soft)]">
-              Eight fandoms, printed in eight inks. Anime, gaming, film, television, K-Pop,
-              comics, manga and cosplay — written up properly, in one place.
+              Eight fandoms, eight signals. Anime, gaming, film, television, K-Pop, comics,
+              manga and cosplay — one undercity, open all night.
             </p>
             <RegMark className="mt-6 text-[var(--ink-faint)]" />
           </div>
 
           {COLUMNS.map((column) => (
             <div key={column.heading}>
-              <p className="mark mb-4 border-b border-[var(--rule)] pb-2">{column.heading}</p>
+              <p className="mark mb-4 border-b border-[var(--rule)] pb-2 text-[var(--n2)]">
+                {column.heading}
+              </p>
               <ul className="flex flex-col">
                 {column.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="block border-b border-[var(--rule)] py-2 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-[var(--ink-soft)] transition-colors hover:bg-[var(--paper-3)] hover:text-[var(--ink)]"
+                      className="block border-b border-[var(--rule)] py-2 font-mono text-[0.66rem] uppercase tracking-[0.12em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n1)]"
                     >
                       {link.label}
                     </Link>
@@ -78,24 +84,27 @@ export function SiteFooter() {
         </div>
 
         {/* Channel index */}
-        <div className="mt-12 border-t-2 border-[var(--ink)] pt-6">
-          <p className="mark mb-4">Index of channels</p>
+        <div className="mt-12 border-t border-[var(--rule)] pt-6">
+          <p className="mark mb-4 text-[var(--n2)]">Index of channels</p>
           <div className="grid gap-x-6 sm:grid-cols-2 lg:grid-cols-4">
             {CATEGORIES.map((category, index) => (
               <Link
                 key={category.slug}
                 href={`/category/${category.slug}`}
-                className="group flex items-center gap-3 border-b border-[var(--rule)] py-2 transition-colors hover:bg-[var(--paper-3)]"
+                className="group flex items-center gap-3 border-b border-[var(--rule)] py-2 transition-colors hover:border-[var(--rule-strong)]"
               >
                 <span className="w-5 font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <span
                   aria-hidden
-                  className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:scale-125"
-                  style={{ background: `var(--ch-${category.token})` }}
+                  className="h-2.5 w-2.5 shrink-0 rounded-full transition-transform duration-200 group-hover:scale-125"
+                  style={{
+                    background: `var(--ch-${category.token})`,
+                    boxShadow: `0 0 10px var(--ch-${category.token})`,
+                  }}
                 />
-                <span className="font-display text-[1.15rem] uppercase leading-none">
+                <span className="font-display text-[0.92rem] font-medium leading-none transition-transform duration-200 group-hover:translate-x-1">
                   {category.name}
                 </span>
               </Link>
@@ -105,7 +114,7 @@ export function SiteFooter() {
 
         <div className="mt-10 flex flex-col gap-2 border-t border-[var(--rule)] pt-6 font-mono text-[0.64rem] uppercase tracking-[0.14em] text-[var(--ink-faint)] sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Fan Hub Plus — academic project build</p>
-          <p>Showcase only · no purchases, orders or payments</p>
+          <p>Merch checkout is a demo · no real payments</p>
         </div>
       </div>
     </footer>

@@ -36,7 +36,7 @@ export default async function SubmitPage() {
 
       <header className="mb-10">
         <p className="mark mb-3">Fan submissions</p>
-        <h1 className="font-display text-[clamp(2rem,5vw,2.8rem)]">Make something for Fan Hub Plus</h1>
+        <h1 className="font-display text-[clamp(1.65rem,4.2vw,2.3rem)]">Make something for Fan Hub Plus</h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
           A theory, a build log, a photo set of a costume you finished, a recording you made, or a
           link to something worth watching. An administrator reads every submission before it goes
@@ -73,7 +73,7 @@ export default async function SubmitPage() {
               return (
                 <li
                   key={String(submission._id)}
-                  className="flex flex-wrap items-center gap-4 border-[1.5px] border-[var(--rule-strong)] bg-[var(--paper)] p-4"
+                  className="flex flex-wrap items-center gap-4 border border-[var(--rule-strong)] bg-[var(--paper)] p-4"
                 >
                   <Icon className={cn("h-4 w-4 shrink-0", status.tone)} aria-hidden />
                   <div className="min-w-0 flex-1">

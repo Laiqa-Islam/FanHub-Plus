@@ -23,7 +23,7 @@ export const ONBOARDING_STEPS = [
   {
     id: "save",
     label: "How do I save things?",
-    prompt: "How do clippings work and how do I add a note to one?",
+    prompt: "How do saves work and how do I add a note to one?",
   },
   {
     id: "events",

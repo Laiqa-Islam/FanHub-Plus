@@ -116,8 +116,8 @@ export function VideoPlayer({
 
   if (failed) {
     return (
-      <div className="border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-8 text-center">
-        <p className="font-display text-[1.6rem] uppercase">This reel won&apos;t load</p>
+      <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-8 text-center">
+        <p className="font-display text-[1.15rem]">This reel won&apos;t load</p>
         <p className="mx-auto mt-2 max-w-md text-[0.92rem] leading-relaxed text-[var(--ink-soft)]">
           The video didn&apos;t start. The source may be offline, or this browser may be
           blocking media playback.
@@ -128,7 +128,7 @@ export function VideoPlayer({
             setFailed(false);
             videoRef.current?.load();
           }}
-          className="mt-5 border-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] transition-shadow hover:shadow-[3px_3px_0_var(--ink)]"
+          className="mt-5 rounded-2xl border border-[var(--edge)] bg-[var(--paper)] px-4 py-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] transition-shadow hover:shadow-[var(--lift-md)]"
         >
           Try again
         </button>
@@ -137,7 +137,7 @@ export function VideoPlayer({
   }
 
   return (
-    <figure className="border-[1.5px] border-[var(--ink)] bg-[#0c0b10] shadow-[6px_6px_0_var(--ink)]">
+    <figure className="rounded-2xl border border-[var(--edge)] bg-[var(--void)] shadow-[var(--lift-md)]">
       <div className="group relative aspect-video w-full overflow-hidden">
         <video
           ref={videoRef}
@@ -161,7 +161,7 @@ export function VideoPlayer({
 
         {waiting && (
           <div className="pointer-events-none absolute inset-0 grid place-items-center">
-            <Loader2 className="h-8 w-8 animate-spin text-white" aria-hidden />
+            <Loader2 className="h-8 w-8 animate-spin text-[var(--void)]" aria-hidden />
           </div>
         )}
 
@@ -170,10 +170,10 @@ export function VideoPlayer({
             type="button"
             onClick={toggle}
             aria-label={`Play ${title}`}
-            className="absolute inset-0 grid place-items-center bg-black/35 transition-colors hover:bg-black/20"
+            className="absolute inset-0 grid place-items-center bg-[color-mix(in_oklch,var(--void)_45%,transparent)] transition-colors hover:bg-[color-mix(in_oklch,var(--void)_25%,transparent)]"
           >
             <span
-              className="grid h-20 w-20 place-items-center border-[1.5px] border-white text-white transition-transform duration-200 hover:scale-110"
+              className="grid h-20 w-20 place-items-center border border-[var(--n1)] text-[var(--n1)] transition-transform duration-200 hover:scale-110"
               style={{ background: ink }}
             >
               <Play className="ml-1 h-8 w-8 fill-current" aria-hidden />
@@ -183,13 +183,13 @@ export function VideoPlayer({
       </div>
 
       {/* Transport */}
-      <div className="flex items-center gap-3 border-t-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-3 py-2.5">
+      <div className="flex items-center gap-3 border-t border-[var(--rule-strong)] bg-[var(--paper)] px-3 py-2.5">
         <button
           type="button"
           onClick={toggle}
           aria-label={playing ? "Pause" : "Play"}
-          className="grid h-9 w-9 shrink-0 place-items-center border-[1.5px] border-[var(--ink)] text-[var(--ink)] transition-colors hover:text-white"
-          style={playing ? undefined : { background: ink, color: "#fff" }}
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl border border-[var(--edge)] text-[var(--ink)] transition-colors hover:text-[var(--n2)]"
+          style={playing ? undefined : { background: ink, color: "var(--void)" }}
         >
           {playing ? (
             <Pause className="h-4 w-4 fill-current" aria-hidden />
@@ -227,7 +227,7 @@ export function VideoPlayer({
           type="button"
           onClick={toggleMute}
           aria-label={muted ? "Unmute" : "Mute"}
-          className="grid h-9 w-9 shrink-0 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--paper-2)]"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--paper-2)]"
         >
           {muted ? <VolumeX className="h-4 w-4" aria-hidden /> : <Volume2 className="h-4 w-4" aria-hidden />}
         </button>
@@ -236,7 +236,7 @@ export function VideoPlayer({
           type="button"
           onClick={() => videoRef.current?.requestFullscreen?.()}
           aria-label="Full screen"
-          className="grid h-9 w-9 shrink-0 place-items-center border-[1.5px] border-[var(--ink)] transition-colors hover:bg-[var(--paper-2)]"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:bg-[var(--paper-2)]"
         >
           <Maximize className="h-4 w-4" aria-hidden />
         </button>

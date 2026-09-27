@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Info } from "lucide-react";
 
 import { CATEGORIES, CATEGORY_SLUGS, MERCH_TAGS } from "@/lib/constants";
 import { getMerch } from "@/lib/showcase";
@@ -8,14 +7,14 @@ import { getBookmarkedIds } from "@/app/actions/bookmarks";
 import { getCurrentUser } from "@/lib/dal";
 import { Breadcrumbs } from "@/components/breadcrumbs";
 import { Reveal } from "@/components/motion/reveal";
-import { InkStrip, Misreg, RegMark } from "@/components/press";
+import { InkStrip, RegMark } from "@/components/press";
 import { MerchCard } from "@/components/merch/merch-card";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
-  title: "Merchandise showcase",
+  title: "Merch shop",
   description:
-    "Figures, art books, prints and collectibles grouped by fandom. Display and discovery only — no purchasing.",
+    "Shop apparel, accessories, figures and collectibles from across the Fan Hub Plus universe.",
 };
 
 export const dynamic = "force-dynamic";
@@ -55,40 +54,39 @@ export default async function MerchPage(props: PageProps<"/merch">) {
 
   return (
     <div>
-      <header className="border-b-2 border-[var(--ink)]">
+      <header className="relative border-b border-[var(--rule)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-10 pt-8 sm:px-8">
           <Breadcrumbs trail={[{ label: "Merch" }]} />
 
-          <div className="flex flex-wrap items-end justify-between gap-6">
-            <div>
-              <p className="mark mb-3">Catalogue · {items.length} plates</p>
-              <Misreg
-                as="h1"
-                className="text-[clamp(2.4rem,8vw,5.2rem)]"
-                ghostInk="var(--ch-movies)"
-              >
-                Merchandise
-              </Misreg>
-              <p className="mt-5 max-w-xl border-l-4 border-[var(--ch-movies)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
-                Figures, art books, prints and collectibles, grouped by fandom — plus
-                what&apos;s arriving next.
-              </p>
+          <div
+            className="relative overflow-hidden rounded-[1.75rem] border p-8 sm:p-10"
+            style={{
+              background:
+                "linear-gradient(135deg, color-mix(in oklch, var(--n1) 26%, var(--paper-3)), var(--paper-3) 62%)",
+              borderColor: "color-mix(in oklch, var(--n1) 45%, transparent)",
+            }}
+          >
+            <div className="flex flex-wrap items-end justify-between gap-6">
+              <div>
+                <p className="mark mb-3 text-[var(--n3)]">
+                  The merch drop · {items.length} items
+                </p>
+                <h1 className="font-display text-[clamp(1.9rem,5.5vw,3.6rem)] font-black leading-[0.95]">
+                  Wear the
+                  <br />
+                  <span className="text-[var(--n1)] [--glow:var(--n1)] glow-text">glow.</span>
+                </h1>
+                <p className="mt-5 max-w-md text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
+                  Fan-picked apparel, accessories, figures and collectibles. Build your
+                  cart now and take it through checkout.
+                </p>
+              </div>
+              <RegMark className="hidden text-[var(--ink-faint)] sm:block" />
             </div>
-            <RegMark className="hidden text-[var(--ink-faint)] sm:block" />
-          </div>
-
-          {/* Commerce is explicitly out of scope; say so rather than leaving
-              readers hunting for a buy button. */}
-          <div className="mt-8 flex items-start gap-3 border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] p-4">
-            <Info className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            <p className="text-[0.9rem] leading-relaxed text-[var(--ink-soft)]">
-              This is a showcase for discovery only. Fan Hub Plus has no cart, checkout or
-              payment processing, and never asks for payment details.
-            </p>
           </div>
 
           <div className="mt-8 flex flex-col gap-3">
-            <div className="flex flex-wrap">
+            <div className="flex flex-wrap gap-2">
               <Chip
                 href="/merch"
                 active={!activeCategory && !activeTag && !upcomingOnly}
@@ -107,16 +105,16 @@ export default async function MerchPage(props: PageProps<"/merch">) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mark mr-1 !text-[0.6rem]">Tag</span>
+              <span className="mark mr-1 !text-[0.58rem] text-[var(--n2)]">Tag</span>
               {MERCH_TAGS.map((tag) => (
                 <Link
                   key={tag}
                   href={activeTag === tag ? "/merch" : `/merch?tag=${encodeURIComponent(tag)}`}
                   className={cn(
-                    "border-[1.5px] px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.13em] transition-colors",
+                    "rounded-full border px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.13em] transition-colors",
                     activeTag === tag
-                      ? "border-[var(--ink)] bg-[var(--ink)] text-[var(--paper)]"
-                      : "border-[var(--rule-strong)] text-[var(--ink-soft)] hover:border-[var(--ink)] hover:text-[var(--ink)]",
+                      ? "border-[var(--n3)] bg-[var(--n3)] text-[var(--void)] shadow-[0_0_16px_color-mix(in_oklch,var(--n3)_50%,transparent)]"
+                      : "border-[var(--edge)] text-[var(--ink-soft)] hover:border-[var(--edge-strong)] hover:text-[var(--ink)]",
                   )}
                 >
                   {tag}
@@ -125,12 +123,12 @@ export default async function MerchPage(props: PageProps<"/merch">) {
             </div>
           </div>
         </div>
-        <InkStrip height={5} />
+        <InkStrip height={2} className="absolute inset-x-0 bottom-0" />
       </header>
 
       <div className="mx-auto max-w-[88rem] px-5 py-12 sm:px-8">
         {items.length === 0 ? (
-          <p className="border-[1.5px] border-dashed border-[var(--rule-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
+          <p className="rounded-2xl border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center text-[var(--ink-soft)]">
             Nothing in the showcase matches that filter yet.
           </p>
         ) : showGrouped ? (
@@ -139,21 +137,24 @@ export default async function MerchPage(props: PageProps<"/merch">) {
               const bucket = grouped.get(category.slug)!;
               return (
                 <section key={category.slug}>
-                  <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-t-2 border-[var(--ink)] pt-3">
+                  <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-t border-[var(--rule)] pt-4">
                     <div className="flex items-center gap-3">
                       <span
                         aria-hidden
-                        className="h-6 w-6"
-                        style={{ background: `var(--ch-${category.token})` }}
+                        className="h-3 w-3 rounded-full"
+                        style={{
+                          background: `var(--ch-${category.token})`,
+                          boxShadow: `0 0 12px var(--ch-${category.token})`,
+                        }}
                       />
-                      <h2 className="font-display text-[2rem] uppercase leading-none">
+                      <h2 className="font-display text-[1.2rem] font-bold leading-none">
                         {category.name}
                       </h2>
-                      <span className="mark !text-[0.6rem]">{bucket.length} plates</span>
+                      <span className="mark !text-[0.58rem]">{bucket.length} items</span>
                     </div>
                     <Link
                       href={`/merch?category=${category.slug}`}
-                      className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot-deep)]"
+                      className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
                     >
                       See all →
                     </Link>
@@ -188,10 +189,10 @@ export default async function MerchPage(props: PageProps<"/merch">) {
           </Reveal>
         )}
 
-        <div className="mt-16 border-t-2 border-[var(--ink)] pt-6">
+        <div className="mt-16 border-t border-[var(--rule)] pt-6">
           <Link
             href="/upcoming"
-            className="group inline-flex items-center gap-3 font-display text-[1.8rem] uppercase leading-none transition-colors hover:text-[var(--spot-deep)]"
+            className="group inline-flex items-center gap-3 font-display text-[1.2rem] font-bold leading-none transition-colors hover:text-[var(--n3)]"
           >
             See everything coming next
             <span className="transition-transform duration-200 group-hover:translate-x-2">→</span>
@@ -217,13 +218,28 @@ function Chip({
     <Link
       href={href}
       className={cn(
-        "-ml-[1.5px] inline-flex items-center gap-2 border-[1.5px] border-[var(--ink)] px-4 py-2 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.14em] transition-colors first:ml-0",
+        "inline-flex items-center gap-2 whitespace-nowrap rounded-full border px-3.5 py-1.5 font-mono text-[0.62rem] font-semibold uppercase tracking-[0.13em] transition-colors",
         active
-          ? "bg-[var(--ink)] text-[var(--paper)]"
-          : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
+          ? "text-[var(--void)]"
+          : "border-[var(--edge)] text-[var(--ink-soft)] hover:border-[var(--edge-strong)] hover:text-[var(--ink)]",
       )}
+      style={
+        active
+          ? {
+              background: ink ?? "var(--n1)",
+              borderColor: ink ?? "var(--n1)",
+              boxShadow: `0 0 18px color-mix(in oklch, ${ink ?? "var(--n1)"} 50%, transparent)`,
+            }
+          : undefined
+      }
     >
-      {ink && <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />}
+      {ink && !active && (
+        <span
+          aria-hidden
+          className="h-2 w-2 rounded-full"
+          style={{ background: ink, boxShadow: `0 0 8px ${ink}` }}
+        />
+      )}
       {label}
     </Link>
   );

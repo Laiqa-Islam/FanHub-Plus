@@ -59,7 +59,7 @@ export function Gallery({
           type="button"
           onClick={() => setOpen(true)}
           aria-label={`Open ${alt} gallery at full size`}
-          className="group relative block aspect-[4/3] w-full overflow-hidden border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)]"
+          className="group relative block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)]"
         >
           <Image
             src={images[active]}
@@ -70,7 +70,7 @@ export function Gallery({
             className="plate object-cover transition-transform duration-500 group-hover:scale-105"
           />
           <Duotone ink={ink} strength={0.62} />
-          <span className="absolute bottom-0 right-0 border-l-[1.5px] border-t-[1.5px] border-[var(--ink)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
+          <span className="absolute bottom-0 right-0 border-l-[1.5px] border-t border-[var(--rule-strong)] bg-[var(--paper)] px-2.5 py-1 font-mono text-[0.6rem] uppercase tracking-[0.14em]">
             Plate {active + 1} / {images.length}
           </span>
         </button>
@@ -85,7 +85,7 @@ export function Gallery({
                 aria-label={`Show plate ${index + 1}`}
                 aria-current={index === active}
                 className={cn(
-                  "relative h-16 w-20 shrink-0 overflow-hidden border-[1.5px] transition-colors",
+                  "relative h-16 w-20 shrink-0 overflow-hidden border transition-colors",
                   index === active ? "border-[var(--spot)]" : "border-[var(--rule-strong)]",
                 )}
               >
@@ -113,13 +113,13 @@ export function Gallery({
           aria-modal="true"
           aria-label={`${alt} gallery`}
           onClick={() => setOpen(false)}
-          className="fixed inset-0 z-[90] grid place-items-center bg-[var(--ink)]/92 p-5"
+          className="fixed inset-0 z-[90] grid place-items-center bg-[var(--paper-3)]/92 p-5"
         >
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Close gallery"
-            className="absolute right-5 top-5 grid h-11 w-11 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+            className="absolute right-5 top-5 grid h-11 w-11 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
           >
             <X className="h-5 w-5" aria-hidden />
           </button>
@@ -128,7 +128,7 @@ export function Gallery({
             className="relative max-h-[82vh] w-full max-w-4xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="relative aspect-[4/3] w-full border-[1.5px] border-[var(--paper)]">
+            <div className="relative aspect-[4/3] w-full border border-[var(--edge-strong)]">
               <Image
                 src={images[active]}
                 alt={`${alt} — plate ${active + 1}`}
@@ -143,19 +143,19 @@ export function Gallery({
                 <button
                   type="button"
                   onClick={() => step(-1)}
-                  aria-label="Previous plate"
-                  className="grid h-10 w-10 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+                  aria-label="Previous image"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
                 >
                   <ChevronLeft className="h-5 w-5" aria-hidden />
                 </button>
-                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[var(--paper)]">
+                <span className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-[var(--ink)]">
                   {active + 1} / {images.length}
                 </span>
                 <button
                   type="button"
                   onClick={() => step(1)}
-                  aria-label="Next plate"
-                  className="grid h-10 w-10 place-items-center border-[1.5px] border-[var(--paper)] text-[var(--paper)] transition-colors hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+                  aria-label="Next image"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink)] transition-colors hover:border-[var(--n2)] hover:text-[var(--n2)]"
                 >
                   <ChevronRight className="h-5 w-5" aria-hidden />
                 </button>

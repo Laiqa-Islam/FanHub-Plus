@@ -21,6 +21,14 @@ const FIELDS: FieldSpec[] = [
     options: CATEGORIES.map((c) => ({ value: c.slug, label: c.name })),
   },
   {
+    name: "price",
+    label: "Price (USD)",
+    kind: "number",
+    required: true,
+    half: true,
+    hint: "Example: 29.99",
+  },
+  {
     name: "tag",
     label: "Tag",
     kind: "select",
@@ -42,12 +50,13 @@ export default async function AdminMerchPage() {
     return {
       id: String(doc._id),
       title: doc.name,
-      meta: `${category?.name ?? doc.category} · ${doc.tag} · ${doc.isUpcoming ? "upcoming" : "released"} ${formatDate(doc.releaseDate)} · ${(doc.viewCount ?? 0).toLocaleString()} views`,
+      meta: `${category?.name ?? doc.category} · $${((doc.priceCents ?? 0) / 100).toFixed(2)} · ${doc.tag} · ${doc.isUpcoming ? "upcoming" : "released"} ${formatDate(doc.releaseDate)} · ${(doc.viewCount ?? 0).toLocaleString()} views`,
       ink: `var(--ch-${category?.token ?? "anime"})`,
       values: {
         name: doc.name,
         category: doc.category,
         tag: doc.tag ?? "Collectible",
+        price: ((doc.priceCents ?? 0) / 100).toFixed(2),
         imageUrl: doc.imageUrl ?? "",
         description: doc.description ?? "",
         isUpcoming: Boolean(doc.isUpcoming),
@@ -57,14 +66,14 @@ export default async function AdminMerchPage() {
 
   return (
     <div>
-      <div className="mb-8 border-t-2 border-[var(--ink)] pt-4">
-        <p className="mark mb-3">Showcase only — no purchase path</p>
-        <Misreg as="h1" className="text-[clamp(2rem,5vw,3.2rem)]" ghostInk="var(--ch-movies)">
+      <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
+        <p className="mark mb-3">Store catalogue</p>
+        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-movies)">
           Merchandise
         </Misreg>
       </div>
 
-      <ResourceManager kind="merchandise" rows={rows} fields={FIELDS} singular="plate" />
+      <ResourceManager kind="merchandise" rows={rows} fields={FIELDS} singular="item" />
     </div>
   );
 }

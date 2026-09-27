@@ -24,9 +24,10 @@ const UserSchema = new Schema(
     /** Favourite fandoms — the many-to-many User ↔ Category link (SRS §1.8). */
     favoriteCategories: [{ type: String, enum: CATEGORY_SLUGS }],
 
-    /** Display preferences surfaced in the profile editor. */
+    /** Display preferences surfaced in the profile editor.
+     *  Neon Oni has a single dark ground, so there is no colour scheme to
+     *  store — only the two accessibility controls the theme leaves open. */
     preferences: {
-      theme: { type: String, enum: ["light", "dark", "system"], default: "system" },
       fontScale: { type: Number, default: 100, min: 90, max: 130 },
       reducedMotion: { type: Boolean, default: false },
     },

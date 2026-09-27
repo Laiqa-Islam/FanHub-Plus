@@ -41,7 +41,7 @@ export function UserRow({ user }: { user: AdminUser }) {
 
   return (
     <li className="flex flex-wrap items-center gap-4 border-b border-[var(--rule)] py-3">
-      <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] font-mono text-[0.68rem] font-bold uppercase">
+      <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] font-mono text-[0.68rem] font-bold uppercase">
         {user.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
@@ -51,7 +51,7 @@ export function UserRow({ user }: { user: AdminUser }) {
       </span>
 
       <div className="min-w-0 flex-1">
-        <p className="truncate font-display text-[1.2rem] uppercase leading-none">
+        <p className="truncate font-display text-[0.95rem] leading-none">
           {user.name}
           {user.isSelf && (
             <span className="ml-2 font-mono text-[0.58rem] tracking-[0.12em] text-[var(--spot-deep)]">
@@ -76,9 +76,9 @@ export function UserRow({ user }: { user: AdminUser }) {
             disabled={isPending || role === value || user.isSelf}
             aria-pressed={role === value}
             className={cn(
-              "-ml-[1.5px] border-[1.5px] border-[var(--ink)] px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] transition-colors first:ml-0",
+              "-ml-[1.5px] rounded-2xl border border-[var(--edge)] px-3 py-1.5 font-mono text-[0.6rem] uppercase tracking-[0.1em] transition-colors first:ml-0",
               role === value
-                ? "bg-[var(--ink)] text-[var(--paper)]"
+                ? "bg-[var(--n1)] text-[var(--void)]"
                 : "bg-[var(--paper)] hover:bg-[var(--paper-2)]",
               user.isSelf && "cursor-not-allowed opacity-45",
             )}

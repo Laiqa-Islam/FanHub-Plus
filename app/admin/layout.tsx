@@ -16,18 +16,18 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
 
   return (
     <div>
-      <div className="border-b-2 border-[var(--ink)] bg-[var(--ink)]">
-        <div className="mx-auto flex max-w-[92rem] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--paper)] sm:px-8">
-          <Link href="/admin" className="font-semibold">
+      <div className="border-b border-[var(--rule)] bg-[var(--paper-3)]">
+        <div className="mx-auto flex max-w-[92rem] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5 font-mono text-[0.62rem] uppercase tracking-[0.16em] text-[var(--ink-soft)] sm:px-8">
+          <Link href="/admin" className="font-semibold text-[var(--n1)]">
             Control panel
           </Link>
-          <span className="opacity-60">Signed in as {admin.name}</span>
+          <span className="text-[var(--ink-faint)]">Signed in as {admin.name}</span>
           <Link href="/" className="ml-auto opacity-70 transition-opacity hover:opacity-100">
             ← Back to the site
           </Link>
         </div>
       </div>
-      <InkStrip height={4} />
+      <InkStrip height={2} />
 
       <div className="mx-auto max-w-[92rem] px-5 py-8 sm:px-8">
         <AdminNav />

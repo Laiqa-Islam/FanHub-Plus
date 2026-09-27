@@ -105,10 +105,10 @@ export function SubmissionForm() {
               <label
                 key={candidate}
                 className={cn(
-                  "flex cursor-pointer flex-col gap-1 border-[1.5px] p-4 transition-all duration-150",
+                  "flex cursor-pointer flex-col gap-1 border p-4 transition-all duration-150",
                   active
-                    ? "border-[var(--spot)] bg-[var(--paper)] shadow-[3px_3px_0_var(--spot)]"
-                    : "border-[var(--rule-strong)] bg-[var(--paper-2)] hover:border-[var(--ink)]",
+                    ? "border-[var(--spot)] bg-[var(--paper)] shadow-[0_0_24px_color-mix(in_oklch,var(--n1)_45%,transparent)]"
+                    : "border-[var(--rule-strong)] bg-[var(--paper-2)] hover:border-[var(--edge)]",
                 )}
               >
                 <span className="flex items-center gap-2">
@@ -170,7 +170,7 @@ export function SubmissionForm() {
               maxLength={400}
               placeholder="https://youtube.com/watch?v=…"
               aria-invalid={Boolean(state?.errors?.embedUrl)}
-              className="w-full border-[1.5px] border-[var(--ink)] bg-[var(--paper-2)] py-3 pl-10 pr-4 text-[0.95rem] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:bg-[var(--paper)] focus:outline-none"
+              className="w-full rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] py-3 pl-10 pr-4 text-[0.95rem] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:bg-[var(--paper)] focus:outline-none"
             />
           </div>
 
@@ -256,7 +256,7 @@ export function SubmissionForm() {
       {spec.requiresOwnWork && (
         <div
           className={cn(
-            "flex items-start gap-3 border-[1.5px] p-4",
+            "flex items-start gap-3 border p-4",
             state?.errors?.ownWork
               ? "border-[var(--spot)] bg-[var(--spot)]/8"
               : "border-[var(--rule-strong)] bg-[var(--paper-2)]",
