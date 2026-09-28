@@ -49,8 +49,8 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
           Everything, searchable
         </h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
-          Filter by channel, format, genre and release year at once, then sort by what&apos;s
-          newest, most popular, or alphabetical.
+          Filter by channel, format, genre and release year at once, then sort
+          by what&apos;s newest, most popular, or alphabetical.
         </p>
       </header>
 
@@ -63,7 +63,10 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
         <EmptyResults />
       ) : (
         <>
-          <Reveal stagger={0.04} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Reveal
+            stagger={0.04}
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          >
             {items.map((item, index) => (
               <ContentCard key={item.id} item={item} priority={index < 3} />
             ))}
@@ -72,7 +75,9 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
           <Pagination
             page={filters.page}
             pageCount={pageCount}
-            hrefFor={(page) => `/explore${buildSearchParams(filters, { page })}`}
+            hrefFor={(page) =>
+              `/explore${buildSearchParams(filters, { page })}`
+            }
           />
         </>
       )}
@@ -83,7 +88,10 @@ export default async function ExplorePage(props: PageProps<"/explore">) {
 function EmptyResults() {
   return (
     <div className="rounded-2xl border border-dashed border-[var(--edge-strong)] px-6 py-20 text-center">
-      <SearchX className="mx-auto h-8 w-8 text-[var(--ink-faint)]" aria-hidden />
+      <SearchX
+        className="mx-auto h-8 w-8 text-[var(--ink-faint)]"
+        aria-hidden
+      />
       <h2 className="mt-5 font-display text-[1.25rem] font-bold">
         Nothing matches that combination
       </h2>

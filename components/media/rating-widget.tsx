@@ -90,7 +90,10 @@ export function RatingWidget({
                 className="p-0.5 transition-transform duration-150 hover:scale-125 disabled:opacity-60"
               >
                 <Star
-                  className={cn("h-7 w-7 transition-colors", star <= shown && "fill-current")}
+                  className={cn(
+                    "h-7 w-7 transition-colors",
+                    star <= shown && "fill-current",
+                  )}
                   style={{ color: star <= shown ? ink : "var(--rule-strong)" }}
                   aria-hidden
                 />
@@ -124,7 +127,9 @@ export function RatingWidget({
               onClick={() => submit(mine ?? (value === "up" ? 4 : 2), value)}
               className={cn(
                 "grid h-9 w-9 place-items-center rounded-2xl border border-[var(--edge)] transition-colors",
-                thumb === value ? "text-[var(--void)]" : "hover:bg-[var(--paper-2)]",
+                thumb === value
+                  ? "text-[var(--void)]"
+                  : "hover:bg-[var(--paper-2)]",
               )}
               style={thumb === value ? { background: ink } : undefined}
             >

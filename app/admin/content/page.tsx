@@ -5,7 +5,10 @@ import { Content } from "@/models";
 import { CATEGORIES, CONTENT_TYPES, categoryBySlug } from "@/lib/constants";
 import { embedHref } from "@/lib/embeds";
 import { Misreg } from "@/components/press";
-import { ResourceManager, type FieldSpec } from "@/components/admin/resource-manager";
+import {
+  ResourceManager,
+  type FieldSpec,
+} from "@/components/admin/resource-manager";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Content · Admin" };
@@ -57,6 +60,12 @@ const FIELDS: FieldSpec[] = [
     hint: "Plain text, shown under the player. Makes spoken content searchable.",
   },
   {
+    name: "timeline",
+    label: "Timeline",
+    kind: "textarea",
+    hint: "One milestone per line: label | title | body. Leave empty for none.",
+  },
+  {
     name: "status",
     label: "Status",
     kind: "select",
@@ -90,6 +99,13 @@ export default async function AdminContentPage() {
         mediaUrl: doc.mediaUrl ?? "",
         genre: (doc.genre ?? []).join(", "),
         mediaTags: (doc.mediaTags ?? []).join(", "),
+        // Printed back in the same shape the parser reads, so editing
+        // an existing chronology is a round trip rather than a retype.
+        timeline: (doc.timeline ?? [])
+          .map((row) =>
+            [row.label, row.title, row.body].filter(Boolean).join(" | "),
+          )
+          .join("\n"),
         // The form takes a URL; the record stores provider + id, so rebuild the
         // canonical link for editing rather than exposing the internal pair.
         embedUrl: embedHref(doc.embedProvider ?? "", doc.embedId ?? "") ?? "",
@@ -103,12 +119,21 @@ export default async function AdminContentPage() {
     <div>
       <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Articles, video, audio and galleries</p>
-        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-anime)">
+        <Misreg
+          as="h1"
+          className="text-[clamp(1.7rem,4.2vw,2.6rem)]"
+          ghostInk="var(--ch-anime)"
+        >
           Content
         </Misreg>
       </div>
 
-      <ResourceManager kind="content" rows={rows} fields={FIELDS} singular="piece" />
+      <ResourceManager
+        kind="content"
+        rows={rows}
+        fields={FIELDS}
+        singular="piece"
+      />
     </div>
   );
 }

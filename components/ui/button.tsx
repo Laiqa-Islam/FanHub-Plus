@@ -28,11 +28,9 @@ const buttonVariants = cva(
         outline:
           "[--glow:var(--n2)] border-[1.5px] border-[var(--n2)] bg-transparent text-[var(--n2)] hover:bg-[color-mix(in_oklch,var(--n2)_14%,transparent)] hover:shadow-[0_0_26px_color-mix(in_oklch,var(--n2)_40%,transparent)]",
         // Acid, for the alert-shaped action: a drop closing, tickets going.
-        flag:
-          "[--glow:var(--n3)] bg-[var(--n3)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n3)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n3)_70%,transparent)]",
+        flag: "[--glow:var(--n3)] bg-[var(--n3)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n3)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n3)_70%,transparent)]",
         // Cyan plate, for the rarer case where two solid actions sit together.
-        blue:
-          "[--glow:var(--n2)] bg-[var(--n2)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n2)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n2)_70%,transparent)]",
+        blue: "[--glow:var(--n2)] bg-[var(--n2)] font-display text-[var(--void)] shadow-[0_0_24px_color-mix(in_oklch,var(--n2)_50%,transparent)] hover:shadow-[0_0_38px_color-mix(in_oklch,var(--n2)_70%,transparent)]",
         // A neutral outline that only lights up on hover.
         ink: "border-[1.5px] border-[var(--edge-strong)] bg-transparent text-[var(--ink)] hover:border-[var(--n1)] hover:text-[var(--n1)]",
         ghost:
@@ -50,7 +48,8 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;

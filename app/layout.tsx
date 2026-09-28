@@ -4,7 +4,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
-import { ThemeProvider, themeScript } from "@/components/providers/theme-provider";
+import {
+  ThemeProvider,
+  themeScript,
+} from "@/components/providers/theme-provider";
 import { CartProvider } from "@/components/providers/cart-provider";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -42,7 +45,15 @@ export const metadata: Metadata = {
   },
   description:
     "Anime, gaming, film, television, K-Pop, comics, manga and cosplay — eight channels lit in neon. Stream the drops, open the character files, and save what you love.",
-  keywords: ["fandom", "anime", "gaming", "K-Pop", "comics", "manga", "cosplay"],
+  keywords: [
+    "fandom",
+    "anime",
+    "gaming",
+    "K-Pop",
+    "comics",
+    "manga",
+    "cosplay",
+  ],
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {

@@ -68,9 +68,13 @@ export function ReviewCard({
     else if (state?.message) toast.error(state.message);
   }, [state]);
 
-  const spec = isSubmissionFormat(format) ? FORMAT_SPECS[format] : FORMAT_SPECS.article;
+  const spec = isSubmissionFormat(format)
+    ? FORMAT_SPECS[format]
+    : FORMAT_SPECS.article;
   const images = media.filter((asset) => asset.kind === "image");
-  const playable = media.find((asset) => asset.kind === "audio" || asset.kind === "video");
+  const playable = media.find(
+    (asset) => asset.kind === "audio" || asset.kind === "video",
+  );
 
   return (
     <article className="relative overflow-hidden border border-[var(--rule-strong)] bg-[var(--paper)]">
@@ -87,7 +91,9 @@ export function ReviewCard({
         <h2 className="mt-2 font-display text-[1.25rem] font-bold">{title}</h2>
         <p className="mt-1.5 text-[0.85rem] text-[var(--ink-soft)]">
           {authorName}
-          {authorEmail && <span className="text-[var(--ink-faint)]"> · {authorEmail}</span>}
+          {authorEmail && (
+            <span className="text-[var(--ink-faint)]"> · {authorEmail}</span>
+          )}
         </p>
 
         {/* Rights declaration — the first thing a moderator should see on any
@@ -102,9 +108,15 @@ export function ReviewCard({
             )}
           >
             {ownWorkDeclared ? (
-              <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+              <ShieldCheck
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--spot-2)]"
+                aria-hidden
+              />
             ) : (
-              <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--spot)]" aria-hidden />
+              <ShieldAlert
+                className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--spot)]"
+                aria-hidden
+              />
             )}
             {ownWorkDeclared
               ? "The member declared this is their own work."
@@ -123,13 +135,23 @@ export function ReviewCard({
           <div className="mt-4 overflow-hidden rounded-xl border border-[var(--edge)] bg-[var(--void)]">
             {/* Native controls: moderation is scrubbing and skipping, not an
                 occasion for custom player chrome. */}
-            <video src={playable.url} controls preload="metadata" className="max-h-72 w-full" />
+            <video
+              src={playable.url}
+              controls
+              preload="metadata"
+              className="max-h-72 w-full"
+            />
           </div>
         )}
 
         {playable?.kind === "audio" && (
           <div className="mt-4 border border-[var(--rule-strong)] bg-[var(--paper-2)] p-3">
-            <audio src={playable.url} controls preload="metadata" className="w-full" />
+            <audio
+              src={playable.url}
+              controls
+              preload="metadata"
+              className="w-full"
+            />
           </div>
         )}
 
@@ -137,7 +159,9 @@ export function ReviewCard({
           <div
             className={cn(
               "mt-4 grid gap-2",
-              images.length === 1 ? "grid-cols-1" : "grid-cols-2 sm:grid-cols-3",
+              images.length === 1
+                ? "grid-cols-1"
+                : "grid-cols-2 sm:grid-cols-3",
             )}
           >
             {images.map((asset, index) => (
@@ -173,7 +197,10 @@ export function ReviewCard({
         >
           {expanded ? "Hide" : "Read"} submission
           <ChevronDown
-            className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+            className={cn(
+              "h-3.5 w-3.5 transition-transform",
+              expanded && "rotate-180",
+            )}
             aria-hidden
           />
         </button>
@@ -198,7 +225,10 @@ export function ReviewCard({
           </div>
         )}
 
-        <form action={action} className="mt-6 flex flex-col gap-3 border-t border-[var(--rule)] pt-5">
+        <form
+          action={action}
+          className="mt-6 flex flex-col gap-3 border-t border-[var(--rule)] pt-5"
+        >
           <input type="hidden" name="id" value={id} />
           <input type="hidden" name="decision" value={decision} />
 

@@ -13,7 +13,9 @@ import { fieldErrors } from "@/lib/validation";
 import type { FormState } from "@/app/actions/auth";
 
 const FeedbackSchema = z.object({
-  type: z.enum(FEEDBACK_TYPES, { error: "Choose what kind of message this is." }),
+  type: z.enum(FEEDBACK_TYPES, {
+    error: "Choose what kind of message this is.",
+  }),
   subject: z.string().trim().min(3, "Give it a short subject.").max(120),
   message: z
     .string()
@@ -47,7 +49,9 @@ export async function submitFeedback(
     "local";
   const limit = await rateLimit(`feedback:${ip}`, 5, 900);
   if (!limit.ok) {
-    return { message: `That's a lot of feedback. Try again in ${limit.retryAfterSeconds}s.` };
+    return {
+      message: `That's a lot of feedback. Try again in ${limit.retryAfterSeconds}s.`,
+    };
   }
 
   try {

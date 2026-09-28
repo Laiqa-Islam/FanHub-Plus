@@ -31,12 +31,20 @@ export function AuthShell({
           ))}
         </div>
 
-        <h1 className="font-display text-[clamp(1.9rem,4.5vw,2.6rem)]">{title}</h1>
-        <p className="mt-3 text-[0.96rem] leading-relaxed text-[var(--ink-soft)]">{subtitle}</p>
+        <h1 className="font-display text-[clamp(1.9rem,4.5vw,2.6rem)]">
+          {title}
+        </h1>
+        <p className="mt-3 text-[0.96rem] leading-relaxed text-[var(--ink-soft)]">
+          {subtitle}
+        </p>
 
         <div className="mt-9">{children}</div>
 
-        {footer && <div className="mt-7 text-[0.88rem] text-[var(--ink-soft)]">{footer}</div>}
+        {footer && (
+          <div className="mt-7 text-[0.88rem] text-[var(--ink-soft)]">
+            {footer}
+          </div>
+        )}
       </div>
 
       <aside className="relative hidden overflow-hidden rounded-3xl border border-[var(--rule-strong)] bg-[var(--paper)] p-10 lg:block">
@@ -63,7 +71,9 @@ export function AuthShell({
                 style={{ background: `var(--ch-${category.token})` }}
               />
               <span className="min-w-0">
-                <span className="block text-[0.92rem] font-semibold">{category.name}</span>
+                <span className="block text-[0.92rem] font-semibold">
+                  {category.name}
+                </span>
                 <span className="block truncate text-[0.78rem] text-[var(--ink-faint)]">
                   {category.tagline}
                 </span>
@@ -74,7 +84,10 @@ export function AuthShell({
 
         <p className="mt-10 font-mono text-[0.72rem] leading-relaxed text-[var(--ink-faint)]">
           Prefer to look around first?{" "}
-          <Link href="/explore" className="text-[var(--spot)] underline underline-offset-4">
+          <Link
+            href="/explore"
+            className="text-[var(--spot)] underline underline-offset-4"
+          >
             Browse as a visitor
           </Link>
         </p>

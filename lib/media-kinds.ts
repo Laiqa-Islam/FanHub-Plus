@@ -33,7 +33,14 @@ export const MEDIA_RULES: Record<MediaKind, MediaRule> = {
   },
   audio: {
     label: "audio",
-    mimes: ["audio/mpeg", "audio/mp4", "audio/ogg", "audio/wav", "audio/webm", "audio/flac"],
+    mimes: [
+      "audio/mpeg",
+      "audio/mp4",
+      "audio/ogg",
+      "audio/wav",
+      "audio/webm",
+      "audio/flac",
+    ],
     formats: ["mp3", "m4a", "aac", "ogg", "oga", "wav", "webm", "flac"],
     maxBytes: 20 * MB,
     // Cloudinary has no "audio" resource_type — audio is handled by the video
@@ -50,7 +57,10 @@ export const MEDIA_RULES: Record<MediaKind, MediaRule> = {
 };
 
 export function isMediaKind(value: unknown): value is MediaKind {
-  return typeof value === "string" && (MEDIA_KINDS as readonly string[]).includes(value);
+  return (
+    typeof value === "string" &&
+    (MEDIA_KINDS as readonly string[]).includes(value)
+  );
 }
 
 /** Value for an `<input type="file" accept="…">`. */
@@ -74,7 +84,10 @@ export function formatBytes(bytes: number): string {
  * mistakes and nothing more — `verifyUploadedAsset` re-checks against what
  * Cloudinary actually stored.
  */
-export function checkFile(file: { type: string; size: number }, kind: MediaKind): string | null {
+export function checkFile(
+  file: { type: string; size: number },
+  kind: MediaKind,
+): string | null {
   const rule = MEDIA_RULES[kind];
   if (!rule.mimes.includes(file.type)) {
     return `That doesn't look like ${rule.label === "image" ? "an" : "a"} ${rule.label} file. Accepted: ${rule.formats.join(", ")}.`;
@@ -87,7 +100,13 @@ export function checkFile(file: { type: string; size: number }, kind: MediaKind)
 
 // ── Submission formats ──────────────────────────────────────────────────────
 
-export const SUBMISSION_FORMATS = ["article", "gallery", "audio", "video", "embed"] as const;
+export const SUBMISSION_FORMATS = [
+  "article",
+  "gallery",
+  "audio",
+  "video",
+  "embed",
+] as const;
 export type SubmissionFormat = (typeof SUBMISSION_FORMATS)[number];
 
 export const GALLERY_MIN = 2;
@@ -141,7 +160,8 @@ export const FORMAT_SPECS: Record<SubmissionFormat, FormatSpec> = {
   },
   embed: {
     label: "Link to a platform",
-    blurb: "YouTube, Vimeo, Spotify or SoundCloud. Nothing is copied to our servers.",
+    blurb:
+      "YouTube, Vimeo, Spotify or SoundCloud. Nothing is copied to our servers.",
     uploadKind: null,
     multiple: false,
     requiresOwnWork: false,
@@ -150,5 +170,8 @@ export const FORMAT_SPECS: Record<SubmissionFormat, FormatSpec> = {
 };
 
 export function isSubmissionFormat(value: unknown): value is SubmissionFormat {
-  return typeof value === "string" && (SUBMISSION_FORMATS as readonly string[]).includes(value);
+  return (
+    typeof value === "string" &&
+    (SUBMISSION_FORMATS as readonly string[]).includes(value)
+  );
 }

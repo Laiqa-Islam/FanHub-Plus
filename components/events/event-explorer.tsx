@@ -2,10 +2,17 @@
 
 import { useState, useMemo, useCallback } from "react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Ticket, Crosshair, Loader2, Search, X } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { getCurrentPosition, distanceKm, formatDistance, type Coords } from "@/lib/geo";
+import {
+  getCurrentPosition,
+  distanceKm,
+  formatDistance,
+  type Coords,
+} from "@/lib/geo";
 import { formatDate, cn } from "@/lib/utils";
 import { BookmarkButton } from "@/components/bookmark-button";
 import type { EventListItem } from "@/lib/events-query";
@@ -23,7 +30,13 @@ const EventMap = dynamic(
   },
 );
 
-type GeoResult = { name: string; label: string; country: string; lat: number; lng: number };
+type GeoResult = {
+  name: string;
+  label: string;
+  country: string;
+  lat: number;
+  lng: number;
+};
 
 export function EventExplorer({
   events,
@@ -51,12 +64,17 @@ export function EventExplorer({
 
   /** Filter by city, then sort by distance when we have a position. */
   const visible = useMemo(() => {
-    const filtered = city ? events.filter((event) => event.city === city) : events;
+    const filtered = city
+      ? events.filter((event) => event.city === city)
+      : events;
 
     if (!origin) return filtered;
 
     return [...filtered]
-      .map((event) => ({ event, km: distanceKm(origin, { lat: event.lat, lng: event.lng }) }))
+      .map((event) => ({
+        event,
+        km: distanceKm(origin, { lat: event.lat, lng: event.lng }),
+      }))
       .sort((a, b) => a.km - b.km)
       .map(({ event }) => event);
   }, [events, city, origin]);
@@ -92,14 +110,20 @@ export function EventExplorer({
 
     setSearching(true);
     try {
-      const response = await fetch(`/api/geocode?q=${encodeURIComponent(term)}`);
-      const data = (await response.json()) as { results?: GeoResult[]; error?: string };
+      const response = await fetch(
+        `/api/geocode?q=${encodeURIComponent(term)}`,
+      );
+      const data = (await response.json()) as {
+        results?: GeoResult[];
+        error?: string;
+      };
       if (data.error) {
         toast.error(data.error);
         return;
       }
       setResults(data.results ?? []);
-      if ((data.results ?? []).length === 0) toast.info("No places matched that search.");
+      if ((data.results ?? []).length === 0)
+        toast.info("No places matched that search.");
     } catch {
       toast.error("Place search is unavailable right now.");
     } finally {
@@ -203,7 +227,11 @@ export function EventExplorer({
 
         {/* City filter */}
         <div className="flex flex-wrap">
-          <CityChip label="All cities" active={!city} onClick={() => setCity("")} />
+          <CityChip
+            label="All cities"
+            active={!city}
+            onClick={() => setCity("")}
+          />
           {cities.map((name) => (
             <CityChip
               key={name}
@@ -247,6 +275,33 @@ export function EventExplorer({
                         active && "bg-[var(--paper-2)]",
                       )}
                     >
+                      {/* The listing carried no imagery at all, on a site
+                          where everything else is picture-led. Clicking the
+                          row still drives the map — that is the point of the
+                          two-pane layout — so the thumbnail is part of the
+                          same control rather than a competing link. */}
+                      <button
+                        type="button"
+                        onClick={() => setActiveSlug(event.slug)}
+                        aria-label={`Show ${event.title} on the map`}
+                        className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-[var(--edge)] bg-[var(--paper-2)]"
+                      >
+                        {event.imageUrl && (
+                          <Image
+                            src={event.imageUrl}
+                            alt=""
+                            fill
+                            sizes="64px"
+                            className="object-cover"
+                          />
+                        )}
+                        <span
+                          aria-hidden
+                          className="absolute inset-0 mix-blend-soft-light"
+                          style={{ background: event.ink, opacity: 0.45 }}
+                        />
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => setActiveSlug(event.slug)}
@@ -271,7 +326,10 @@ export function EventExplorer({
                         </span>
 
                         <span className="mt-1 flex items-center gap-1.5 text-[0.84rem] text-[var(--ink-soft)]">
-                          <MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                          <MapPin
+                            className="h-3.5 w-3.5 shrink-0"
+                            aria-hidden
+                          />
                           {event.venue}, {event.city}
                         </span>
 
@@ -288,17 +346,17 @@ export function EventExplorer({
                           signedIn={signedIn}
                           variant="icon"
                         />
-                        {event.ticketUrl && (
-                          <a
-                            href={event.ticketUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={`Tickets for ${event.title}`}
-                            className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)]"
-                          >
-                            <Ticket className="h-4 w-4" aria-hidden />
-                          </a>
-                        )}
+                        {/* Was an anchor to whatever sat in `ticketUrl`,
+                            which for every seeded event was the same
+                            placeholder on example.com. It now opens the
+                            event, where a pass can actually be claimed. */}
+                        <Link
+                          href={`/events/${event.slug}`}
+                          aria-label={`Details and passes for ${event.title}`}
+                          className="grid h-8 w-8 place-items-center rounded-2xl border border-[var(--edge)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)]"
+                        >
+                          <Ticket className="h-4 w-4" aria-hidden />
+                        </Link>
                       </div>
                     </div>
                   </li>

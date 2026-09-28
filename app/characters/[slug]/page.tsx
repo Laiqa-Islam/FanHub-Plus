@@ -45,7 +45,10 @@ export default async function CharacterDetailPage(
 
   await connectToDatabase();
   const [siblings, user, clipped] = await Promise.all([
-    CharacterProfile.find({ franchise: character.franchise, slug: { $ne: slug } })
+    CharacterProfile.find({
+      franchise: character.franchise,
+      slug: { $ne: slug },
+    })
       .limit(4)
       .lean(),
     getCurrentUser(),
@@ -57,7 +60,10 @@ export default async function CharacterDetailPage(
       <Breadcrumbs
         trail={[
           { href: "/characters", label: "Characters" },
-          { href: `/characters?category=${character.category}`, label: category?.name ?? "" },
+          {
+            href: `/characters?category=${character.category}`,
+            label: category?.name ?? "",
+          },
           { label: character.name },
         ]}
       />
@@ -76,9 +82,17 @@ export default async function CharacterDetailPage(
           stats: (character.stats ?? []) as number[],
           // The six rows of the reference layout, in its order.
           rows: [
-            { id: "affiliation", label: "Affiliation", value: character.affiliation },
+            {
+              id: "affiliation",
+              label: "Affiliation",
+              value: character.affiliation,
+            },
             { id: "status", label: "Status", value: character.status },
-            { id: "relationships", label: "Relationships", list: character.relationships },
+            {
+              id: "relationships",
+              label: "Relationships",
+              list: character.relationships,
+            },
             { id: "skills", label: "Skills", list: character.skills },
             { id: "troops", label: "Troops", value: character.troops },
             { id: "weapons", label: "Weapons & EQS", list: character.weapons },
@@ -117,9 +131,9 @@ export default async function CharacterDetailPage(
       )}
 
       <p className="mt-6 max-w-3xl text-[0.76rem] leading-relaxed text-[var(--ink-faint)]">
-        Card art comes from the site&apos;s shared fan-art pool. Where a dossier does not name its
-        own art, the image is assigned by channel position and is representative rather than a
-        portrait of this specific character.
+        Card art comes from the site&apos;s shared fan-art pool. Where a dossier
+        does not name its own art, the image is assigned by channel position and
+        is representative rather than a portrait of this specific character.
       </p>
 
       {siblings.length > 0 && (

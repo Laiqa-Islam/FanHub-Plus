@@ -14,8 +14,11 @@ import {
   Bookmark,
   ChevronDown,
   ArrowUpRight,
+  Inbox,
 } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+
+import { BrandMark } from "@/components/brand/mark";
 
 import { CATEGORIES } from "@/lib/constants";
 import { cn, initials } from "@/lib/utils";
@@ -68,20 +71,16 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
         }}
       >
         <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-          {/* The reference puts a round mark at the left end of the pill; this
-              is the site's own, lit rather than filled. */}
-          <span
-            aria-hidden
-            className="grid h-9 w-9 place-items-center rounded-full border-2 border-[var(--n1)] font-display text-[0.8rem] font-black leading-none text-[var(--n1)] shadow-[0_0_16px_color-mix(in_oklch,var(--n1)_55%,transparent),inset_0_0_12px_color-mix(in_oklch,var(--n1)_35%,transparent)] transition-transform duration-300 group-hover:rotate-90"
-          >
-            +
-          </span>
-          <span className="hidden font-display text-[0.95rem] font-black leading-none tracking-[0.01em] sm:block">
-            FAN<span className="text-[var(--n2)]">{"//"}</span>HUB
+          <BrandMark className="h-9 w-9 transition-transform duration-300 group-hover:-rotate-6" />
+          <span className="hidden font-display text-[0.95rem] font-black leading-none tracking-[0.02em] sm:block">
+            FANHUB<span className="text-[var(--n1)]">.</span>
           </span>
         </Link>
 
-        <nav className="hidden min-w-0 items-center gap-0.5 lg:flex" aria-label="Primary">
+        <nav
+          className="hidden min-w-0 items-center gap-0.5 lg:flex"
+          aria-label="Primary"
+        >
           <ChannelMenu pathname={pathname} />
           {NAV_LINKS.map((link, index) => {
             const active = pathname.startsWith(link.href);
@@ -144,7 +143,11 @@ export function SiteHeader({ user }: { user: CurrentUser | null }) {
             aria-expanded={mobileOpen}
             className="grid h-10 w-10 place-items-center rounded-full border border-[var(--edge-strong)] text-[var(--ink-soft)] transition-colors hover:border-[var(--n1)] hover:text-[var(--n1)] lg:hidden"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {mobileOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
         </div>
       </div>
@@ -182,10 +185,14 @@ function ChannelMenu({ pathname }: { pathname: string }) {
           sideOffset={14}
           align="start"
           className="z-[70] w-[min(42rem,calc(100vw-2rem))] overflow-hidden rounded-[1.5rem] border border-[var(--edge)] p-2 shadow-[var(--lift-lg)] backdrop-blur-xl data-[state=open]:motion-safe:animate-[menu-in_.16s_ease-out]"
-          style={{ background: "color-mix(in oklch, var(--paper-2) 94%, transparent)" }}
+          style={{
+            background: "color-mix(in oklch, var(--paper-2) 94%, transparent)",
+          }}
         >
           <div className="flex items-center justify-between px-3 pb-2 pt-1.5">
-            <p className="mark !text-[0.58rem] text-[var(--n2)]">Eight channels</p>
+            <p className="mark !text-[0.58rem] text-[var(--n2)]">
+              Eight channels
+            </p>
             <DropdownMenu.Item asChild>
               <Link
                 href="/explore"
@@ -259,7 +266,11 @@ function AccountMenu({ user }: { user: CurrentUser }) {
         >
           {user.avatarUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
+            <img
+              src={user.avatarUrl}
+              alt=""
+              className="h-full w-full object-cover"
+            />
           ) : (
             initials(user.name)
           )}
@@ -288,12 +299,30 @@ function AccountMenu({ user }: { user: CurrentUser }) {
             )}
           </div>
 
-          <MenuLink href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+          <MenuLink
+            href="/dashboard"
+            icon={LayoutDashboard}
+            label="Dashboard"
+          />
           <MenuLink href="/bookmarks" icon={Bookmark} label="Saved" />
           <MenuLink href="/profile" icon={UserIcon} label="Profile" />
           <MenuLink href="/submit" icon={PenLine} label="Submit content" />
+          {/* The control panel had no link anywhere in the app except a
+              line in the sitemap — nine admin pages reachable only by typing
+              the URL. It gets its own labelled group here so it reads as a
+              separate place rather than one more account link. */}
           {user.role === "admin" && (
-            <MenuLink href="/admin/submissions" icon={Shield} label="Review queue" />
+            <div className="border-t border-[var(--rule)] bg-[color-mix(in_oklch,var(--n1)_7%,transparent)]">
+              <p className="px-4 pb-1 pt-2.5 font-mono text-[0.52rem] uppercase tracking-[0.18em] text-[var(--n1)]">
+                Admin
+              </p>
+              <MenuLink href="/admin" icon={Shield} label="Control panel" />
+              <MenuLink
+                href="/admin/submissions"
+                icon={Inbox}
+                label="Review queue"
+              />
+            </div>
           )}
 
           <form action={logout} className="border-t border-[var(--rule)]">
@@ -333,7 +362,13 @@ function MenuLink({
   );
 }
 
-function MobileNav({ user, pathname }: { user: CurrentUser | null; pathname: string }) {
+function MobileNav({
+  user,
+  pathname,
+}: {
+  user: CurrentUser | null;
+  pathname: string;
+}) {
   return (
     <div className="border-t border-[var(--rule)] bg-[var(--paper-2)] px-5 py-5 lg:hidden">
       <nav className="flex flex-col" aria-label="Mobile">
@@ -343,7 +378,9 @@ function MobileNav({ user, pathname }: { user: CurrentUser | null; pathname: str
             href={link.href}
             className={cn(
               "border-b border-[var(--rule)] py-3 font-display text-[1.05rem] font-bold leading-none transition-colors",
-              pathname.startsWith(link.href) ? "text-[var(--n1)]" : "hover:text-[var(--n2)]",
+              pathname.startsWith(link.href)
+                ? "text-[var(--n1)]"
+                : "hover:text-[var(--n2)]",
             )}
           >
             {link.label}

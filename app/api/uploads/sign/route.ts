@@ -25,7 +25,10 @@ import { isMediaKind, MEDIA_RULES } from "@/lib/media-kinds";
 export async function POST(request: NextRequest) {
   const user = await getCurrentUser();
   if (!user) {
-    return NextResponse.json({ error: "Sign in to upload media." }, { status: 401 });
+    return NextResponse.json(
+      { error: "Sign in to upload media." },
+      { status: 401 },
+    );
   }
   if (!user.emailVerified) {
     return NextResponse.json(
@@ -39,8 +42,13 @@ export async function POST(request: NextRequest) {
   const limit = await rateLimit(`upload-sign:${user.id}`, 40, 3600);
   if (!limit.ok) {
     return NextResponse.json(
-      { error: `Too many uploads for now. Try again in ${limit.retryAfterSeconds}s.` },
-      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+      {
+        error: `Too many uploads for now. Try again in ${limit.retryAfterSeconds}s.`,
+      },
+      {
+        status: 429,
+        headers: { "Retry-After": String(limit.retryAfterSeconds) },
+      },
     );
   }
 
@@ -53,7 +61,10 @@ export async function POST(request: NextRequest) {
 
   const kind = (body as { kind?: unknown })?.kind;
   if (!isMediaKind(kind)) {
-    return NextResponse.json({ error: "Unsupported media kind." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Unsupported media kind." },
+      { status: 400 },
+    );
   }
 
   try {

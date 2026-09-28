@@ -71,7 +71,9 @@ async function countInDatabase(
           ok: false,
           retryAfterSeconds: Math.max(
             1,
-            Math.ceil((new Date(live.resetAt).getTime() - now.getTime()) / 1000),
+            Math.ceil(
+              (new Date(live.resetAt).getTime() - now.getTime()) / 1000,
+            ),
           ),
         }
       : allowed;
@@ -100,7 +102,11 @@ async function countInDatabase(
   return allowed;
 }
 
-function countInMemory(key: string, limit: number, windowSeconds: number): RateLimitResult {
+function countInMemory(
+  key: string,
+  limit: number,
+  windowSeconds: number,
+): RateLimitResult {
   const now = Date.now();
   const bucket = buckets.get(key);
 
@@ -111,7 +117,10 @@ function countInMemory(key: string, limit: number, windowSeconds: number): RateL
 
   bucket.count += 1;
   if (bucket.count > limit) {
-    return { ok: false, retryAfterSeconds: Math.ceil((bucket.resetAt - now) / 1000) };
+    return {
+      ok: false,
+      retryAfterSeconds: Math.ceil((bucket.resetAt - now) / 1000),
+    };
   }
   return allowed;
 }
@@ -130,10 +139,13 @@ export async function resetLimit(key: string): Promise<void> {
 // Opportunistic sweep of the in-memory fallback: drop expired buckets so the
 // map can't grow unbounded. The database copy is swept by its TTL index.
 if (!(globalThis as { _rateSweep?: NodeJS.Timeout })._rateSweep) {
-  (globalThis as { _rateSweep?: NodeJS.Timeout })._rateSweep = setInterval(() => {
-    const now = Date.now();
-    for (const [key, bucket] of buckets) {
-      if (now > bucket.resetAt) buckets.delete(key);
-    }
-  }, 60_000).unref?.() as unknown as NodeJS.Timeout;
+  (globalThis as { _rateSweep?: NodeJS.Timeout })._rateSweep = setInterval(
+    () => {
+      const now = Date.now();
+      for (const [key, bucket] of buckets) {
+        if (now > bucket.resetAt) buckets.delete(key);
+      }
+    },
+    60_000,
+  ).unref?.() as unknown as NodeJS.Timeout;
 }

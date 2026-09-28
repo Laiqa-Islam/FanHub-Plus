@@ -34,14 +34,22 @@ type CollectionInfo = {
   model: string;
   collection: string;
   fields: FieldInfo[];
-  indexes: { keys: Record<string, unknown>; options: Record<string, unknown> }[];
+  indexes: {
+    keys: Record<string, unknown>;
+    options: Record<string, unknown>;
+  }[];
   documentCount: number;
 };
 
 function describe(schemaPath: mongoose.SchemaType): FieldInfo {
-  const options = (schemaPath as unknown as { options?: Record<string, unknown> }).options ?? {};
-  const caster = (schemaPath as unknown as { caster?: { instance?: string; options?: Record<string, unknown> } })
-    .caster;
+  const options =
+    (schemaPath as unknown as { options?: Record<string, unknown> }).options ??
+    {};
+  const caster = (
+    schemaPath as unknown as {
+      caster?: { instance?: string; options?: Record<string, unknown> };
+    }
+  ).caster;
 
   // Arrays report as "Array"; the element type is on the caster.
   const type = caster?.instance
@@ -59,8 +67,12 @@ function describe(schemaPath: mongoose.SchemaType): FieldInfo {
       options.default !== undefined && typeof options.default !== "function"
         ? JSON.stringify(options.default)
         : undefined,
-    enum: (options.enum as string[]) ?? (caster?.options?.enum as string[]) ?? undefined,
-    ref: (options.ref as string) ?? (caster?.options?.ref as string) ?? undefined,
+    enum:
+      (options.enum as string[]) ??
+      (caster?.options?.enum as string[]) ??
+      undefined,
+    ref:
+      (options.ref as string) ?? (caster?.options?.ref as string) ?? undefined,
   };
 }
 
@@ -192,7 +204,9 @@ async function run() {
   writeFileSync(join(outDir, "schema.md"), lines.join("\n"));
 
   console.log(`✓ Wrote docs/schema.md and docs/schema.json`);
-  console.log(`  ${collections.length} collections, ${collections.reduce((n, c) => n + c.fields.length, 0)} fields`);
+  console.log(
+    `  ${collections.length} collections, ${collections.reduce((n, c) => n + c.fields.length, 0)} fields`,
+  );
 
   await mongoose.disconnect();
   process.exit(0);

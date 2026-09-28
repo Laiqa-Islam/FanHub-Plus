@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 import { CATEGORY_SLUGS } from "@/lib/constants";
 import { SUBMISSION_FORMATS } from "@/lib/media-kinds";
 import { EMBED_PROVIDERS } from "@/lib/embeds";
@@ -7,9 +13,19 @@ import { MediaAssetSchema } from "./media-asset";
 /** Fan-submitted pieces awaiting admin approval before publication (SRS FR-6). */
 const FanSubmissionSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     title: { type: String, required: true, trim: true },
-    category: { type: String, enum: CATEGORY_SLUGS, required: true, index: true },
+    category: {
+      type: String,
+      enum: CATEGORY_SLUGS,
+      required: true,
+      index: true,
+    },
     body: { type: String, required: true },
 
     /**
@@ -33,7 +49,11 @@ const FanSubmissionSchema = new Schema(
      * A third-party embed, stored as provider + id — never as a URL.
      * `lib/embeds.ts` explains why that distinction is the security boundary.
      */
-    embedProvider: { type: String, enum: [...EMBED_PROVIDERS, ""], default: "" },
+    embedProvider: {
+      type: String,
+      enum: [...EMBED_PROVIDERS, ""],
+      default: "",
+    },
     embedId: { type: String, default: "" },
 
     /**
@@ -71,7 +91,11 @@ const FanSubmissionSchema = new Schema(
     reviewedAt: { type: Date, default: null },
     reviewNote: { type: String, default: "" },
     /** Set once approved and mirrored into the Content collection. */
-    publishedContentId: { type: Schema.Types.ObjectId, ref: "Content", default: null },
+    publishedContentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Content",
+      default: null,
+    },
   },
   { timestamps: true },
 );

@@ -27,9 +27,13 @@ export default async function MerchPage(props: PageProps<"/merch">) {
   };
 
   const rawCategory = one("category");
-  const activeCategory = CATEGORY_SLUGS.includes(rawCategory as never) ? rawCategory! : "";
+  const activeCategory = CATEGORY_SLUGS.includes(rawCategory as never)
+    ? rawCategory!
+    : "";
   const rawTag = one("tag");
-  const activeTag = (MERCH_TAGS as readonly string[]).includes(rawTag ?? "") ? rawTag! : "";
+  const activeTag = (MERCH_TAGS as readonly string[]).includes(rawTag ?? "")
+    ? rawTag!
+    : "";
   const upcomingOnly = one("upcoming") === "1";
 
   const [items, user] = await Promise.all([
@@ -74,11 +78,13 @@ export default async function MerchPage(props: PageProps<"/merch">) {
                 <h1 className="font-display text-[clamp(1.9rem,5.5vw,3.6rem)] font-black leading-[0.95]">
                   Wear the
                   <br />
-                  <span className="text-[var(--n1)] [--glow:var(--n1)] glow-text">glow.</span>
+                  <span className="text-[var(--n1)] [--glow:var(--n1)] glow-text">
+                    glow.
+                  </span>
                 </h1>
                 <p className="mt-5 max-w-md text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
-                  Fan-picked apparel, accessories, figures and collectibles. Build your
-                  cart now and take it through checkout.
+                  Fan-picked apparel, accessories, figures and collectibles.
+                  Build your cart now and take it through checkout.
                 </p>
               </div>
               <RegMark className="hidden text-[var(--ink-faint)] sm:block" />
@@ -92,7 +98,11 @@ export default async function MerchPage(props: PageProps<"/merch">) {
                 active={!activeCategory && !activeTag && !upcomingOnly}
                 label="All"
               />
-              <Chip href="/merch?upcoming=1" active={upcomingOnly} label="Upcoming" />
+              <Chip
+                href="/merch?upcoming=1"
+                active={upcomingOnly}
+                label="Upcoming"
+              />
               {CATEGORIES.map((category) => (
                 <Chip
                   key={category.slug}
@@ -105,11 +115,17 @@ export default async function MerchPage(props: PageProps<"/merch">) {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="mark mr-1 !text-[0.58rem] text-[var(--n2)]">Tag</span>
+              <span className="mark mr-1 !text-[0.58rem] text-[var(--n2)]">
+                Tag
+              </span>
               {MERCH_TAGS.map((tag) => (
                 <Link
                   key={tag}
-                  href={activeTag === tag ? "/merch" : `/merch?tag=${encodeURIComponent(tag)}`}
+                  href={
+                    activeTag === tag
+                      ? "/merch"
+                      : `/merch?tag=${encodeURIComponent(tag)}`
+                  }
                   className={cn(
                     "rounded-full border px-3 py-1 font-mono text-[0.58rem] uppercase tracking-[0.13em] transition-colors",
                     activeTag === tag
@@ -133,50 +149,60 @@ export default async function MerchPage(props: PageProps<"/merch">) {
           </p>
         ) : showGrouped ? (
           <div className="flex flex-col gap-16">
-            {CATEGORIES.filter((category) => grouped.has(category.slug)).map((category) => {
-              const bucket = grouped.get(category.slug)!;
-              return (
-                <section key={category.slug}>
-                  <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-t border-[var(--rule)] pt-4">
-                    <div className="flex items-center gap-3">
-                      <span
-                        aria-hidden
-                        className="h-3 w-3 rounded-full"
-                        style={{
-                          background: `var(--ch-${category.token})`,
-                          boxShadow: `0 0 12px var(--ch-${category.token})`,
-                        }}
-                      />
-                      <h2 className="font-display text-[1.2rem] font-bold leading-none">
-                        {category.name}
-                      </h2>
-                      <span className="mark !text-[0.58rem]">{bucket.length} items</span>
+            {CATEGORIES.filter((category) => grouped.has(category.slug)).map(
+              (category) => {
+                const bucket = grouped.get(category.slug)!;
+                return (
+                  <section key={category.slug}>
+                    <div className="mb-6 flex flex-wrap items-end justify-between gap-3 border-t border-[var(--rule)] pt-4">
+                      <div className="flex items-center gap-3">
+                        <span
+                          aria-hidden
+                          className="h-3 w-3 rounded-full"
+                          style={{
+                            background: `var(--ch-${category.token})`,
+                            boxShadow: `0 0 12px var(--ch-${category.token})`,
+                          }}
+                        />
+                        <h2 className="font-display text-[1.2rem] font-bold leading-none">
+                          {category.name}
+                        </h2>
+                        <span className="mark !text-[0.58rem]">
+                          {bucket.length} items
+                        </span>
+                      </div>
+                      <Link
+                        href={`/merch?category=${category.slug}`}
+                        className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
+                      >
+                        See all →
+                      </Link>
                     </div>
-                    <Link
-                      href={`/merch?category=${category.slug}`}
-                      className="font-mono text-[0.62rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
-                    >
-                      See all →
-                    </Link>
-                  </div>
 
-                  <Reveal stagger={0.05} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                    {bucket.slice(0, 4).map((item, index) => (
-                      <MerchCard
-                        key={item.id}
-                        item={item}
-                        index={index}
-                        bookmarked={clipped.has(item.id)}
-                        signedIn={Boolean(user)}
-                      />
-                    ))}
-                  </Reveal>
-                </section>
-              );
-            })}
+                    <Reveal
+                      stagger={0.05}
+                      className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+                    >
+                      {bucket.slice(0, 4).map((item, index) => (
+                        <MerchCard
+                          key={item.id}
+                          item={item}
+                          index={index}
+                          bookmarked={clipped.has(item.id)}
+                          signedIn={Boolean(user)}
+                        />
+                      ))}
+                    </Reveal>
+                  </section>
+                );
+              },
+            )}
           </div>
         ) : (
-          <Reveal stagger={0.04} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Reveal
+            stagger={0.04}
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {items.map((item, index) => (
               <MerchCard
                 key={item.id}
@@ -195,7 +221,9 @@ export default async function MerchPage(props: PageProps<"/merch">) {
             className="group inline-flex items-center gap-3 font-display text-[1.2rem] font-bold leading-none transition-colors hover:text-[var(--n3)]"
           >
             See everything coming next
-            <span className="transition-transform duration-200 group-hover:translate-x-2">→</span>
+            <span className="transition-transform duration-200 group-hover:translate-x-2">
+              →
+            </span>
           </Link>
         </div>
       </div>

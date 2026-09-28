@@ -1,6 +1,6 @@
 # Fan Hub Plus — Database Schema
 
-Database: `fanhub` · Engine: MongoDB · ODM: Mongoose
+Database: `fanhubplus` · Engine: MongoDB · ODM: Mongoose
 
 Generated from the live Mongoose models by `npm run schema`, so it cannot
 drift out of step with the code. Do not edit by hand.
@@ -9,20 +9,21 @@ drift out of step with the code. Do not edit by hand.
 
 | Collection | Model | Fields | Indexes | Documents |
 | --- | --- | ---: | ---: | ---: |
-| `activitylogs` | ActivityLog | 9 | 3 | 13 |
-| `bookmarks` | Bookmark | 7 | 2 | 2 |
-| `characterprofiles` | CharacterProfile | 14 | 5 | 32 |
-| `chatbotqueries` | ChatbotQuery | 8 | 3 | 24 |
-| `contents` | Content | 30 | 8 | 57 |
-| `events` | Event | 18 | 7 | 16 |
-| `fansubmissions` | FanSubmission | 20 | 4 | 1 |
+| `activitylogs` | ActivityLog | 9 | 3 | 5 |
+| `bookmarks` | Bookmark | 7 | 2 | 1 |
+| `characterprofiles` | CharacterProfile | 27 | 5 | 36 |
+| `chatbotqueries` | ChatbotQuery | 8 | 3 | 2 |
+| `contents` | Content | 31 | 8 | 63 |
+| `events` | Event | 20 | 7 | 16 |
+| `eventtickets` | EventTicket | 12 | 5 | 2 |
+| `fansubmissions` | FanSubmission | 20 | 4 | 0 |
 | `faqentries` | FaqEntry | 9 | 2 | 8 |
 | `feedbacks` | Feedback | 11 | 3 | 0 |
-| `merchandiseitems` | MerchandiseItem | 15 | 6 | 25 |
-| `ratebuckets` | RateBucket | 3 | 1 | 2 |
-| `ratings` | Rating | 7 | 3 | 1 |
+| `merchandiseitems` | MerchandiseItem | 16 | 6 | 41 |
+| `ratebuckets` | RateBucket | 3 | 1 | 0 |
+| `ratings` | Rating | 7 | 3 | 0 |
 | `tokens` | Token | 8 | 3 | 0 |
-| `users` | User | 16 | 2 | 3 |
+| `users` | User | 15 | 2 | 3 |
 
 ## `activitylogs`
 
@@ -31,7 +32,7 @@ Mongoose model: **ActivityLog**
 | Field | Type | Required | Unique | Enum / Ref | Default |
 | --- | --- | :-: | :-: | --- | --- |
 | `userId` | ObjectId | yes |  | → User |  |
-| `action` | String | yes |  | `registered`, `logged-in`, `viewed-content`, `bookmarked`, `unbookmarked`, `rated`, `submitted-feedback`, `submitted-content`, `updated-profile`, `chatbot-message` |  |
+| `action` | String | yes |  | `registered`, `logged-in`, `viewed-content`, `bookmarked`, `unbookmarked`, `rated`, `submitted-feedback`, `submitted-content`, `updated-profile`, `chatbot-message`, `claimed-pass`, `released-pass` |  |
 | `label` | String |  |  |  | `""` |
 | `targetType` | String |  |  |  | `""` |
 | `targetId` | ObjectId |  |  |  | `null` |
@@ -78,6 +79,19 @@ Mongoose model: **CharacterProfile**
 | `bio` | String |  |  |  | `""` |
 | `imageUrl` | String |  |  |  | `""` |
 | `imagePublicId` | String |  |  |  | `""` |
+| `kanji` | String |  |  |  | `""` |
+| `role` | String |  |  |  | `""` |
+| `signature` | String |  |  |  | `""` |
+| `grade` | String |  |  |  | `""` |
+| `sealMark` | String |  |  |  | `""` |
+| `accent` | String |  |  |  | `""` |
+| `affiliation` | String |  |  |  | `""` |
+| `status` | String |  |  |  | `""` |
+| `relationships` | Mixed[] |  |  |  |  |
+| `skills` | Mixed[] |  |  |  |  |
+| `troops` | String |  |  |  | `""` |
+| `weapons` | Mixed[] |  |  |  |  |
+| `stats` | Mixed[] |  |  |  |  |
 | `traits` | Mixed[] |  |  |  |  |
 | `debutYear` | Number |  |  |  | `null` |
 | `viewCount` | Number |  |  |  | `0` |
@@ -135,6 +149,7 @@ Mongoose model: **Content**
 | `mediaRuntime` | String |  |  |  | `""` |
 | `mediaTags` | Mixed[] |  |  |  |  |
 | `gallery` | Mixed[] |  |  |  | `[]` |
+| `timeline` | Mixed[] |  |  |  | `[]` |
 | `embedProvider` | String |  |  | `youtube`, `vimeo`, `spotify`, `soundcloud`, `` | `""` |
 | `embedId` | String |  |  |  | `""` |
 | `transcript` | String |  |  |  | `""` |
@@ -174,6 +189,7 @@ Mongoose model: **Event**
 | `category` | String | yes |  | `anime`, `gaming`, `movies`, `tv-shows`, `k-pop`, `comics`, `manga`, `cosplay` |  |
 | `type` | String |  |  | `convention`, `meetup`, `screening`, `premiere`, `concert` | `"convention"` |
 | `description` | String |  |  |  | `""` |
+| `story` | String |  |  |  | `""` |
 | `venue` | String |  |  |  | `""` |
 | `city` | String | yes |  |  |  |
 | `country` | String |  |  |  | `""` |
@@ -182,6 +198,7 @@ Mongoose model: **Event**
 | `startsAt` | Date | yes |  |  |  |
 | `endsAt` | Date |  |  |  | `null` |
 | `ticketUrl` | String |  |  |  | `""` |
+| `capacity` | Number |  |  |  | `0` |
 | `imageUrl` | String |  |  |  | `""` |
 | `isHighlight` | Boolean |  |  |  | `false` |
 | `_id` | ObjectId |  |  |  |  |
@@ -197,6 +214,33 @@ Mongoose model: **Event**
 - `{ startsAt: 1 }`
 - `{ isHighlight: 1 }`
 - `{ location: 2dsphere }`
+
+## `eventtickets`
+
+Mongoose model: **EventTicket**
+
+| Field | Type | Required | Unique | Enum / Ref | Default |
+| --- | --- | :-: | :-: | --- | --- |
+| `userId` | ObjectId | yes |  | → User |  |
+| `eventId` | ObjectId | yes |  | → Event |  |
+| `code` | String | yes | yes |  |  |
+| `holderName` | String |  |  |  | `""` |
+| `holderEmail` | String |  |  |  | `""` |
+| `status` | String |  |  | `pending`, `confirmed`, `rejected`, `released` | `"pending"` |
+| `decidedAt` | Date |  |  |  | `null` |
+| `decidedBy` | ObjectId |  |  | → User | `null` |
+| `decisionNote` | String |  |  |  | `""` |
+| `_id` | ObjectId |  |  |  |  |
+| `createdAt` | Date |  |  |  |  |
+| `updatedAt` | Date |  |  |  |  |
+
+**Indexes**
+
+- `{ userId: 1 }`
+- `{ eventId: 1 }`
+- `{ code: 1 }` — {"unique":true}
+- `{ status: 1 }`
+- `{ userId: 1, eventId: 1 }` — {"unique":true,"partialFilterExpression":{"status":{"$in":["pending","confirmed"]}}}
 
 ## `fansubmissions`
 
@@ -287,6 +331,7 @@ Mongoose model: **MerchandiseItem**
 | `slug` | String | yes | yes |  |  |
 | `category` | String | yes |  | `anime`, `gaming`, `movies`, `tv-shows`, `k-pop`, `comics`, `manga`, `cosplay` |  |
 | `description` | String |  |  |  | `""` |
+| `priceCents` | Number |  |  |  | `0` |
 | `imageUrl` | String |  |  |  | `""` |
 | `imagePublicId` | String |  |  |  | `""` |
 | `gallery` | Mixed[] |  |  |  |  |
@@ -377,7 +422,6 @@ Mongoose model: **User**
 | `avatarPublicId` | String |  |  |  | `""` |
 | `bio` | String |  |  |  | `""` |
 | `favoriteCategories` | Mixed[] |  |  |  |  |
-| `preferences.theme` | String |  |  | `light`, `dark`, `system` | `"system"` |
 | `preferences.fontScale` | Number |  |  |  | `100` |
 | `preferences.reducedMotion` | Boolean |  |  |  | `false` |
 | `emailVerifiedAt` | Date |  |  |  | `null` |

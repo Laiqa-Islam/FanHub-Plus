@@ -63,7 +63,9 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
 
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
-            <span className="border border-[var(--rule-strong)] px-1.5 py-0.5">{item.type}</span>
+            <span className="border border-[var(--rule-strong)] px-1.5 py-0.5">
+              {item.type}
+            </span>
             <span>{status}</span>
             <span>{item.at}</span>
           </p>
@@ -85,7 +87,10 @@ export function FeedbackRow({ item }: { item: FeedbackItem }) {
           >
             {expanded ? "Hide" : "Read"} message
             <ChevronDown
-              className={cn("h-3.5 w-3.5 transition-transform", expanded && "rotate-180")}
+              className={cn(
+                "h-3.5 w-3.5 transition-transform",
+                expanded && "rotate-180",
+              )}
               aria-hidden
             />
           </button>

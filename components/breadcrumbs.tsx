@@ -16,10 +16,16 @@ export function Breadcrumbs({
           </Link>
         </li>
         {trail.map((crumb, index) => (
-          <li key={`${crumb.label}-${index}`} className="flex items-center gap-1.5">
+          <li
+            key={`${crumb.label}-${index}`}
+            className="flex items-center gap-1.5"
+          >
             <ChevronRight className="h-3 w-3 shrink-0" aria-hidden />
             {crumb.href ? (
-              <Link href={crumb.href} className="transition-colors hover:text-[var(--spot)]">
+              <Link
+                href={crumb.href}
+                className="transition-colors hover:text-[var(--spot)]"
+              >
                 {crumb.label}
               </Link>
             ) : (

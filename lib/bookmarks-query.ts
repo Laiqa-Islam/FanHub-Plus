@@ -1,7 +1,13 @@
 import "server-only";
 import { Types } from "mongoose";
 import { connectToDatabase } from "@/lib/db";
-import { Bookmark, Content, CharacterProfile, MerchandiseItem, Event } from "@/models";
+import {
+  Bookmark,
+  Content,
+  CharacterProfile,
+  MerchandiseItem,
+  Event,
+} from "@/models";
 import type { BookmarkTargetType } from "@/lib/bookmark-types";
 
 /**
@@ -43,7 +49,9 @@ export async function getClippings(
   const filter: Record<string, unknown> = { userId };
   if (filterType && filterType in KIND_LABEL) filter.targetType = filterType;
 
-  const bookmarks = await Bookmark.find(filter as never).sort({ createdAt: -1 }).lean();
+  const bookmarks = await Bookmark.find(filter as never)
+    .sort({ createdAt: -1 })
+    .lean();
   if (bookmarks.length === 0) return [];
 
   const idsByType = new Map<string, string[]>();
@@ -54,9 +62,15 @@ export async function getClippings(
   }
 
   const [contents, characters, merch, events] = await Promise.all([
-    Content.find({ _id: { $in: idsByType.get("content") ?? [] } } as never).lean(),
-    CharacterProfile.find({ _id: { $in: idsByType.get("character") ?? [] } } as never).lean(),
-    MerchandiseItem.find({ _id: { $in: idsByType.get("merchandise") ?? [] } } as never).lean(),
+    Content.find({
+      _id: { $in: idsByType.get("content") ?? [] },
+    } as never).lean(),
+    CharacterProfile.find({
+      _id: { $in: idsByType.get("character") ?? [] },
+    } as never).lean(),
+    MerchandiseItem.find({
+      _id: { $in: idsByType.get("merchandise") ?? [] },
+    } as never).lean(),
     Event.find({ _id: { $in: idsByType.get("event") ?? [] } } as never).lean(),
   ]);
 

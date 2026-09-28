@@ -18,7 +18,8 @@ export const ONBOARDING_STEPS = [
   {
     id: "watch",
     label: "Where's the video and audio?",
-    prompt: "Where can I watch videos and listen to audio, and can I rate them?",
+    prompt:
+      "Where can I watch videos and listen to audio, and can I rate them?",
   },
   {
     id: "save",

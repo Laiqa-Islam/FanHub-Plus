@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 
 /**
  * A bookmark can point at any showcased item — article, character, video or
@@ -7,7 +13,12 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
  */
 const BookmarkSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     targetType: {
       type: String,
       enum: ["content", "character", "merchandise", "event"],
@@ -20,9 +31,13 @@ const BookmarkSchema = new Schema(
 );
 
 // One bookmark per user per item.
-BookmarkSchema.index({ userId: 1, targetType: 1, targetId: 1 }, { unique: true });
+BookmarkSchema.index(
+  { userId: 1, targetType: 1, targetId: 1 },
+  { unique: true },
+);
 
 export type BookmarkDoc = InferSchemaType<typeof BookmarkSchema>;
 
 export const Bookmark: Model<BookmarkDoc> =
-  (models.Bookmark as Model<BookmarkDoc>) ?? model<BookmarkDoc>("Bookmark", BookmarkSchema);
+  (models.Bookmark as Model<BookmarkDoc>) ??
+  model<BookmarkDoc>("Bookmark", BookmarkSchema);

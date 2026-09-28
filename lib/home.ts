@@ -16,7 +16,13 @@
  * cost the visitor the events strip, not the entire front page.
  */
 import { connectToDatabase } from "@/lib/db";
-import { Content, CharacterProfile, MerchandiseItem, Event } from "@/models";
+import {
+  Content,
+  CharacterProfile,
+  MerchandiseItem,
+  Event,
+  EventTicket,
+} from "@/models";
 
 export type HomeVideo = {
   slug: string;
@@ -205,5 +211,69 @@ export async function getHomeExtras(): Promise<HomeExtras> {
   } catch (error) {
     console.error("[home] extras unavailable:", error);
     return EMPTY;
+  }
+}
+
+export type MyPass = {
+  code: string;
+  status: "pending" | "confirmed";
+  eventSlug: string;
+  eventTitle: string;
+  city: string;
+  category: string;
+  startsAt: string | null;
+};
+
+/**
+ * Passes the member is holding for events still to come.
+ *
+ * Lives here rather than in the tickets action file because it is read-only
+ * page data, and because the dashboard is where a claimed pass has to show
+ * up — a booking you can only find by navigating back to the event you
+ * booked it from is a booking people lose.
+ */
+export async function getMyPasses(userId: string): Promise<MyPass[]> {
+  try {
+    await connectToDatabase();
+
+    // Requests awaiting a decision belong here too: "did that go through?"
+    // is exactly the question this list should answer.
+    const tickets = await EventTicket.find({
+      userId,
+      status: { $in: ["pending", "confirmed"] },
+    })
+      .select("code eventId status")
+      .lean();
+    if (tickets.length === 0) return [];
+
+    const events = await Event.find({
+      _id: { $in: tickets.map((t) => t.eventId) },
+      startsAt: { $gte: new Date() },
+    })
+      .select("slug title city category startsAt")
+      .sort({ startsAt: 1 })
+      .lean();
+
+    const byId = new Map(
+      tickets.map((t) => [
+        String(t.eventId),
+        { code: String(t.code), status: t.status as "pending" | "confirmed" },
+      ]),
+    );
+
+    return events.map((event) => ({
+      code: byId.get(String(event._id))?.code ?? "",
+      status: byId.get(String(event._id))?.status ?? "pending",
+      eventSlug: String(event.slug),
+      eventTitle: String(event.title),
+      city: String(event.city ?? ""),
+      category: String(event.category ?? "anime"),
+      startsAt: event.startsAt
+        ? new Date(event.startsAt as Date).toISOString()
+        : null,
+    }));
+  } catch (error) {
+    console.error("[home] passes unavailable:", error);
+    return [];
   }
 }

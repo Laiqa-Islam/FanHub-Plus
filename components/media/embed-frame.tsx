@@ -1,6 +1,11 @@
 import { ExternalLink } from "lucide-react";
 
-import { PROVIDER_SPECS, embedHref, embedSrc, isEmbedProvider } from "@/lib/embeds";
+import {
+  PROVIDER_SPECS,
+  embedHref,
+  embedSrc,
+  isEmbedProvider,
+} from "@/lib/embeds";
 
 /**
  * Renders a third-party player (v2 Phase 11).

@@ -21,7 +21,10 @@ export function FeedbackForm({ signedIn }: { signedIn: boolean }) {
   if (state?.success) {
     return (
       <div className="flex items-start gap-3 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-6">
-        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+        <CheckCircle2
+          className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]"
+          aria-hidden
+        />
         <div>
           <p className="font-display text-[1.01rem] leading-none">Sent</p>
           <p className="mt-2 text-[0.92rem] leading-relaxed text-[var(--ink-soft)]">
@@ -42,7 +45,12 @@ export function FeedbackForm({ signedIn }: { signedIn: boolean }) {
 
   return (
     <form action={action} className="flex flex-col gap-6">
-      <Select label="What kind of message is this?" name="type" required error={state?.errors?.type}>
+      <Select
+        label="What kind of message is this?"
+        name="type"
+        required
+        error={state?.errors?.type}
+      >
         <option value="">Choose one…</option>
         {FEEDBACK_TYPES.map((type) => (
           <option key={type} value={type}>

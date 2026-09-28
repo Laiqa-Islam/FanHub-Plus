@@ -74,7 +74,11 @@ export function MerchCard({
           <p className="mark mb-2 !text-[0.58rem]">
             <span style={{ color: ink }}>{category?.name}</span>
             {item.releaseDate && (
-              <> · {item.isUpcoming ? "expected" : "out"} {formatDate(item.releaseDate)}</>
+              <>
+                {" "}
+                · {item.isUpcoming ? "expected" : "out"}{" "}
+                {formatDate(item.releaseDate)}
+              </>
             )}
           </p>
           <h3 className="font-display text-[0.95rem] font-bold leading-[1.15] transition-colors group-hover:text-[var(--n2)]">

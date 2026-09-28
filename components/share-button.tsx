@@ -38,7 +38,9 @@ export function ShareButton({
       toast.success("Link copied");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy the link. Copy it from the address bar instead.");
+      toast.error(
+        "Couldn't copy the link. Copy it from the address bar instead.",
+      );
     }
   }
 

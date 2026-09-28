@@ -59,7 +59,7 @@ export function EventsStrip({ events }: { events: HomeEvent[] }) {
             return (
               <Link
                 key={event.slug}
-                href="/events"
+                href={`/events/${event.slug}`}
                 className="reveal group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-[var(--edge-strong)]"
               >
                 <div className="relative aspect-[16/10] overflow-hidden">

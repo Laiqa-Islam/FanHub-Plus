@@ -57,9 +57,14 @@ export function imageUrl(
 }
 
 /** A `srcset` across `IMAGE_WIDTHS`, for plain `<img>` outside next/image. */
-export function imageSrcSet(url: string, widths: readonly number[] = IMAGE_WIDTHS): string {
+export function imageSrcSet(
+  url: string,
+  widths: readonly number[] = IMAGE_WIDTHS,
+): string {
   if (!isCloudinary(url)) return "";
-  return widths.map((width) => `${imageUrl(url, { width })} ${width}w`).join(", ");
+  return widths
+    .map((width) => `${imageUrl(url, { width })} ${width}w`)
+    .join(", ");
 }
 
 /**
@@ -78,7 +83,10 @@ export function lqipUrl(url: string): string {
  * the URL's resource type must be `video` — asking the image pipeline for a
  * frame of a video returns nothing.
  */
-export function videoPosterUrl(url: string, options: { width?: number } = {}): string {
+export function videoPosterUrl(
+  url: string,
+  options: { width?: number } = {},
+): string {
   if (!url || !isCloudinary(url) || !url.includes("/video/upload/")) return "";
 
   const parts = ["so_0", "f_jpg", "q_auto"];

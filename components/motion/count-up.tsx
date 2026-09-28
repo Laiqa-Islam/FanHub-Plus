@@ -36,26 +36,37 @@ export function CountUp({
       if (document.documentElement.dataset.reducedMotion === "true") return;
 
       const counter = { value: 0 };
+      const settle = () => {
+        node.textContent = `${to}${suffix}`;
+      };
 
-      gsap.to(counter, {
+      const tween = gsap.to(counter, {
         value: to,
         duration,
         ease: "power2.out",
+        // Nothing is written to the DOM until the tween genuinely starts, so
+        // a ScrollTrigger that never fires leaves the server-rendered number
+        // in place rather than a zero that never moves.
         onUpdate: () => {
           node.textContent = `${Math.round(counter.value)}${suffix}`;
         },
-        scrollTrigger: {
-          trigger: node,
-          start: "top 88%",
-          once: true,
-          // Only zero the display once we know the tween is about to run.
-          // Setting it at mount would blank a server-rendered number for
-          // anyone whose ScrollTrigger never fires.
-          onEnter: () => {
-            node.textContent = `0${suffix}`;
-          },
-        },
+        // Rounding during the tween can land a frame short of the target.
+        onComplete: settle,
+        scrollTrigger: { trigger: node, start: "top 88%", once: true },
       });
+
+      // These are real figures — someone's saved count, the size of the
+      // library — so a stalled tween must not be allowed to leave a *wrong*
+      // number on screen. GSAP drives updates from requestAnimationFrame,
+      // which a background or non-painting tab can suspend indefinitely,
+      // freezing the display mid-count. This runs on a timer instead, so it
+      // fires regardless, and snaps to the true value if the count is still
+      // unfinished. Matches the failsafe `Reveal` already carries.
+      const failsafe = setTimeout(() => {
+        if (tween.progress() < 1) settle();
+      }, 3000);
+
+      return () => clearTimeout(failsafe);
     },
     { scope: ref, dependencies: [to, duration, suffix] },
   );

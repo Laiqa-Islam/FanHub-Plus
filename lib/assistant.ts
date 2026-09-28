@@ -34,7 +34,8 @@ export type AssistantContext = {
 function stem(word: string): string {
   if (word.length > 4 && word.endsWith("ies")) return `${word.slice(0, -3)}y`;
   if (word.length > 4 && word.endsWith("es")) return word.slice(0, -2);
-  if (word.length > 3 && word.endsWith("s") && !word.endsWith("ss")) return word.slice(0, -1);
+  if (word.length > 3 && word.endsWith("s") && !word.endsWith("ss"))
+    return word.slice(0, -1);
   return word;
 }
 
@@ -42,7 +43,10 @@ function score(haystack: string, terms: string[]): number {
   const words = new Set(
     (haystack.toLowerCase().match(/[a-z0-9]+/g) ?? []).map(stem),
   );
-  return terms.reduce((total, term) => (words.has(stem(term)) ? total + 1 : total), 0);
+  return terms.reduce(
+    (total, term) => (words.has(stem(term)) ? total + 1 : total),
+    0,
+  );
 }
 
 /**
@@ -52,12 +56,59 @@ function score(haystack: string, terms: string[]): number {
  * makes everything look equally relevant.
  */
 const STOP_WORDS = new Set([
-  "the", "and", "for", "you", "your", "can", "how", "what", "where", "when",
-  "does", "this", "that", "with", "are", "any", "get", "have", "there", "about",
-  "from", "into", "site", "please", "tell", "its", "was", "were", "has",
-  "recommend", "recommendation", "something", "anything", "good", "best", "great",
-  "read", "reading", "watch", "watching", "listen", "find", "show", "give",
-  "want", "need", "like", "know", "help", "page", "here", "some", "more",
+  "the",
+  "and",
+  "for",
+  "you",
+  "your",
+  "can",
+  "how",
+  "what",
+  "where",
+  "when",
+  "does",
+  "this",
+  "that",
+  "with",
+  "are",
+  "any",
+  "get",
+  "have",
+  "there",
+  "about",
+  "from",
+  "into",
+  "site",
+  "please",
+  "tell",
+  "its",
+  "was",
+  "were",
+  "has",
+  "recommend",
+  "recommendation",
+  "something",
+  "anything",
+  "good",
+  "best",
+  "great",
+  "read",
+  "reading",
+  "watch",
+  "watching",
+  "listen",
+  "find",
+  "show",
+  "give",
+  "want",
+  "need",
+  "like",
+  "know",
+  "help",
+  "page",
+  "here",
+  "some",
+  "more",
 ]);
 
 function keywords(question: string): string[] {
@@ -86,14 +137,24 @@ export async function buildContext(
       .select("title slug category type summary")
       .limit(120)
       .lean(),
-    Event.find().select("title city venue startsAt category type").sort({ startsAt: 1 }).limit(20).lean(),
-    MerchandiseItem.find().select("name slug category tag isUpcoming").limit(40).lean(),
+    Event.find()
+      .select("title city venue startsAt category type")
+      .sort({ startsAt: 1 })
+      .limit(20)
+      .lean(),
+    MerchandiseItem.find()
+      .select("name slug category tag isUpcoming")
+      .limit(40)
+      .lean(),
   ]);
 
   // FAQ entries are the primary source; include the best matches in full, and
   // always keep a baseline set so common questions are answerable.
   const rankedFaqs = [...faqs]
-    .map((faq) => ({ faq, rank: score(`${faq.question} ${faq.answer}`, terms) }))
+    .map((faq) => ({
+      faq,
+      rank: score(`${faq.question} ${faq.answer}`, terms),
+    }))
     .sort((a, b) => b.rank - a.rank)
     .slice(0, 10)
     .map(({ faq }) => `Q: ${faq.question}\nA: ${faq.answer}`);
@@ -117,14 +178,20 @@ export async function buildContext(
   const matchedEvents = [...events]
     .map((event) => ({
       event,
-      rank: score(`${event.title} ${event.city} ${event.venue} ${event.category} ${event.type}`, terms),
+      rank: score(
+        `${event.title} ${event.city} ${event.venue} ${event.category} ${event.type}`,
+        terms,
+      ),
     }))
     .sort((a, b) => b.rank - a.rank)
     .slice(0, 6)
     .map(({ event }) => event);
 
   const matchedMerch = [...merch]
-    .map((item) => ({ item, rank: score(`${item.name} ${item.category} ${item.tag}`, terms) }))
+    .map((item) => ({
+      item,
+      rank: score(`${item.name} ${item.category} ${item.tag}`, terms),
+    }))
     .sort((a, b) => b.rank - a.rank)
     .filter(({ rank }) => rank > 0)
     .slice(0, 5)
@@ -138,12 +205,18 @@ export async function buildContext(
   if (rankedContent.length > 0) {
     pool = rankedContent.map(({ item }) => item);
   } else if (favouriteCategories.length > 0) {
-    pool = content.filter((item) => favouriteCategories.includes(item.category));
+    pool = content.filter((item) =>
+      favouriteCategories.includes(item.category),
+    );
   } else {
     // Nothing matched and we know nothing about the reader: mention a channel
     // the question named, if it named one, and otherwise stay quiet.
     const named = CATEGORIES.filter((category) =>
-      terms.some((term) => category.name.toLowerCase().includes(term) || category.slug.includes(term)),
+      terms.some(
+        (term) =>
+          category.name.toLowerCase().includes(term) ||
+          category.slug.includes(term),
+      ),
     ).map((category) => category.slug);
 
     if (named.length > 0) {
@@ -154,7 +227,8 @@ export async function buildContext(
   const recommendations: Recommendation[] = pool.slice(0, 4).map((item) => ({
     title: item.title,
     href: `/content/${item.slug}`,
-    channel: CATEGORIES.find((c) => c.slug === item.category)?.name ?? item.category,
+    channel:
+      CATEGORIES.find((c) => c.slug === item.category)?.name ?? item.category,
   }));
 
   const sections = [
@@ -206,10 +280,12 @@ Each has a page at /category/<slug>, slugs: ${CATEGORIES.map((c) => c.slug).join
   }
 
   if (favouriteCategories.length > 0) {
-    const names = CATEGORIES.filter((c) => favouriteCategories.includes(c.slug)).map(
-      (c) => c.name,
+    const names = CATEGORIES.filter((c) =>
+      favouriteCategories.includes(c.slug),
+    ).map((c) => c.name);
+    sections.push(
+      `THIS MEMBER FOLLOWS: ${names.join(", ")}. Prefer these when recommending.`,
     );
-    sections.push(`THIS MEMBER FOLLOWS: ${names.join(", ")}. Prefer these when recommending.`);
   }
 
   return { reference: sections.join("\n\n"), recommendations };
@@ -247,7 +323,10 @@ export async function findFaqAnswer(question: string): Promise<string | null> {
 }
 
 /** The assistant's operating rules. */
-export function buildSystemInstruction(reference: string, signedIn: boolean): string {
+export function buildSystemInstruction(
+  reference: string,
+  signedIn: boolean,
+): string {
   return `You are the assistant for Fan Hub Plus, an online fandom magazine covering eight channels: anime, gaming, movies, TV shows, K-Pop, comics, manga and cosplay.
 
 HOW TO ANSWER — follow these exactly:

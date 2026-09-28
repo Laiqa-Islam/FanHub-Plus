@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 
 /**
  * Single-use tokens for email verification and password reset.
@@ -9,7 +15,12 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
  */
 const TokenSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     tokenHash: { type: String, required: true, index: true },
     purpose: {
       type: String,

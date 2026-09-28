@@ -17,7 +17,11 @@ const transporter = nodemailer.createTransport({
 const FROM = process.env.MAIL_FROM || "Fan Hub Plus <no-reply@fanhubplus.app>";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-function layout(heading: string, body: string, cta: { href: string; label: string }) {
+function layout(
+  heading: string,
+  body: string,
+  cta: { href: string; label: string },
+) {
   return `
   <div style="background:#0b0a12;padding:40px 0;font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif">
     <div style="max-width:520px;margin:0 auto;background:#15131f;border:1px solid #272235;border-radius:18px;padding:36px 34px;color:#efecf6">
@@ -34,7 +38,11 @@ function layout(heading: string, body: string, cta: { href: string; label: strin
   </div>`;
 }
 
-export async function sendVerificationEmail(to: string, name: string, token: string) {
+export async function sendVerificationEmail(
+  to: string,
+  name: string,
+  token: string,
+) {
   const href = `${APP_URL}/verify-email?token=${encodeURIComponent(token)}`;
   await transporter.sendMail({
     from: FROM,
@@ -48,7 +56,11 @@ export async function sendVerificationEmail(to: string, name: string, token: str
   });
 }
 
-export async function sendPasswordResetEmail(to: string, name: string, token: string) {
+export async function sendPasswordResetEmail(
+  to: string,
+  name: string,
+  token: string,
+) {
   const href = `${APP_URL}/reset-password?token=${encodeURIComponent(token)}`;
   await transporter.sendMail({
     from: FROM,

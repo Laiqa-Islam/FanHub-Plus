@@ -98,7 +98,10 @@ export function EventMap({
           iconAnchor: [9, 9],
         });
 
-        const marker = L.marker([event.lat, event.lng], { icon, title: event.title })
+        const marker = L.marker([event.lat, event.lng], {
+          icon,
+          title: event.title,
+        })
           .bindPopup(
             `<strong style="font-size:13px">${escapeHtml(event.title)}</strong><br>` +
               `<span style="font-size:12px">${escapeHtml(event.venue)}, ${escapeHtml(event.city)}</span>`,

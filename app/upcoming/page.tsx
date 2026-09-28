@@ -26,12 +26,17 @@ function daysUntil(iso: string | null) {
 /** Groups entries under a month heading, the way a release calendar reads. */
 function monthKey(iso: string | null) {
   if (!iso) return "Date to be confirmed";
-  return new Date(iso).toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+  return new Date(iso).toLocaleDateString("en-GB", {
+    month: "long",
+    year: "numeric",
+  });
 }
 
 export default async function UpcomingPage(props: PageProps<"/upcoming">) {
   const params = await props.searchParams;
-  const raw = Array.isArray(params.category) ? params.category[0] : params.category;
+  const raw = Array.isArray(params.category)
+    ? params.category[0]
+    : params.category;
   const activeCategory = CATEGORY_SLUGS.includes(raw as never) ? raw! : "";
 
   const entries = await getUpcoming(activeCategory || undefined);
@@ -48,18 +53,31 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
     <div>
       <header className="border-b border-[var(--rule-strong)]">
         <div className="mx-auto max-w-[88rem] px-5 pb-10 pt-8 sm:px-8">
-          <Breadcrumbs trail={[{ href: "/merch", label: "Merch" }, { label: "Upcoming" }]} />
+          <Breadcrumbs
+            trail={[{ href: "/merch", label: "Merch" }, { label: "Upcoming" }]}
+          />
 
-          <p className="mark mb-3">Release schedule · {entries.length} entries</p>
-          <Misreg as="h1" className="text-[clamp(1.85rem,5.5vw,3.6rem)]" ghostInk="var(--ch-gaming)">
+          <p className="mark mb-3">
+            Release schedule · {entries.length} entries
+          </p>
+          <Misreg
+            as="h1"
+            className="text-[clamp(1.85rem,5.5vw,3.6rem)]"
+            ghostInk="var(--ch-gaming)"
+          >
             Coming next
           </Misreg>
           <p className="mt-5 max-w-xl border-l-2 border-[var(--ch-gaming)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
-            Anticipated releases and merchandise drops across every channel, in date order.
+            Anticipated releases and merchandise drops across every channel, in
+            date order.
           </p>
 
           <div className="mt-8 flex flex-wrap">
-            <Chip href="/upcoming" active={!activeCategory} label="All channels" />
+            <Chip
+              href="/upcoming"
+              active={!activeCategory}
+              label="All channels"
+            />
             {CATEGORIES.map((category) => (
               <Chip
                 key={category.slug}
@@ -84,7 +102,9 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
             {[...months.entries()].map(([month, bucket]) => (
               <section key={month}>
                 <div className="mb-5 flex items-baseline gap-4 border-t border-[var(--rule-strong)] pt-3">
-                  <h2 className="font-display text-[1.44rem] leading-none">{month}</h2>
+                  <h2 className="font-display text-[1.44rem] leading-none">
+                    {month}
+                  </h2>
                   <span className="mark !text-[0.6rem]">{bucket.length}</span>
                 </div>
 
@@ -121,7 +141,9 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
                         {/* Date + countdown */}
                         <div className="font-mono text-[0.68rem] uppercase tracking-[0.1em] sm:order-1">
                           <div className="text-[var(--ink)]">
-                            {entry.releaseDate ? formatDate(entry.releaseDate) : "TBC"}
+                            {entry.releaseDate
+                              ? formatDate(entry.releaseDate)
+                              : "TBC"}
                           </div>
                           {days !== null && days >= 0 && (
                             <div className="mt-0.5 tabular-nums text-[var(--ink-faint)]">
@@ -133,8 +155,13 @@ export default async function UpcomingPage(props: PageProps<"/upcoming">) {
                         {/* Title */}
                         <div className="min-w-0 sm:order-3">
                           <p className="flex items-center gap-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
-                            <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />
-                            {category?.name} · {entry.kind === "merchandise" ? "Merch" : entry.tag}
+                            <span
+                              aria-hidden
+                              className="h-2.5 w-2.5"
+                              style={{ background: ink }}
+                            />
+                            {category?.name} ·{" "}
+                            {entry.kind === "merchandise" ? "Merch" : entry.tag}
                           </p>
                           <h3 className="mt-1 font-display text-[1.01rem] leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
                             {entry.title}
@@ -181,7 +208,9 @@ function Chip({
           : "bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--paper-2)]",
       )}
     >
-      {ink && <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />}
+      {ink && (
+        <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />
+      )}
       {label}
     </Link>
   );

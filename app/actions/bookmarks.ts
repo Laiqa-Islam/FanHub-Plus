@@ -20,7 +20,9 @@ import { BOOKMARK_TYPES, type BookmarkTargetType } from "@/lib/bookmark-types";
 
 const ToggleSchema = z.object({
   targetType: z.enum(BOOKMARK_TYPES),
-  targetId: z.string().regex(/^[a-f\d]{24}$/i, "That item reference isn't valid."),
+  targetId: z
+    .string()
+    .regex(/^[a-f\d]{24}$/i, "That item reference isn't valid."),
 });
 
 export type ToggleResult = {
@@ -42,7 +44,11 @@ export async function toggleBookmark(
 
   const parsed = ToggleSchema.safeParse({ targetType, targetId });
   if (!parsed.success) {
-    return { ok: false, bookmarked: false, message: "We couldn't save that item." };
+    return {
+      ok: false,
+      bookmarked: false,
+      message: "We couldn't save that item.",
+    };
   }
 
   try {
@@ -65,7 +71,11 @@ export async function toggleBookmark(
       });
       if (path) revalidatePath(path);
       revalidatePath("/bookmarks");
-      return { ok: true, bookmarked: false, message: "Removed from your saves." };
+      return {
+        ok: true,
+        bookmarked: false,
+        message: "Removed from your saves.",
+      };
     }
 
     await Bookmark.create({
@@ -93,7 +103,11 @@ export async function toggleBookmark(
       return { ok: true, bookmarked: true, message: "Saved." };
     }
     console.error("[bookmarks] toggle failed:", error);
-    return { ok: false, bookmarked: false, message: "We couldn't save that. Try again." };
+    return {
+      ok: false,
+      bookmarked: false,
+      message: "We couldn't save that. Try again.",
+    };
   }
 }
 
@@ -112,7 +126,10 @@ export async function updateBookmarkNote(
 
   const parsed = NoteSchema.safeParse({ bookmarkId, note });
   if (!parsed.success) {
-    return { ok: false, message: parsed.error.issues[0]?.message ?? "That note isn't valid." };
+    return {
+      ok: false,
+      message: parsed.error.issues[0]?.message ?? "That note isn't valid.",
+    };
   }
 
   try {
@@ -172,7 +189,9 @@ export async function isBookmarked(
 
   try {
     await connectToDatabase();
-    return Boolean(await Bookmark.exists({ userId: user.id, targetType, targetId }));
+    return Boolean(
+      await Bookmark.exists({ userId: user.id, targetType, targetId }),
+    );
   } catch {
     return false;
   }

@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Type, Accessibility, Check } from "lucide-react";
+import { Type, Accessibility, Check, Sun, Moon, Monitor } from "lucide-react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
-import { useTheme } from "@/components/providers/theme-provider";
+import {
+  useTheme,
+  type ThemeChoice,
+} from "@/components/providers/theme-provider";
 import { cn } from "@/lib/utils";
 
 const FONT_STEPS = [
@@ -13,14 +16,29 @@ const FONT_STEPS = [
   { value: 130, label: "Largest" },
 ];
 
+const THEMES: { value: ThemeChoice; label: string; icon: typeof Sun }[] = [
+  { value: "light", label: "Light", icon: Sun },
+  { value: "dark", label: "Dark", icon: Moon },
+  { value: "system", label: "System", icon: Monitor },
+];
+
 /**
- * Text-size control and motion switch.
+ * Colour scheme, text size and motion.
  *
- * The light/dark toggle that used to sit beside these is gone: Neon Oni runs
- * on one dark ground, so there was nothing left for it to switch between.
+ * All three display preferences live behind one control rather than putting
+ * a separate sun/moon button in the header: they are the same kind of
+ * setting, they are all set once and forgotten, and the header pill has no
+ * room to spare.
  */
 export function AccessibilityMenu() {
-  const { fontScale, setFontScale, reducedMotion, setReducedMotion } = useTheme();
+  const {
+    theme,
+    setTheme,
+    fontScale,
+    setFontScale,
+    reducedMotion,
+    setReducedMotion,
+  } = useTheme();
   const [open, setOpen] = useState(false);
 
   return (
@@ -46,6 +64,29 @@ export function AccessibilityMenu() {
           align="end"
           className="z-[70] w-64 rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4 shadow-[var(--lift-lg)]"
         >
+          <p className="mark mb-3 flex items-center gap-2">
+            <Moon className="h-3.5 w-3.5" aria-hidden /> Appearance
+          </p>
+          <div className="mb-4 grid grid-cols-3 gap-1.5">
+            {THEMES.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setTheme(option.value)}
+                aria-pressed={theme === option.value}
+                className={cn(
+                  "flex flex-col items-center gap-1.5 rounded-lg border px-1 py-2.5 font-mono text-[0.58rem] transition-colors",
+                  theme === option.value
+                    ? "border-[var(--n2)] bg-[var(--spot-2-wash)] text-[var(--n2)]"
+                    : "border-[var(--edge)] text-[var(--ink-soft)] hover:border-[var(--edge-strong)] hover:text-[var(--ink)]",
+                )}
+              >
+                <option.icon className="h-3.5 w-3.5" aria-hidden />
+                {option.label}
+              </button>
+            ))}
+          </div>
+
           <p className="mark mb-3 flex items-center gap-2">
             <Type className="h-3.5 w-3.5" aria-hidden /> Text size
           </p>

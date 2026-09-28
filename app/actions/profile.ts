@@ -14,7 +14,10 @@ import type { Role } from "@/lib/constants";
  * Updates the signed-in user's profile: display name, bio, favourite fandoms,
  * display preferences, and optionally a new avatar (SRS FR-1).
  */
-export async function updateProfile(_prev: FormState, formData: FormData): Promise<FormState> {
+export async function updateProfile(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const current = await requireUser();
 
   const parsed = ProfileSchema.safeParse({
@@ -27,7 +30,8 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
 
   if (!parsed.success) return { errors: fieldErrors(parsed.error) };
 
-  const { name, bio, favoriteCategories, fontScale, reducedMotion } = parsed.data;
+  const { name, bio, favoriteCategories, fontScale, reducedMotion } =
+    parsed.data;
 
   try {
     await connectToDatabase();
@@ -48,8 +52,11 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
         update.avatarPublicId = uploaded.publicId;
 
         // Replace, don't accumulate: drop the previous asset.
-        const existing = await User.findById(current.id).select("avatarPublicId");
-        if (existing?.avatarPublicId) await destroyImage(existing.avatarPublicId);
+        const existing = await User.findById(current.id).select(
+          "avatarPublicId",
+        );
+        if (existing?.avatarPublicId)
+          await destroyImage(existing.avatarPublicId);
       } catch (error) {
         return { errors: { avatar: (error as Error).message } };
       }

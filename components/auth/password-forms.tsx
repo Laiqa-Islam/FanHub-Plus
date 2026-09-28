@@ -4,13 +4,20 @@ import { useActionState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { requestPasswordReset, resetPassword, resendVerification } from "@/app/actions/auth";
+import {
+  requestPasswordReset,
+  resetPassword,
+  resendVerification,
+} from "@/app/actions/auth";
 import { Input } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 
 /** Step 1 — ask for the reset link. */
 export function ForgotPasswordForm() {
-  const [state, action, pending] = useActionState(requestPasswordReset, undefined);
+  const [state, action, pending] = useActionState(
+    requestPasswordReset,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success && state.message) toast.success(state.message);
@@ -81,8 +88,15 @@ export function ResetPasswordForm({ token }: { token: string }) {
 }
 
 /** Requests a fresh confirmation email. */
-export function ResendVerificationForm({ defaultEmail = "" }: { defaultEmail?: string }) {
-  const [state, action, pending] = useActionState(resendVerification, undefined);
+export function ResendVerificationForm({
+  defaultEmail = "",
+}: {
+  defaultEmail?: string;
+}) {
+  const [state, action, pending] = useActionState(
+    resendVerification,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success && state.message) toast.success(state.message);
@@ -105,7 +119,12 @@ export function ResendVerificationForm({ defaultEmail = "" }: { defaultEmail?: s
         required
         error={state?.errors?.email}
       />
-      <Button type="submit" loading={pending} variant="outline" className="w-full">
+      <Button
+        type="submit"
+        loading={pending}
+        variant="outline"
+        className="w-full"
+      >
         Send a new link
       </Button>
     </form>
@@ -115,10 +134,15 @@ export function ResendVerificationForm({ defaultEmail = "" }: { defaultEmail?: s
 function SentNotice({ message }: { message: string }) {
   return (
     <div className="flex items-start gap-3 border border-[var(--spot-2)]/35 bg-[var(--spot-2-wash)] p-5">
-      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+      <CheckCircle2
+        className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]"
+        aria-hidden
+      />
       <div>
         <p className="font-semibold text-[var(--ink)]">Check your inbox</p>
-        <p className="mt-1 text-[0.88rem] leading-relaxed text-[var(--ink-soft)]">{message}</p>
+        <p className="mt-1 text-[0.88rem] leading-relaxed text-[var(--ink-soft)]">
+          {message}
+        </p>
       </div>
     </div>
   );

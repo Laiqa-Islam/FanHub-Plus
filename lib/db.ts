@@ -31,7 +31,10 @@ globalForMongoose._mongoose = cached;
  * wait on. Anything else means the socket is gone.
  */
 function isUsable(conn: Mongoose | null): conn is Mongoose {
-  return conn !== null && (conn.connection.readyState === 1 || conn.connection.readyState === 2);
+  return (
+    conn !== null &&
+    (conn.connection.readyState === 1 || conn.connection.readyState === 2)
+  );
 }
 
 export async function connectToDatabase(): Promise<Mongoose> {

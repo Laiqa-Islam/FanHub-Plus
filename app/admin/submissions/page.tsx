@@ -37,16 +37,21 @@ export default async function AdminSubmissionsPage() {
 
       <header className="mb-10">
         <p className="mark mb-3">Moderation queue</p>
-        <h1 className="font-display text-[clamp(1.65rem,4.2vw,2.3rem)]">Fan submissions</h1>
+        <h1 className="font-display text-[clamp(1.65rem,4.2vw,2.3rem)]">
+          Fan submissions
+        </h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
-          Approving publishes the piece to its channel immediately. Rejecting keeps it private
-          and records your note for the author.
+          Approving publishes the piece to its channel immediately. Rejecting
+          keeps it private and records your note for the author.
         </p>
       </header>
 
       {pending.length === 0 ? (
         <div className="border border-dashed border-[var(--edge-strong)] px-6 py-16 text-center">
-          <Inbox className="mx-auto h-8 w-8 text-[var(--ink-faint)]" aria-hidden />
+          <Inbox
+            className="mx-auto h-8 w-8 text-[var(--ink-faint)]"
+            aria-hidden
+          />
           <p className="mt-4 font-semibold">Queue is clear</p>
           <p className="mx-auto mt-2 max-w-sm text-[0.9rem] text-[var(--ink-soft)]">
             Nothing is waiting for review right now.
@@ -55,7 +60,10 @@ export default async function AdminSubmissionsPage() {
       ) : (
         <div className="flex flex-col gap-5">
           {pending.map((submission) => {
-            const author = submission.userId as unknown as { name?: string; email?: string };
+            const author = submission.userId as unknown as {
+              name?: string;
+              email?: string;
+            };
 
             // Submissions predating v2 Phase 10 kept a single cover image in
             // `mediaUrl`; present it as a one-image set so one card renders both.
@@ -74,8 +82,13 @@ export default async function AdminSubmissionsPage() {
                 key={String(submission._id)}
                 id={String(submission._id)}
                 title={submission.title}
-                category={categoryBySlug(submission.category)?.name ?? submission.category}
-                categoryToken={categoryBySlug(submission.category)?.token ?? "anime"}
+                category={
+                  categoryBySlug(submission.category)?.name ??
+                  submission.category
+                }
+                categoryToken={
+                  categoryBySlug(submission.category)?.token ?? "anime"
+                }
                 authorName={author?.name ?? "Unknown member"}
                 authorEmail={author?.email ?? ""}
                 submittedAt={relativeTime(submission.createdAt)}
@@ -101,7 +114,9 @@ export default async function AdminSubmissionsPage() {
                 key={String(submission._id)}
                 className="flex flex-wrap items-center gap-3 border border-[var(--rule-strong)] px-4 py-3 text-[0.88rem]"
               >
-                <span className="min-w-0 flex-1 truncate">{submission.title}</span>
+                <span className="min-w-0 flex-1 truncate">
+                  {submission.title}
+                </span>
                 <span
                   className={
                     submission.status === "approved"

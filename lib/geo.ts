@@ -22,7 +22,9 @@ export function distanceKm(from: Coords, to: Coords): number {
 
   const a =
     Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRadians(from.lat)) * Math.cos(toRadians(to.lat)) * Math.sin(dLng / 2) ** 2;
+    Math.cos(toRadians(from.lat)) *
+      Math.cos(toRadians(to.lat)) *
+      Math.sin(dLng / 2) ** 2;
 
   return EARTH_RADIUS_KM * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
@@ -47,14 +49,21 @@ export function getCurrentPosition(): Promise<Coords> {
 
     navigator.geolocation.getCurrentPosition(
       (position) =>
-        resolve({ lat: position.coords.latitude, lng: position.coords.longitude }),
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        }),
       (error) => {
         const messages: Record<number, string> = {
           1: "Location permission was denied. You can still filter events by city.",
           2: "Your location is unavailable right now. Try again, or filter by city.",
           3: "Finding your location took too long. Try again, or filter by city.",
         };
-        reject(new Error(messages[error.code] ?? "We couldn't determine your location."));
+        reject(
+          new Error(
+            messages[error.code] ?? "We couldn't determine your location.",
+          ),
+        );
       },
       { enableHighAccuracy: false, timeout: 10_000, maximumAge: 300_000 },
     );

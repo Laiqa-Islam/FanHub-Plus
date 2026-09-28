@@ -56,7 +56,9 @@ export function AssistantWidget() {
 
     (async () => {
       try {
-        const response = await fetch(`/api/chat?sessionId=${sessionRef.current}`);
+        const response = await fetch(
+          `/api/chat?sessionId=${sessionRef.current}`,
+        );
         const data = (await response.json()) as { messages?: Message[] };
         if (data.messages?.length) setMessages(data.messages);
       } catch {
@@ -67,7 +69,10 @@ export function AssistantWidget() {
 
   // Keep the newest message in view.
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "smooth",
+    });
   }, [messages, sending]);
 
   useEffect(() => {
@@ -99,7 +104,10 @@ export function AssistantWidget() {
         const response = await fetch("/api/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: question, sessionId: sessionRef.current }),
+          body: JSON.stringify({
+            message: question,
+            sessionId: sessionRef.current,
+          }),
         });
         const data = (await response.json()) as {
           reply?: string;
@@ -110,16 +118,24 @@ export function AssistantWidget() {
         setMessages((current) => [
           ...current,
           data.reply
-            ? { role: "assistant", text: data.reply, recommendations: data.recommendations }
+            ? {
+                role: "assistant",
+                text: data.reply,
+                recommendations: data.recommendations,
+              }
             : {
                 role: "assistant",
-                text: data.error ?? "Something went wrong. Try again in a moment.",
+                text:
+                  data.error ?? "Something went wrong. Try again in a moment.",
               },
         ]);
       } catch {
         setMessages((current) => [
           ...current,
-          { role: "assistant", text: "I couldn't reach the server. Check your connection." },
+          {
+            role: "assistant",
+            text: "I couldn't reach the server. Check your connection.",
+          },
         ]);
       } finally {
         setSending(false);
@@ -138,7 +154,9 @@ export function AssistantWidget() {
         aria-label={open ? "Close the assistant" : "Ask the assistant"}
         className={cn(
           "fixed bottom-5 right-5 z-[80] inline-flex items-center gap-2 rounded-2xl border border-[var(--edge)] px-4 py-3 font-mono text-[0.7rem] font-semibold uppercase tracking-[0.14em] shadow-[var(--lift-md)] transition-[transform,box-shadow] duration-150 hover:-translate-y-[2px] hover:shadow-[var(--lift-md)]",
-          open ? "bg-[var(--n1)] text-[var(--void)]" : "bg-[var(--spot)] text-[var(--void)]",
+          open
+            ? "bg-[var(--n1)] text-[var(--void)]"
+            : "bg-[var(--spot)] text-[var(--void)]",
         )}
       >
         {open ? (
@@ -170,8 +188,8 @@ export function AssistantWidget() {
                   Ask me about the issue
                 </p>
                 <p className="mt-2 text-[0.88rem] leading-snug text-[var(--ink-soft)]">
-                  I know what&apos;s on this site — the channels, the pieces, the events and how
-                  everything works. Start with one of these:
+                  I know what&apos;s on this site — the channels, the pieces,
+                  the events and how everything works. Start with one of these:
                 </p>
 
                 <ul className="mt-4 flex flex-col gap-2">
@@ -217,29 +235,32 @@ export function AssistantWidget() {
                       {message.text}
                     </p>
 
-                    {message.recommendations && message.recommendations.length > 0 && (
-                      <div className="mt-2 w-full">
-                        <p className="mark mb-1.5 !text-[0.54rem]">Have a look at</p>
-                        <ul className="flex flex-col">
-                          {message.recommendations.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                href={item.href}
-                                onClick={() => setOpen(false)}
-                                className="group flex items-baseline gap-2 border-b border-[var(--rule)] py-1.5"
-                              >
-                                <span className="font-mono text-[0.54rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
-                                  {item.channel}
-                                </span>
-                                <span className="min-w-0 flex-1 truncate font-display text-[0.95rem] leading-none transition-colors group-hover:text-[var(--spot-deep)]">
-                                  {item.title}
-                                </span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                    {message.recommendations &&
+                      message.recommendations.length > 0 && (
+                        <div className="mt-2 w-full">
+                          <p className="mark mb-1.5 !text-[0.54rem]">
+                            Have a look at
+                          </p>
+                          <ul className="flex flex-col">
+                            {message.recommendations.map((item) => (
+                              <li key={item.href}>
+                                <Link
+                                  href={item.href}
+                                  onClick={() => setOpen(false)}
+                                  className="group flex items-baseline gap-2 border-b border-[var(--rule)] py-1.5"
+                                >
+                                  <span className="font-mono text-[0.54rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
+                                    {item.channel}
+                                  </span>
+                                  <span className="min-w-0 flex-1 truncate font-display text-[0.95rem] leading-none transition-colors group-hover:text-[var(--spot-deep)]">
+                                    {item.title}
+                                  </span>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                   </li>
                 ))}
 
@@ -284,7 +305,8 @@ export function AssistantWidget() {
           </form>
 
           <p className="shrink-0 border-t border-[var(--rule)] px-3 py-1.5 font-mono text-[0.54rem] leading-snug text-[var(--ink-faint)]">
-            AI-generated answers can be wrong. Never share passwords or payment details.
+            AI-generated answers can be wrong. Never share passwords or payment
+            details.
           </p>
         </aside>
       )}

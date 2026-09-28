@@ -6,7 +6,11 @@ import { ChatbotQuery, FaqEntry } from "@/models";
 import { getCurrentUser } from "@/lib/dal";
 import { rateLimit } from "@/lib/rate-limit";
 import { generateReply, isAssistantEnabled, type ChatTurn } from "@/lib/gemini";
-import { buildContext, buildSystemInstruction, findFaqAnswer } from "@/lib/assistant";
+import {
+  buildContext,
+  buildSystemInstruction,
+  findFaqAnswer,
+} from "@/lib/assistant";
 
 /**
  * The assistant endpoint (SRS FR-4).
@@ -54,7 +58,9 @@ export async function POST(request: NextRequest) {
   const limit = await rateLimit(`chat:${sessionId}`, 15, 300);
   if (!limit.ok) {
     return NextResponse.json(
-      { error: `That's a lot of questions. Try again in ${limit.retryAfterSeconds}s.` },
+      {
+        error: `That's a lot of questions. Try again in ${limit.retryAfterSeconds}s.`,
+      },
       { status: 429 },
     );
   }
@@ -69,26 +75,24 @@ export async function POST(request: NextRequest) {
       .limit(HISTORY_TURNS)
       .lean();
 
-    const history: ChatTurn[] = previous
-      .reverse()
-      .flatMap((turn) =>
-        turn.response
-          ? [
-              { role: "user" as const, text: turn.message },
-              { role: "model" as const, text: turn.response },
-            ]
-          : [],
-      );
+    const history: ChatTurn[] = previous.reverse().flatMap((turn) =>
+      turn.response
+        ? [
+            { role: "user" as const, text: turn.message },
+            { role: "model" as const, text: turn.response },
+          ]
+        : [],
+    );
 
     const { reference, recommendations } = await buildContext(
       message,
       user?.favoriteCategories ?? [],
     );
 
-    const result = await generateReply(buildSystemInstruction(reference, Boolean(user)), [
-      ...history,
-      { role: "user", text: message },
-    ]);
+    const result = await generateReply(
+      buildSystemInstruction(reference, Boolean(user)),
+      [...history, { role: "user", text: message }],
+    );
 
     if (!result.ok) {
       // The model is unavailable — but if the knowledge base already answers
@@ -111,7 +115,10 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json(
-        { error: "The assistant couldn't answer that just now. Try again in a moment." },
+        {
+          error:
+            "The assistant couldn't answer that just now. Try again in a moment.",
+        },
         { status: 502 },
       );
     }
@@ -125,7 +132,10 @@ export async function POST(request: NextRequest) {
 
     // Track which FAQ entries are earning their place, for the admin panel.
     void FaqEntry.updateMany(
-      { isPublished: true, question: { $in: extractMatchedQuestions(reference, message) } },
+      {
+        isPublished: true,
+        question: { $in: extractMatchedQuestions(reference, message) },
+      },
       { $inc: { useCount: 1 } },
     ).catch(() => {});
 
@@ -136,7 +146,10 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("[api/chat] failed:", error);
-    return NextResponse.json({ error: "Something went wrong. Try again." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong. Try again." },
+      { status: 500 },
+    );
   }
 }
 
@@ -146,8 +159,13 @@ export async function POST(request: NextRequest) {
  * correctness signal.
  */
 function extractMatchedQuestions(reference: string, message: string): string[] {
-  const terms = message.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
-  const questions = [...reference.matchAll(/^Q: (.+)$/gm)].map((match) => match[1]);
+  const terms = message
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((w) => w.length > 3);
+  const questions = [...reference.matchAll(/^Q: (.+)$/gm)].map(
+    (match) => match[1],
+  );
   return questions.filter((question) =>
     terms.some((term) => question.toLowerCase().includes(term)),
   );

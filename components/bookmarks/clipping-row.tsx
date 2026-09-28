@@ -45,7 +45,11 @@ export function ClippingRow({ row }: { row: Row }) {
   function remove() {
     setRemoved(true);
     startTransition(async () => {
-      const result = await toggleBookmark(row.targetType, row.targetId, "/bookmarks");
+      const result = await toggleBookmark(
+        row.targetType,
+        row.targetId,
+        "/bookmarks",
+      );
       if (result.ok) toast.success(result.message);
       else {
         setRemoved(false);
@@ -73,7 +77,13 @@ export function ClippingRow({ row }: { row: Row }) {
           className="relative hidden h-20 w-24 shrink-0 overflow-hidden rounded-2xl border border-[var(--edge)] sm:block"
         >
           {row.imageUrl && (
-            <Image src={row.imageUrl} alt="" fill sizes="96px" className="plate object-cover" />
+            <Image
+              src={row.imageUrl}
+              alt=""
+              fill
+              sizes="96px"
+              className="plate object-cover"
+            />
           )}
           <span
             aria-hidden
@@ -84,7 +94,11 @@ export function ClippingRow({ row }: { row: Row }) {
 
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
-            <span aria-hidden className="h-2.5 w-2.5" style={{ background: ink }} />
+            <span
+              aria-hidden
+              className="h-2.5 w-2.5"
+              style={{ background: ink }}
+            />
             {category?.name}
             <span className="border border-[var(--rule-strong)] px-1.5 py-0.5">
               {row.kindLabel}

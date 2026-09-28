@@ -21,7 +21,9 @@ describe("escapeHtml", () => {
   });
 
   it("leaves ordinary prose untouched", () => {
-    expect(escapeHtml("A perfectly normal sentence.")).toBe("A perfectly normal sentence.");
+    expect(escapeHtml("A perfectly normal sentence.")).toBe(
+      "A perfectly normal sentence.",
+    );
   });
 });
 
@@ -33,7 +35,9 @@ describe("toSafeParagraphs", () => {
   });
 
   it("collapses runs of more than two newlines into one break", () => {
-    expect(toSafeParagraphs("One.\n\n\n\nTwo.")).toBe("<p>One.</p>\n<p>Two.</p>");
+    expect(toSafeParagraphs("One.\n\n\n\nTwo.")).toBe(
+      "<p>One.</p>\n<p>Two.</p>",
+    );
   });
 
   it("drops empty and whitespace-only blocks", () => {
@@ -43,7 +47,9 @@ describe("toSafeParagraphs", () => {
   });
 
   it("keeps single newlines inside a paragraph", () => {
-    expect(toSafeParagraphs("Line one\nline two")).toBe("<p>Line one\nline two</p>");
+    expect(toSafeParagraphs("Line one\nline two")).toBe(
+      "<p>Line one\nline two</p>",
+    );
   });
 
   it("returns an empty string for empty input", () => {
@@ -130,7 +136,9 @@ describe("excerpt", () => {
     expect(result.endsWith("…")).toBe(true);
     expect(result.length).toBeLessThanOrEqual(41);
     // No half-words: everything before the ellipsis is a complete token.
-    expect(result.slice(0, -1).trim().split(" ").at(-1)).toMatch(/^(alpha|bravo)$/);
+    expect(result.slice(0, -1).trim().split(" ").at(-1)).toMatch(
+      /^(alpha|bravo)$/,
+    );
   });
 
   it("still truncates when there is no space to cut on", () => {

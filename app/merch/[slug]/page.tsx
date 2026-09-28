@@ -4,7 +4,11 @@ import { notFound } from "next/navigation";
 import { Calendar, Eye } from "lucide-react";
 
 import { categoryBySlug } from "@/lib/constants";
-import { getMerchBySlug, getRelatedMerch, incrementMerchViews } from "@/lib/showcase";
+import {
+  getMerchBySlug,
+  getRelatedMerch,
+  incrementMerchViews,
+} from "@/lib/showcase";
 import { getBookmarkedIds, isBookmarked } from "@/app/actions/bookmarks";
 import { getCurrentUser } from "@/lib/dal";
 import { Breadcrumbs } from "@/components/breadcrumbs";
@@ -33,7 +37,9 @@ export async function generateMetadata(
   };
 }
 
-export default async function MerchDetailPage(props: PageProps<"/merch/[slug]">) {
+export default async function MerchDetailPage(
+  props: PageProps<"/merch/[slug]">,
+) {
   const { slug } = await props.params;
   const item = await getMerchBySlug(slug);
   if (!item) notFound();
@@ -63,7 +69,10 @@ export default async function MerchDetailPage(props: PageProps<"/merch/[slug]">)
       <Breadcrumbs
         trail={[
           { href: "/merch", label: "Merch" },
-          { href: `/merch?category=${item.category}`, label: category?.name ?? item.category },
+          {
+            href: `/merch?category=${item.category}`,
+            label: category?.name ?? item.category,
+          },
           { label: item.name },
         ]}
       />
@@ -78,7 +87,8 @@ export default async function MerchDetailPage(props: PageProps<"/merch/[slug]">)
           </div>
 
           <p className="mark mb-3">
-            <span style={{ color: ink }}>{category?.name}</span> · Catalogue plate
+            <span style={{ color: ink }}>{category?.name}</span> · Catalogue
+            plate
           </p>
 
           <h1 className="font-display text-[clamp(1.44rem,3.90vw,2.45rem)] leading-[0.92]">
@@ -121,7 +131,10 @@ export default async function MerchDetailPage(props: PageProps<"/merch/[slug]">)
                 {item.isUpcoming ? "Expected" : "Released"}
               </dt>
               <dd className="mt-1.5 flex items-center gap-2 font-display text-[0.95rem] leading-none">
-                <Calendar className="h-4 w-4 text-[var(--ink-faint)]" aria-hidden />
+                <Calendar
+                  className="h-4 w-4 text-[var(--ink-faint)]"
+                  aria-hidden
+                />
                 {item.releaseDate ? formatDate(item.releaseDate) : "TBC"}
               </dd>
             </div>
@@ -158,7 +171,10 @@ export default async function MerchDetailPage(props: PageProps<"/merch/[slug]">)
           <h2 className="mb-6 font-display text-[1.37rem] leading-none">
             Also in {category?.name}
           </h2>
-          <Reveal stagger={0.05} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <Reveal
+            stagger={0.05}
+            className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+          >
             {related.map((entry, index) => (
               <MerchCard
                 key={entry.id}

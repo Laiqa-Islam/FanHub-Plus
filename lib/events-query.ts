@@ -14,6 +14,8 @@ export type EventListItem = {
   ink: string;
   type: string;
   description: string;
+  /** Narrative copy, set on highlighted events only. */
+  story: string;
   venue: string;
   city: string;
   country: string;
@@ -24,6 +26,8 @@ export type EventListItem = {
   ticketUrl: string;
   imageUrl: string;
   isHighlight: boolean;
+  /** Passes offered through this site; 0 means no limit. */
+  capacity: number;
 };
 
 /**
@@ -44,14 +48,18 @@ const PIN_INK: Record<string, string> = {
   cosplay: "#d18700",
 };
 
-export async function getEvents(options: { category?: string; city?: string } = {}) {
+export async function getEvents(
+  options: { category?: string; city?: string } = {},
+) {
   await connectToDatabase();
 
   const filter: Record<string, unknown> = {};
   if (options.category) filter.category = options.category;
   if (options.city) filter.city = options.city;
 
-  const docs = await Event.find(filter as never).sort({ startsAt: 1 }).lean();
+  const docs = await Event.find(filter as never)
+    .sort({ startsAt: 1 })
+    .lean();
 
   return docs.map((doc): EventListItem => {
     const category = categoryBySlug(doc.category);
@@ -65,6 +73,7 @@ export async function getEvents(options: { category?: string; city?: string } = 
       ink: PIN_INK[category?.token ?? "anime"] ?? "#ff2e88",
       type: doc.type,
       description: doc.description ?? "",
+      story: doc.story ?? "",
       venue: doc.venue ?? "",
       city: doc.city,
       country: doc.country ?? "",
@@ -74,6 +83,7 @@ export async function getEvents(options: { category?: string; city?: string } = 
       startsAt: doc.startsAt.toISOString(),
       endsAt: doc.endsAt ? new Date(doc.endsAt).toISOString() : null,
       ticketUrl: doc.ticketUrl ?? "",
+      capacity: Number(doc.capacity ?? 0),
       imageUrl: doc.imageUrl ?? "",
       isHighlight: Boolean(doc.isHighlight),
     };

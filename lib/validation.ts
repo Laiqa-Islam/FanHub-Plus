@@ -11,7 +11,11 @@ const password = z
 export const RegisterSchema = z
   .object({
     name: z.string().trim().min(2, "Tell us what to call you.").max(60),
-    email: z.string().trim().toLowerCase().email("Enter a valid email address."),
+    email: z
+      .string()
+      .trim()
+      .toLowerCase()
+      .email("Enter a valid email address."),
     password,
     confirmPassword: z.string(),
   })
@@ -42,8 +46,14 @@ export const ResetPasswordSchema = z
 
 export const ProfileSchema = z.object({
   name: z.string().trim().min(2, "Tell us what to call you.").max(60),
-  bio: z.string().trim().max(280, "Keep your bio under 280 characters.").optional(),
-  favoriteCategories: z.array(z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]])).max(8),
+  bio: z
+    .string()
+    .trim()
+    .max(280, "Keep your bio under 280 characters.")
+    .optional(),
+  favoriteCategories: z
+    .array(z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]]))
+    .max(8),
   fontScale: z.coerce.number().min(90).max(130),
   reducedMotion: z.boolean(),
 });

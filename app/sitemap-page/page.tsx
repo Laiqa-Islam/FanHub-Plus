@@ -23,48 +23,120 @@ type Node = { href: string; label: string; note: string };
 
 const PUBLIC_PAGES: Node[] = [
   { href: "/", label: "Front page", note: "Hero, channel index, latest drops" },
-  { href: "/explore", label: "Explore", note: "Search, filter and sort everything" },
-  { href: "/media", label: "Multimedia Center", note: "Watch, listen, galleries, ratings" },
-  { href: "/characters", label: "Characters", note: "Profile cards, filter by channel" },
+  {
+    href: "/explore",
+    label: "Explore",
+    note: "Search, filter and sort everything",
+  },
+  {
+    href: "/media",
+    label: "Multimedia Center",
+    note: "Watch, listen, galleries, ratings",
+  },
+  {
+    href: "/characters",
+    label: "Characters",
+    note: "Profile cards, filter by channel",
+  },
   { href: "/events", label: "Events", note: "OpenStreetMap map + calendar" },
   { href: "/merch", label: "Merch", note: "Shop catalogue, grouped by fandom" },
-  { href: "/cart", label: "Cart", note: "Persistent bag, quantities and totals" },
-  { href: "/checkout", label: "Checkout", note: "Delivery and demo payment flow" },
+  {
+    href: "/cart",
+    label: "Cart",
+    note: "Persistent bag, quantities and totals",
+  },
+  {
+    href: "/checkout",
+    label: "Checkout",
+    note: "Delivery and demo payment flow",
+  },
   { href: "/upcoming", label: "Upcoming", note: "Release schedule by month" },
   { href: "/feedback", label: "Feedback", note: "Bug, suggestion or query" },
   { href: "/sitemap-page", label: "Sitemap", note: "This page" },
 ];
 
 const DETAIL_PAGES: Node[] = [
-  { href: "/category/anime", label: "/category/[slug]", note: "One channel, filtered" },
-  { href: "/explore", label: "/content/[slug]", note: "Article or media, with rating" },
-  { href: "/characters", label: "/characters/[slug]", note: "One character profile" },
-  { href: "/merch", label: "/merch/[slug]", note: "Product gallery + add to cart" },
+  {
+    href: "/category/anime",
+    label: "/category/[slug]",
+    note: "One channel, filtered",
+  },
+  {
+    href: "/explore",
+    label: "/content/[slug]",
+    note: "Article or media, with rating",
+  },
+  {
+    href: "/characters",
+    label: "/characters/[slug]",
+    note: "One character profile",
+  },
+  {
+    href: "/merch",
+    label: "/merch/[slug]",
+    note: "Product gallery + add to cart",
+  },
 ];
 
 const AUTH_PAGES: Node[] = [
   { href: "/register", label: "Register", note: "Create a free account" },
   { href: "/login", label: "Sign in", note: "Session begins" },
-  { href: "/verify-email", label: "Verify email", note: "Tokenised link, single use" },
-  { href: "/forgot-password", label: "Forgot password", note: "Request a reset link" },
-  { href: "/reset-password", label: "Reset password", note: "Set a new password" },
+  {
+    href: "/verify-email",
+    label: "Verify email",
+    note: "Tokenised link, single use",
+  },
+  {
+    href: "/forgot-password",
+    label: "Forgot password",
+    note: "Request a reset link",
+  },
+  {
+    href: "/reset-password",
+    label: "Reset password",
+    note: "Set a new password",
+  },
 ];
 
 const MEMBER_PAGES: Node[] = [
-  { href: "/dashboard", label: "Dashboard", note: "Your channels, saves, activity" },
-  { href: "/bookmarks", label: "Saved", note: "Saved items with private notes" },
-  { href: "/profile", label: "Profile", note: "Fandoms, avatar, display preferences" },
-  { href: "/submit", label: "Submit content", note: "Fan article, pending review" },
+  {
+    href: "/dashboard",
+    label: "Dashboard",
+    note: "Your channels, saves, activity",
+  },
+  {
+    href: "/bookmarks",
+    label: "Saved",
+    note: "Saved items with private notes",
+  },
+  {
+    href: "/profile",
+    label: "Profile",
+    note: "Fandoms, avatar, display preferences",
+  },
+  {
+    href: "/submit",
+    label: "Submit content",
+    note: "Fan article, pending review",
+  },
 ];
 
 const ADMIN_PAGES: Node[] = [
   { href: "/admin", label: "Overview", note: "Usage statistics" },
   { href: "/admin/content", label: "Content", note: "Create, edit, delete" },
-  { href: "/admin/characters", label: "Characters", note: "Create, edit, delete" },
+  {
+    href: "/admin/characters",
+    label: "Characters",
+    note: "Create, edit, delete",
+  },
   { href: "/admin/merch", label: "Merch", note: "Create, edit, delete" },
   { href: "/admin/events", label: "Events", note: "Create, edit, delete" },
   { href: "/admin/faq", label: "FAQ", note: "Assistant knowledge base" },
-  { href: "/admin/submissions", label: "Submissions", note: "Approve or reject" },
+  {
+    href: "/admin/submissions",
+    label: "Submissions",
+    note: "Approve or reject",
+  },
   { href: "/admin/feedback", label: "Feedback", note: "Triage reports" },
   { href: "/admin/users", label: "Users", note: "Role management" },
 ];
@@ -78,13 +150,18 @@ export default function SitemapPage() {
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="mark mb-3">Application flow</p>
-              <Misreg as="h1" className="text-[clamp(1.85rem,5.5vw,3.6rem)]" ghostInk="var(--ch-manga)">
+              <Misreg
+                as="h1"
+                className="text-[clamp(1.85rem,5.5vw,3.6rem)]"
+                ghostInk="var(--ch-manga)"
+              >
                 Sitemap
               </Misreg>
               <p className="mt-5 max-w-xl border-l-2 border-[var(--ch-manga)] pl-5 text-[1.03rem] leading-relaxed text-[var(--ink-soft)]">
-                Every page in Fan Hub Plus, grouped by who can reach it. Access level is what
-                shapes the flow: most of the site is open to anyone, a band of it needs a free
-                account, and one corner is administrators only.
+                Every page in Fan Hub Plus, grouped by who can reach it. Access
+                level is what shapes the flow: most of the site is open to
+                anyone, a band of it needs a free account, and one corner is
+                administrators only.
               </p>
             </div>
             <RegMark className="hidden text-[var(--ink-faint)] sm:block" />
@@ -97,11 +174,23 @@ export default function SitemapPage() {
         {/* Access tiers, as a flow */}
         <div className="mb-12 grid gap-2.5 sm:grid-cols-3">
           {[
-            { tier: "Visitor", body: "Browse and read everything. No account needed." },
-            { tier: "Member", body: "Adds saves, notes, ratings and submissions." },
-            { tier: "Administrator", body: "Adds the control panel and moderation." },
+            {
+              tier: "Visitor",
+              body: "Browse and read everything. No account needed.",
+            },
+            {
+              tier: "Member",
+              body: "Adds saves, notes, ratings and submissions.",
+            },
+            {
+              tier: "Administrator",
+              body: "Adds the control panel and moderation.",
+            },
           ].map((step, index) => (
-            <div key={step.tier} className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5">
+            <div
+              key={step.tier}
+              className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5"
+            >
               <p className="font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
                 {String(index + 1).padStart(2, "0")}
               </p>
@@ -116,10 +205,26 @@ export default function SitemapPage() {
         </div>
 
         <div className="grid gap-12 lg:grid-cols-2">
-          <Section title="Open to everyone" ink="var(--ch-gaming)" nodes={PUBLIC_PAGES} />
-          <Section title="Detail pages" ink="var(--ch-movies)" nodes={DETAIL_PAGES} />
-          <Section title="Getting an account" ink="var(--ch-tv)" nodes={AUTH_PAGES} />
-          <Section title="Members only" ink="var(--ch-anime)" nodes={MEMBER_PAGES} />
+          <Section
+            title="Open to everyone"
+            ink="var(--ch-gaming)"
+            nodes={PUBLIC_PAGES}
+          />
+          <Section
+            title="Detail pages"
+            ink="var(--ch-movies)"
+            nodes={DETAIL_PAGES}
+          />
+          <Section
+            title="Getting an account"
+            ink="var(--ch-tv)"
+            nodes={AUTH_PAGES}
+          />
+          <Section
+            title="Members only"
+            ink="var(--ch-anime)"
+            nodes={MEMBER_PAGES}
+          />
           <Section
             title="Administrators only"
             ink="var(--ch-comics)"
@@ -175,8 +280,12 @@ export default function SitemapPage() {
                 key={path}
                 className="flex flex-wrap items-baseline gap-x-3 border-b border-[var(--rule)] py-2"
               >
-                <span className="font-mono text-[0.78rem] text-[var(--spot-deep)]">{path}</span>
-                <span className="text-[0.86rem] text-[var(--ink-soft)]">{note}</span>
+                <span className="font-mono text-[0.78rem] text-[var(--spot-deep)]">
+                  {path}
+                </span>
+                <span className="text-[0.86rem] text-[var(--ink-soft)]">
+                  {note}
+                </span>
               </li>
             ))}
           </ul>

@@ -30,8 +30,7 @@ const MODEL_CHAIN = [
 export type ChatTurn = { role: "user" | "model"; text: string };
 
 export type GeminiResult =
-  | { ok: true; text: string; model: string }
-  | { ok: false; error: string };
+  { ok: true; text: string; model: string } | { ok: false; error: string };
 
 /** Whether the assistant is configured at all. */
 export function isAssistantEnabled(): boolean {
@@ -44,7 +43,12 @@ async function callModel(
   history: ChatTurn[],
   withThinking: boolean,
   maxOutputTokens: number,
-): Promise<{ status: number; text?: string; error?: string; truncated?: boolean }> {
+): Promise<{
+  status: number;
+  text?: string;
+  error?: string;
+  truncated?: boolean;
+}> {
   const generationConfig: Record<string, unknown> = {
     maxOutputTokens,
     temperature: 0.3,
@@ -88,7 +92,10 @@ async function callModel(
   };
 
   if (!response.ok) {
-    return { status: response.status, error: data.error?.message ?? `HTTP ${response.status}` };
+    return {
+      status: response.status,
+      error: data.error?.message ?? `HTTP ${response.status}`,
+    };
   }
 
   const candidate = data.candidates?.[0];
@@ -110,7 +117,11 @@ async function callModel(
 
   // MAX_TOKENS means the model was cut off mid-sentence. Report it so the
   // caller can retry with a bigger budget instead of showing half an answer.
-  return { status: 200, text, truncated: candidate?.finishReason === "MAX_TOKENS" };
+  return {
+    status: 200,
+    text,
+    truncated: candidate?.finishReason === "MAX_TOKENS",
+  };
 }
 
 /** Sends a conversation and returns the assistant's reply. */
@@ -119,7 +130,10 @@ export async function generateReply(
   history: ChatTurn[],
 ): Promise<GeminiResult> {
   if (!isAssistantEnabled()) {
-    return { ok: false, error: "The assistant isn't configured on this deployment." };
+    return {
+      ok: false,
+      error: "The assistant isn't configured on this deployment.",
+    };
   }
 
   let lastError = "The assistant is unavailable right now.";
@@ -127,7 +141,13 @@ export async function generateReply(
   for (const model of MODEL_CHAIN) {
     for (const withThinking of [false, true]) {
       try {
-        let result = await callModel(model, systemInstruction, history, withThinking, 2000);
+        let result = await callModel(
+          model,
+          systemInstruction,
+          history,
+          withThinking,
+          2000,
+        );
 
         // Cut off mid-sentence: one retry with a much larger budget rather
         // than handing the reader a fragment.

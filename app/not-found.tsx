@@ -23,7 +23,8 @@ export default function NotFound() {
           Nothing on this frequency
         </h1>
         <p className="mt-4 text-[0.95rem] leading-relaxed text-[var(--ink-soft)]">
-          The page you asked for isn&apos;t here. It may have moved, or the link may be stale.
+          The page you asked for isn&apos;t here. It may have moved, or the link
+          may be stale.
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">

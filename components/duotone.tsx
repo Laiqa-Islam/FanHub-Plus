@@ -31,7 +31,10 @@ export function Duotone({
   className?: string;
 }) {
   return (
-    <span aria-hidden className={cn("pointer-events-none absolute inset-0", className)}>
+    <span
+      aria-hidden
+      className={cn("pointer-events-none absolute inset-0", className)}
+    >
       <span
         className="absolute inset-0 mix-blend-soft-light"
         style={{ background: ink, opacity: strength }}

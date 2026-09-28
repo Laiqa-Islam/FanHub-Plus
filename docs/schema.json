@@ -1,6 +1,6 @@
 {
-  "database": "fanhub",
-  "generatedAt": "2026-09-26T05:29:08.311Z",
+  "database": "fanhubplus",
+  "generatedAt": "2026-09-27T13:19:16.791Z",
   "engine": "MongoDB (Mongoose)",
   "collections": [
     {
@@ -29,7 +29,9 @@
             "submitted-feedback",
             "submitted-content",
             "updated-profile",
-            "chatbot-message"
+            "chatbot-message",
+            "claimed-pass",
+            "released-pass"
           ]
         },
         {
@@ -100,7 +102,7 @@
           "options": {}
         }
       ],
-      "documentCount": 13
+      "documentCount": 5
     },
     {
       "model": "Bookmark",
@@ -175,7 +177,7 @@
           }
         }
       ],
-      "documentCount": 2
+      "documentCount": 1
     },
     {
       "model": "CharacterProfile",
@@ -236,6 +238,93 @@
           "required": false,
           "unique": false,
           "default": "\"\""
+        },
+        {
+          "path": "kanji",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "role",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "signature",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "grade",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "sealMark",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "accent",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "affiliation",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "status",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "relationships",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false
+        },
+        {
+          "path": "skills",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false
+        },
+        {
+          "path": "troops",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "weapons",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false
+        },
+        {
+          "path": "stats",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false
         },
         {
           "path": "traits",
@@ -319,7 +408,7 @@
           "options": {}
         }
       ],
-      "documentCount": 32
+      "documentCount": 36
     },
     {
       "model": "ChatbotQuery",
@@ -400,7 +489,7 @@
           "options": {}
         }
       ],
-      "documentCount": 24
+      "documentCount": 2
     },
     {
       "model": "Content",
@@ -510,6 +599,13 @@
         },
         {
           "path": "gallery",
+          "type": "Mixed[]",
+          "required": false,
+          "unique": false,
+          "default": "[]"
+        },
+        {
+          "path": "timeline",
           "type": "Mixed[]",
           "required": false,
           "unique": false,
@@ -689,7 +785,7 @@
           "options": {}
         }
       ],
-      "documentCount": 57
+      "documentCount": 63
     },
     {
       "model": "Event",
@@ -739,6 +835,13 @@
         },
         {
           "path": "description",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "story",
           "type": "String",
           "required": false,
           "unique": false,
@@ -800,6 +903,13 @@
           "required": false,
           "unique": false,
           "default": "\"\""
+        },
+        {
+          "path": "capacity",
+          "type": "Number",
+          "required": false,
+          "unique": false,
+          "default": "0"
         },
         {
           "path": "imageUrl",
@@ -881,6 +991,145 @@
         }
       ],
       "documentCount": 16
+    },
+    {
+      "model": "EventTicket",
+      "collection": "eventtickets",
+      "fields": [
+        {
+          "path": "userId",
+          "type": "ObjectId",
+          "required": true,
+          "unique": false,
+          "ref": "User"
+        },
+        {
+          "path": "eventId",
+          "type": "ObjectId",
+          "required": true,
+          "unique": false,
+          "ref": "Event"
+        },
+        {
+          "path": "code",
+          "type": "String",
+          "required": true,
+          "unique": true
+        },
+        {
+          "path": "holderName",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "holderEmail",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "status",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"pending\"",
+          "enum": [
+            "pending",
+            "confirmed",
+            "rejected",
+            "released"
+          ]
+        },
+        {
+          "path": "decidedAt",
+          "type": "Date",
+          "required": false,
+          "unique": false,
+          "default": "null"
+        },
+        {
+          "path": "decidedBy",
+          "type": "ObjectId",
+          "required": false,
+          "unique": false,
+          "default": "null",
+          "ref": "User"
+        },
+        {
+          "path": "decisionNote",
+          "type": "String",
+          "required": false,
+          "unique": false,
+          "default": "\"\""
+        },
+        {
+          "path": "_id",
+          "type": "ObjectId",
+          "required": false,
+          "unique": false
+        },
+        {
+          "path": "createdAt",
+          "type": "Date",
+          "required": false,
+          "unique": false
+        },
+        {
+          "path": "updatedAt",
+          "type": "Date",
+          "required": false,
+          "unique": false
+        }
+      ],
+      "indexes": [
+        {
+          "keys": {
+            "userId": 1
+          },
+          "options": {}
+        },
+        {
+          "keys": {
+            "eventId": 1
+          },
+          "options": {}
+        },
+        {
+          "keys": {
+            "code": 1
+          },
+          "options": {
+            "unique": true
+          }
+        },
+        {
+          "keys": {
+            "status": 1
+          },
+          "options": {}
+        },
+        {
+          "keys": {
+            "userId": 1,
+            "eventId": 1
+          },
+          "options": {
+            "unique": true,
+            "partialFilterExpression": {
+              "status": {
+                "$in": [
+                  "pending",
+                  "confirmed"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "documentCount": 2
     },
     {
       "model": "FanSubmission",
@@ -1078,7 +1327,7 @@
           "options": {}
         }
       ],
-      "documentCount": 1
+      "documentCount": 0
     },
     {
       "model": "FaqEntry",
@@ -1310,6 +1559,13 @@
           "default": "\"\""
         },
         {
+          "path": "priceCents",
+          "type": "Number",
+          "required": false,
+          "unique": false,
+          "default": "0"
+        },
+        {
           "path": "imageUrl",
           "type": "String",
           "required": false,
@@ -1431,7 +1687,7 @@
           "options": {}
         }
       ],
-      "documentCount": 25
+      "documentCount": 41
     },
     {
       "model": "RateBucket",
@@ -1467,7 +1723,7 @@
           }
         }
       ],
-      "documentCount": 2
+      "documentCount": 0
     },
     {
       "model": "Rating",
@@ -1547,7 +1803,7 @@
           }
         }
       ],
-      "documentCount": 1
+      "documentCount": 0
     },
     {
       "model": "Token",
@@ -1692,18 +1948,6 @@
           "type": "Mixed[]",
           "required": false,
           "unique": false
-        },
-        {
-          "path": "preferences.theme",
-          "type": "String",
-          "required": false,
-          "unique": false,
-          "default": "\"system\"",
-          "enum": [
-            "light",
-            "dark",
-            "system"
-          ]
         },
         {
           "path": "preferences.fontScale",

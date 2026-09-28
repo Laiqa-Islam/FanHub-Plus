@@ -21,8 +21,13 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           <Link href="/admin" className="font-semibold text-[var(--n1)]">
             Control panel
           </Link>
-          <span className="text-[var(--ink-faint)]">Signed in as {admin.name}</span>
-          <Link href="/" className="ml-auto opacity-70 transition-opacity hover:opacity-100">
+          <span className="text-[var(--ink-faint)]">
+            Signed in as {admin.name}
+          </span>
+          <Link
+            href="/"
+            className="ml-auto opacity-70 transition-opacity hover:opacity-100"
+          >
             ← Back to the site
           </Link>
         </div>

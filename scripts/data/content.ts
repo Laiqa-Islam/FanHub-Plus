@@ -35,6 +35,12 @@ export type ContentSeed = {
    * the seed falls back to cycling the rotation.
    */
   media?: string;
+  /**
+   * Dated milestones rendered beside the piece (SRS FR-7). Optional on
+   * purpose: a craft explainer has no chronology, and inventing one for
+   * every article would make the device meaningless.
+   */
+  timeline?: { label: string; title: string; body: string }[];
   paragraphs: string[];
 };
 
@@ -164,6 +170,33 @@ const raw: ContentSeed[] = [
       "Strip a season down to its combat and you find out what a show is actually built from. What survives this cut is a camera that never once loses the blade.",
     art: "video-demon-slayer-fights.jpg",
     media: "demon-slayer-fight-edit",
+    timeline: [
+      {
+        label: "2016",
+        title: "Serialisation begins",
+        body: "A Weekly Shonen Jump run that is well-liked but not, at first, a phenomenon.",
+      },
+      {
+        label: "2019",
+        title: "The anime, and episode 19",
+        body: "ufotable's adaptation. One episode's compositing — painted water pushed through digital distortion — turns the series into an event overnight.",
+      },
+      {
+        label: "2020",
+        title: "Mugen Train",
+        body: "The highest-grossing film in Japanese history, in a year when cinemas were barely open.",
+      },
+      {
+        label: "2021–2024",
+        title: "The look becomes the standard",
+        body: "Painted-texture effects layered over cel animation spread across the industry's top tier, because the pipeline reason for it is as strong as the aesthetic one.",
+      },
+      {
+        label: "2024–",
+        title: "Cut and re-cut",
+        body: "Fan edits strip the series to its fights and it survives the cut, which is the clearest proof that the frames were built to be paused.",
+      },
+    ],
     paragraphs: [
       "A fan edit is an unkind test. Cut away the dialogue, the training, the flashbacks and the jokes, and most action series collapse into noise — exchanges that only made sense because someone explained the stakes forty seconds earlier. This one does not collapse, and the reason is legibility.",
       "Watch where the sword is in any given frame. Tanjiro leaps through a field of embers and the blade stays the brightest, most saturated object on screen; Giyu draws and the composition reorganises around the line of the draw. The effects work is dense enough to be genuinely hard to read, so the show compensates by treating the weapon as the frame's anchor and letting everything else blur past it.",
@@ -181,6 +214,33 @@ const raw: ContentSeed[] = [
       "An edit set to a Hanumankind track, cutting on the snare rather than on the story. It makes the series feel faster than it actually is, and that is a technique, not an accident.",
     art: "video-jujutsu-kaisen-amv.jpg",
     media: "jujutsu-kaisen-big-dawgs",
+    timeline: [
+      {
+        label: "2018",
+        title: "Serialisation begins",
+        body: "A cursed-energy battle manga with unusually precise character silhouettes — a detail that matters more later than it looks.",
+      },
+      {
+        label: "2020",
+        title: "The anime arrives",
+        body: "MAPPA's adaptation lands mid-pandemic into an audience with time and a clipping habit.",
+      },
+      {
+        label: "2021",
+        title: "Shibuya",
+        body: "The arc that generates the clips. Hollow Purple against a night street becomes one of the most re-uploaded shots in modern anime.",
+      },
+      {
+        label: "2024",
+        title: "Big Dawgs",
+        body: "Hanumankind's track breaks internationally and becomes an editing bed — a tempo that suits beat-locked cutting.",
+      },
+      {
+        label: "2024–",
+        title: "The edit as its own form",
+        body: "Thousands of versions. The series' single-frame legibility is what lets a cut this fast stay readable at all.",
+      },
+    ],
     paragraphs: [
       "The anime music video is one of the few genuinely native fan forms, and its governing rule is that the edit obeys the song, not the show. Cuts land on the beat. A four-second shot gets one second. A character walks into frame and is gone before you have placed them, because the snare arrived.",
       "It works here because Jujutsu Kaisen is unusually rich in single-frame identifiers — Gojo's blindfold and white hair, Sukuna's markings, the specific violet of Hollow Purple against a night street. You need roughly a third of a second to recognise any of them, which is exactly the budget a beat-locked edit can afford. A series with subtler character design would turn to mush at this cadence.",
@@ -230,6 +290,38 @@ const raw: ContentSeed[] = [
     summary:
       "Putting a number on strength was a gag. It became the genre's most durable structural trap, and the series that coined it escaped by ignoring it.",
     art: "manga-dragon-ball.jpg",
+    timeline: [
+      {
+        label: "1984",
+        title: "Dragon Ball begins serialisation",
+        body: "A comedy adventure loosely following Journey to the West. Fights are settled by wit and training, and nobody has a number attached to them.",
+      },
+      {
+        label: "1989",
+        title: "The scouter arrives",
+        body: "Saiyan technology puts a readable figure on a fighter's strength. It works as a joke and as a threat — and quietly commits the series to arithmetic.",
+      },
+      {
+        label: "1991",
+        title: '\\"It\'s over 9000\\"',
+        body: "The line that outlived the series. The scale breaks on screen, which is the first sign that a number the reader can track is a number the author has to keep beating.",
+      },
+      {
+        label: "1992",
+        title: "Super Saiyan tiers begin",
+        body: "Grades 2 and 3, then Super Saiyan 2. Each rung re-bases the scale, and every previously terrifying opponent is retroactively demoted.",
+      },
+      {
+        label: "1996",
+        title: "Power levels quietly retired",
+        body: "The scouter is gone and the figures stop being quoted. The problem does not go away; it is simply no longer measured out loud.",
+      },
+      {
+        label: "2015",
+        title: "Dragon Ball Super inherits it",
+        body: "Gods, angels and Ultra Instinct. The series spends its sequel solving the same escalation problem it created thirty years earlier.",
+      },
+    ],
     paragraphs: [
       "The scouter was a joke about bureaucratic invaders who measure everything. Once readers had a number, though, they started doing arithmetic, and arithmetic is fatal to tension — a fight whose outcome can be calculated in advance is a fight with no question in it.",
       "The series' escape route was to break its own instrument. Numbers stop being quoted, transformations stop being quantified, and strength returns to being something demonstrated rather than stated. It is a retreat, and it works.",
@@ -474,6 +566,38 @@ const raw: ContentSeed[] = [
     summary:
       "The crossover worked so completely that it stopped being a film and became a format — including for studios with nothing to cross over.",
     art: "movies-avengers.jpg",
+    timeline: [
+      {
+        label: "2008",
+        title: "Iron Man, and a post-credits scene",
+        body: "Nick Fury walks into Tony Stark's living room for thirty seconds. A studio tells the audience, for the first time, that the film they just watched was also an advertisement.",
+      },
+      {
+        label: "2008–2011",
+        title: "Five films of setup",
+        body: "The Incredible Hulk, Iron Man 2, Thor, Captain America. Each carries a subplot it does not need, because the assembly needs it.",
+      },
+      {
+        label: "2012",
+        title: "The Avengers",
+        body: "The gamble lands. A crossover earns $1.5bn and the post-credits scene stops being a gag and becomes a contractual obligation.",
+      },
+      {
+        label: "2013–2017",
+        title: "Everyone builds a universe",
+        body: "Universal's Dark Universe, Sony's Amazing Spider-Man spin-offs, Warner's DCEU. Most begin with a shared-world announcement before they have a first film that works.",
+      },
+      {
+        label: "2019",
+        title: "Endgame",
+        body: "The template's proof and its ceiling. Twenty-two films of accumulated investment pay off, and the bar for a satisfying crossover moves out of reach of anyone starting now.",
+      },
+      {
+        label: "2021–",
+        title: "The cost comes due",
+        body: "Audiences start describing homework. The structure that made the payoff possible is the same structure that makes each individual film feel like a chapter.",
+      },
+    ],
     paragraphs: [
       "The achievement was structural rather than spectacular. Assembling characters from separate films, giving each a reason to be present and a moment to justify the ticket, and resolving it in one legible location — that is a screenwriting problem most attempts underestimate.",
       "The third act is the part everyone copied and the part that travels worst. It works here because the geography is established early and never cheats; the audience always knows where everyone is. Later imitations kept the scale and dropped the map.",
@@ -573,6 +697,38 @@ const raw: ContentSeed[] = [
     summary:
       "The final seasons are usually blamed on rushing. The more precise diagnosis is that the show lost the thing it had been adapting: interiority.",
     art: "tv-game-of-thrones.jpg",
+    timeline: [
+      {
+        label: "1996",
+        title: "A Game of Thrones published",
+        body: "A fantasy series built on slow political consequence, where the plot advances because characters make decisions with reasons behind them.",
+      },
+      {
+        label: "2011",
+        title: "The series premieres",
+        body: "Season one adapts one book. The adaptation has a full novel of material and a year to shoot it.",
+      },
+      {
+        label: "2011",
+        title: "A Dance with Dragons",
+        body: "The fifth novel. It is also, though nobody knows it yet, the last one the series will have to work from.",
+      },
+      {
+        label: "2016",
+        title: "Season six passes the books",
+        body: "The adaptation runs out of source. What it loses is not plot — the endings were known — but the connective reasoning between them.",
+      },
+      {
+        label: "2017–2019",
+        title: "Seasons shorten, travel speeds up",
+        body: "Seven episodes, then six. Characters cross the continent between scenes, because the remaining beats have to be reached and there is no longer a novel pacing them.",
+      },
+      {
+        label: "2019",
+        title: "The finale",
+        body: "A million-signature petition to remake it. The destinations were largely the ones the author had planned; the argument was about everything that used to happen between them.",
+      },
+    ],
     paragraphs: [
       "For most of its run the series had access to something television cannot easily film — chapters written from inside a character's head. The adaptation externalised that interiority into conversation, and the famously good early seasons are largely people explaining themselves to each other in rooms.",
       "Once the source ran out, the scaffolding went with it. The later seasons still move characters to the same destinations, but the reasoning that made those destinations feel inevitable was the part that had been in the prose.",
@@ -671,6 +827,28 @@ const raw: ContentSeed[] = [
       "Someone rebuilt one show's main titles using a different show's visual grammar. The result proves that a title sequence is a promise about genre, not a summary of plot.",
     art: "video-vampire-diaries-titles.jpg",
     media: "vampire-diaries-teen-wolf-titles",
+    timeline: [
+      {
+        label: "2009",
+        title: "The Vampire Diaries premieres",
+        body: "Its own titles are brief, soft-focus and moody — a romance that happens to have fangs, and the sequence says so before a line is spoken.",
+      },
+      {
+        label: "2011",
+        title: "Teen Wolf premieres",
+        body: "A different promise: bodies coming apart into smoke and particles in a white void, name cards in thin serif. Body horror with a cast list.",
+      },
+      {
+        label: "2011–2017",
+        title: "Both run in parallel",
+        body: "Two shows in overlapping territory on overlapping networks, each telling its audience something different in the first forty seconds.",
+      },
+      {
+        label: "2017–",
+        title: "The fan edit",
+        body: "Someone swaps one grammar onto the other cast. Same performers, same series, an entirely different show — which is the whole argument about what main titles are for.",
+      },
+    ],
     paragraphs: [
       "The formula is borrowed wholesale: a performer stands in a white void, arms opening, body coming apart into smoke and particles, name card in a thin serif. It is Teen Wolf's sequence almost shot for shot, with The Vampire Diaries' cast standing in — Nina Dobrev, Candice Accola King, Michael Malarkey, each dissolving in turn.",
       "The interesting part is how completely it relabels the show. The series' own titles were brief, moody and soft-focus: a romance that happens to have fangs. This version, with its cold white space and bodies visibly disintegrating, reads as body horror with a cast list. Same performers, same series, entirely different promise about what the next forty minutes contain.",
@@ -802,6 +980,33 @@ const raw: ContentSeed[] = [
       "The video opens on a date card and then splits into colour-separated worlds, one per member. With the sound off you can still tell whose verse it is.",
     art: "video-blackpink-lovesick-girls.jpg",
     media: "blackpink-lovesick-girls",
+    timeline: [
+      {
+        label: "2016",
+        title: "BLACKPINK debuts",
+        body: "Two singles, a heavily stylised visual identity, and a colour discipline that is already doing more work than the choreography.",
+      },
+      {
+        label: "2018",
+        title: "Ddu-Du Ddu-Du",
+        body: "The set-per-member structure hardens into a house grammar: each member gets a room, a palette and a verse, and the group shots exist to re-fuse them.",
+      },
+      {
+        label: "2020.10.02",
+        title: "THE ALBUM, and Lovesick Girls",
+        body: "The first full-length. The title track opens on a dated wordmark rather than a scene — a release, not a story.",
+      },
+      {
+        label: "2020",
+        title: "Four rooms, four palettes",
+        body: "Green garage, white flower room, red track, blue night road. Mute the video and the cut to a new colour is still the cut to a new verse.",
+      },
+      {
+        label: "2022–",
+        title: "The grammar spreads",
+        body: "Colour-separated member sections become standard across the industry's tier of large-budget videos, to the point where its absence reads as a deliberate choice.",
+      },
+    ],
     paragraphs: [
       "It begins the way a release does rather than the way a story does: the wordmark and the date, 2020.10.02, held on black. That is a habit worth noticing — the video is treated as a dated event, not as a film, and everything after it is organised for a viewer who already knows what they came for.",
       "What follows is sorted by colour. A sickly green garage, a white room full of dried flowers, a red racetrack, a blue-black stretch of night road; each member gets a palette and a set and rarely leaves it. Mute the video and you can still follow the song's structure, because the cut to a new colour is the cut to a new verse. It is the same function a key change serves, done with a gel.",
@@ -819,6 +1024,33 @@ const raw: ContentSeed[] = [
       "Three stacked lines, a strip of tinted member portraits, and a format nobody at a label designed. It solved a problem the official releases never addressed.",
     art: "video-exo-love-shot.jpg",
     media: "exo-love-shot-lyrics",
+    timeline: [
+      {
+        label: "2009–2012",
+        title: "Groups get larger",
+        body: "Nine, twelve, thirteen members. A listener who cannot yet tell the voices apart has no way to know who is singing, and official releases never address it.",
+      },
+      {
+        label: "2011",
+        title: "Fans start colour-coding",
+        body: "Subtitle groups assign each member a colour and tint their lines. The format is unofficial, unpaid and immediately legible.",
+      },
+      {
+        label: "2013–2016",
+        title: "The three-line stack settles",
+        body: "Hangul, romanisation, English. Nobody standardises it; it converges anyway, because that is the layout someone singing along actually needs.",
+      },
+      {
+        label: "2018",
+        title: "Love Shot",
+        body: "EXO's release gets the treatment within days, in the layout that is by now completely conventional: tinted headshot strip, three stacked lines, the current singer lit.",
+      },
+      {
+        label: "2020–",
+        title: "The default first meeting",
+        body: "For most listeners outside Korea, the colour-coded version is how a song is learned — not the official video it was made from.",
+      },
+    ],
     paragraphs: [
       "The layout is rigidly conventional and entirely unofficial. A row of member headshots runs along the top, each one tinted and captioned with a name; beneath it sit three lines of the same lyric — Hangul, romanisation, English — and the member currently singing is lit while the rest are dimmed. Every colour-coded lyric video on the internet looks like this, and no record company drew up the spec.",
       "It exists because a nine-member group creates a genuine comprehension problem. A listener who does not read Korean and cannot yet distinguish nine voices has no way to know who is singing, and official lyric videos, which are marketing, have never cared. Fans built a teaching format instead, and the three-line stack is the giveaway: it is designed for someone who wants to follow along out loud and understand what they are saying.",
@@ -836,6 +1068,38 @@ const raw: ContentSeed[] = [
     summary:
       "An open world with almost no directed guidance should be frustrating. Removing the map markers is what makes the map worth reading.",
     art: "gaming-elden-ring.jpg",
+    timeline: [
+      {
+        label: "2009",
+        title: "Demon's Souls",
+        body: "Sparse guidance, punishing failure, and a tone that treats the player as an adult. Commercially minor; structurally the source of everything after it.",
+      },
+      {
+        label: "2011",
+        title: "Dark Souls",
+        body: "The interlocking world. Lordran folds back on itself so completely that a shortcut unlocking is a narrative event.",
+      },
+      {
+        label: "2015",
+        title: "Bloodborne",
+        body: "Faster, more aggressive, and more willing to hide a third of itself behind an optional item. The studio learns how much it can withhold.",
+      },
+      {
+        label: "2019",
+        title: "Sekiro",
+        body: "The posture bar. Proof the studio will rebuild its own combat from the ground up rather than iterate it.",
+      },
+      {
+        label: "2022",
+        title: "Elden Ring",
+        body: "The open world arrives with the guidance deliberately left out. No quest markers, no waypoints, a map you fill in by walking — and 25 million copies in a year.",
+      },
+      {
+        label: "2024",
+        title: "Shadow of the Erdtree",
+        body: "The expansion doubles down: a region whose power curve is gated behind collectables it never tells you exist.",
+      },
+    ],
     paragraphs: [
       "The modern open world solved navigation by annotating it: icons, waypoints, a compass full of promises. It works, and it converts exploration into errand-running, because the interesting question — what is over there? — has already been answered by the UI.",
       "Withholding that turns landscape into information. A distant structure is the only prompt available, so players start reading terrain the way the designers composed it: sightlines, silhouettes, and light sources doing the work an icon would.",
@@ -950,6 +1214,33 @@ const raw: ContentSeed[] = [
       "Three minutes of pre-rendered film with no gameplay in it, closing on a release date. For a few years this was how games were sold, and then it stopped working.",
     art: "video-assassins-creed-brotherhood.jpg",
     media: "assassins-creed-brotherhood-trailer",
+    timeline: [
+      {
+        label: "2007",
+        title: "Assassin's Creed ships",
+        body: "A new engine, a crowd system nobody had seen, and a marketing campaign that leans on pre-rendered film because the real thing is hard to show in thirty seconds.",
+      },
+      {
+        label: "2009",
+        title: "Assassin's Creed II",
+        body: "The formula lands. Annual releases become the plan, which means an annual marketing beat has to land too.",
+      },
+      {
+        label: "2010",
+        title: "The Brotherhood trailer",
+        body: "Three minutes of CG, no gameplay, closing on a date card. The prestige format of its console generation, and this series is one of its most fluent users.",
+      },
+      {
+        label: "2013–2015",
+        title: "Trust erodes",
+        body: "Reveal footage that does not match the shipped game becomes a running story. Audiences learn to read a CG trailer as a thing being hidden.",
+      },
+      {
+        label: "2018–",
+        title: "Gameplay or nothing",
+        body: "Showcases lead with captured play and label it. A trailer with no gameplay now reads as an admission rather than as ambition.",
+      },
+    ],
     paragraphs: [
       "Nothing in this trailer is the game. Ezio moves through a Roman plaza thick with red-robed guards at a fidelity the 2010 hardware could not produce, in a sequence no player will ever be in, rendered by a studio that does not make the game. It ends on a card: November 16th 2010.",
       "The logic was sound at the time. A publisher selling an annualised series needs to communicate tone and scale in a slot where competitors are showing menus and HUDs, and a short pre-rendered film does that better than footage of an early build ever could. For a stretch of that console generation the CG trailer was the prestige format, and this series was one of its most fluent users.",

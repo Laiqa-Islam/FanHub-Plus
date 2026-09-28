@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 import { CATEGORY_SLUGS, ROLES } from "@/lib/constants";
 
 const UserSchema = new Schema(

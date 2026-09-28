@@ -6,8 +6,9 @@
 
    The rules that drive every decision here:
 
-     · One ground, always dark. There is no light mode — a neon sign only
-       reads against the night.
+     · Dark is the default ground, because a neon sign reads against the
+       night. A light ground exists as an opt-in and is a re-tone, not an
+       inversion — see the light block near the foot of this file.
      · Three signals, never four. Magenta, cyan, acid. Colour is a line, a
        glow and a small solid mark — never a flood.
      · Glow is the shadow. Elevation on a dark ground is an edge plus light
@@ -466,6 +467,47 @@ html[data-reduced-motion="true"] .rail-track {
   animation: none;
 }
 
+/* ═══════════════════════════ Leaflet ══════════════════════════════════ */
+
+/* OpenStreetMap only serves light tiles, and a white map dropped into this
+   ground is the single most out-of-place thing on the site. Inverting and
+   rotating the hue turns them dark without swapping providers — which
+   matters, because the attribution requirement is tied to using theirs.
+
+   The filter is scoped to the tile pane: applying it to the whole map would
+   also invert the pins and the attribution text, which are already drawn in
+   the right colours. */
+/* Leaflet's own stylesheet is imported by the page, so it can land after
+   this file — its `#ddd` default needs overriding outright. */
+.leaflet-container {
+  background: var(--paper-2) !important;
+}
+
+.leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.95) saturate(0.75);
+}
+
+.leaflet-control-attribution {
+  background: color-mix(in oklch, var(--void) 78%, transparent) !important;
+  color: var(--ink-faint) !important;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.58rem !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--n2) !important;
+}
+
+.leaflet-control-zoom a {
+  background: var(--paper-3) !important;
+  border-color: var(--edge) !important;
+  color: var(--ink) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--paper-2) !important;
+}
+
 /* ═══════════════════════════ Article prose ════════════════════════════ */
 
 .prose-fanhub {
@@ -607,4 +649,200 @@ html[data-reduced-motion="true"] .reveal {
 .Toastify__close-button {
   color: var(--ink-soft) !important;
   opacity: 1 !important;
+}
+
+/* ═══════════════════════════ Light ground ═════════════════════════════ */
+
+/*
+ * The second ground.
+ *
+ * Neon Oni was built as a single dark theme and the light/dark control was
+ * removed with it, which dropped SRS FR-12's colour-scheme clause. This
+ * restores it, on request. It is a re-tone rather than an inversion: the
+ * neon signals are *lit lines on a night ground*, and reproducing them at
+ * full chroma on white gives unreadable type and haloed edges. Each signal
+ * is therefore darkened to clear 4.5:1 on paper while keeping its hue, and
+ * the textures that only make sense on a screen-at-night are damped.
+ *
+ * `--void` is the one token whose meaning inverts. It is defined as "what
+ * sits *on* a filled signal", so on a dark ground it is near-black and on a
+ * light ground, where the signals are dark, it has to be white.
+ */
+:root[data-theme="light"] {
+  --paper: #f2f2f6;
+  --paper-2: #ffffff;
+  --paper-3: #ffffff;
+  --void: #ffffff;
+
+  --ink: #14151f;
+  --ink-soft: #3c4053;
+  --ink-faint: #676c81;
+
+  --edge: #d8dae3;
+  --edge-strong: #b3b7c6;
+  --rule: color-mix(in srgb, #14151f 10%, transparent);
+  --rule-strong: color-mix(in srgb, #14151f 20%, transparent);
+
+  --n1: #bd006c;
+  --n2: #00706c;
+  --n3: #59660b;
+
+  --spot-deep: #99005a;
+  --spot-2-deep: #005b58;
+  --spot-wash: color-mix(in oklch, var(--n1) 9%, transparent);
+  --spot-2-wash: color-mix(in oklch, var(--n2) 9%, transparent);
+
+  --ch-anime: #a1006a;
+  --ch-gaming: #4f6b00;
+  --ch-movies: #9c4400;
+  --ch-tv: #00696b;
+  --ch-kpop: #6a30c4;
+  --ch-comics: #b4003a;
+  --ch-manga: #00648f;
+  --ch-cosplay: #7a5800;
+
+  /* Elevation on paper is a soft cast shadow, not ambient darkness. */
+  --lift-sm: 0 0 0 1px var(--edge);
+  --lift-md: 0 0 0 1px var(--edge), 0 6px 18px rgba(20, 21, 31, 0.1);
+  --lift-lg: 0 0 0 1px var(--edge-strong), 0 16px 40px rgba(20, 21, 31, 0.16);
+
+  color-scheme: light;
+}
+
+/* Scanlines are drawn as black lines in `multiply`, which on a light ground
+   reads as dirt rather than as a screen. */
+:root[data-theme="light"] .scan {
+  opacity: 0.35;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(20, 21, 31, 0.05) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* A bloom needs darkness around it to read as light. On paper the same
+   values smear, so they are pulled back to a tight contact shadow. */
+:root[data-theme="light"] .glow {
+  box-shadow: 0 2px 10px color-mix(in oklch, var(--glow, var(--n1)) 22%, transparent);
+}
+
+:root[data-theme="light"] .glow-text {
+  text-shadow: none;
+}
+
+:root[data-theme="light"] .halftone {
+  opacity: 0.5;
+}
+
+/* The map tiles are inverted to make OpenStreetMap's light imagery sit on a
+   dark page. On a light page they are already the right way round. */
+:root[data-theme="light"] .leaflet-tile-pane {
+  filter: none;
+}
+
+:root[data-theme="light"] .leaflet-control-attribution {
+  background: color-mix(in srgb, #ffffff 85%, transparent) !important;
+}
+
+/* ═════════════════════════════ Print ══════════════════════════════════ */
+
+/*
+ * Printing this theme produced blank sheets, and the reason is worth
+ * recording: browsers drop background colours when printing unless asked
+ * otherwise, but they keep text colours. Every surface here is dark and
+ * every piece of type is near-white (`--ink` is #e9e9ed), so the page came
+ * out as white text on white paper.
+ *
+ * Rather than patch each component with `print:` variants, the theme's own
+ * tokens are redefined for print. Everything already reads its colour from
+ * a custom property, so inverting the palette here fixes the whole app at
+ * once — and anything added later inherits the fix.
+ */
+@media print {
+  :root {
+    --paper: #ffffff;
+    --paper-2: #ffffff;
+    --paper-3: #ffffff;
+    --void: #ffffff;
+
+    --ink: #000000;
+    --ink-soft: #1f1f1f;
+    --ink-faint: #4d4d4d;
+
+    --edge: #b4b4b4;
+    --edge-strong: #6b6b6b;
+    --rule: #d6d6d6;
+    --rule-strong: #a3a3a3;
+
+    /* The signals stay recognisable but are darkened to survive on paper;
+       the neon values are far too light to read when printed. */
+    --n1: #a8005f;
+    --n2: #00706c;
+    --n3: #5c6a00;
+    --spot: var(--n1);
+    --spot-2: var(--n2);
+    --flag: var(--n3);
+
+    /* The channel inks matter as much as the signals here: a ticket prints
+       its booking code, its header band and its icons in the channel's own
+       colour, and the neon values are far too light for paper — acid green
+       on white is invisible. Each is darkened to roughly 4.5:1 on white
+       while staying recognisably the same hue. */
+    --ch-anime: #a1006a;
+    --ch-gaming: #4f6b00;
+    --ch-movies: #9c4400;
+    --ch-tv: #00696b;
+    --ch-kpop: #6a30c4;
+    --ch-comics: #b4003a;
+    --ch-manga: #00648f;
+    --ch-cosplay: #7a5800;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    /* `overflow: clip` on the body truncates a printed document after the
+       first page in Chrome. */
+    overflow: visible !important;
+  }
+
+  /* Site chrome is not part of anything worth printing. */
+  header,
+  footer,
+  nav[aria-label="Breadcrumb"],
+  .Toastify,
+  nextjs-portal,
+  [data-print-hide] {
+    display: none !important;
+  }
+
+  /* Decorative overlays render as grey wash on paper. */
+  .scan,
+  .halftone,
+  .misreg::before {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+  }
+
+  /* Keep a stub from being split across two sheets. */
+  article,
+  figure {
+    break-inside: avoid;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+
+  /* Opt one element back into printing its backgrounds. A ticket without its
+     accent band, or a QR with no contrast, is not worth printing. */
+  .print-exact,
+  .print-exact * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }

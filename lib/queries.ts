@@ -15,7 +15,8 @@ import { embedThumbnail } from "@/lib/embeds";
 type LooseFilter = Record<string, unknown>;
 type ContentFilter = Parameters<typeof Content.find>[0];
 
-const asContentFilter = (filter: LooseFilter) => filter as unknown as ContentFilter;
+const asContentFilter = (filter: LooseFilter) =>
+  filter as unknown as ContentFilter;
 
 /**
  * Query layer for the Content Explorer (SRS FR-3).
@@ -47,12 +48,17 @@ export type ExploreFilters = {
 
 export const PAGE_SIZE = 12;
 
+/** One dated milestone on an article's timeline. */
+export type TimelineEntry = { label: string; title: string; body: string };
+
 /** Normalises raw search params, discarding anything not on the allow-list. */
 export function parseFilters(params: ExploreParams): ExploreFilters {
   const sort = params.sort;
   return {
     q: (params.q ?? "").trim().slice(0, 80),
-    category: CATEGORY_SLUGS.includes(params.category as never) ? params.category! : "",
+    category: CATEGORY_SLUGS.includes(params.category as never)
+      ? params.category!
+      : "",
     type: CONTENT_TYPES.includes(params.type as never) ? params.type! : "",
     genre: (params.genre ?? "").trim().slice(0, 40),
     year: /^\d{4}$/.test(params.year ?? "") ? params.year! : "",
@@ -161,7 +167,9 @@ function toListItem(doc: Record<string, unknown>): ContentListItem {
     summary: String(doc.summary ?? ""),
     coverImage,
     genre: (doc.genre as string[]) ?? [],
-    releaseDate: doc.releaseDate ? new Date(doc.releaseDate as string).toISOString() : null,
+    releaseDate: doc.releaseDate
+      ? new Date(doc.releaseDate as string).toISOString()
+      : null,
     popularityScore: Number(doc.popularityScore ?? 0),
     viewCount: Number(doc.viewCount ?? 0),
     averageRating: ratingCount > 0 ? ratingSum / ratingCount : 0,
@@ -171,7 +179,9 @@ function toListItem(doc: Record<string, unknown>): ContentListItem {
     mediaCredit: String(doc.mediaCredit ?? ""),
     mediaRuntime: String(doc.mediaRuntime ?? ""),
     mediaTags: (doc.mediaTags as string[]) ?? [],
-    gallery: ((doc.gallery as unknown[]) ?? []).map(toPlate).filter((plate) => plate.url),
+    gallery: ((doc.gallery as unknown[]) ?? [])
+      .map(toPlate)
+      .filter((plate) => plate.url),
     embedProvider,
     embedId,
     transcript: String(doc.transcript ?? ""),
@@ -183,14 +193,19 @@ export async function getMediaLibrary(type?: string) {
   await connectToDatabase();
   const filter: LooseFilter = {
     status: "published",
-    type: type && ["video", "audio", "image"].includes(type) ? type : { $in: ["video", "audio", "image"] },
+    type:
+      type && ["video", "audio", "image"].includes(type)
+        ? type
+        : { $in: ["video", "audio", "image"] },
   };
 
   const docs = await Content.find(asContentFilter(filter))
     .sort({ popularityScore: -1, createdAt: -1 })
     .lean();
 
-  return docs.map((doc) => toListItem(doc as unknown as Record<string, unknown>));
+  return docs.map((doc) =>
+    toListItem(doc as unknown as Record<string, unknown>),
+  );
 }
 
 export async function searchContent(filters: ExploreFilters) {
@@ -207,7 +222,9 @@ export async function searchContent(filters: ExploreFilters) {
   ]);
 
   return {
-    items: docs.map((doc) => toListItem(doc as unknown as Record<string, unknown>)),
+    items: docs.map((doc) =>
+      toListItem(doc as unknown as Record<string, unknown>),
+    ),
     total,
     pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)),
   };
@@ -223,7 +240,9 @@ export async function getFilterFacets(category?: string) {
   if (category) match.category = category;
 
   const [genres, years] = await Promise.all([
-    Content.distinct("genre", asContentFilter(match)) as unknown as Promise<string[]>,
+    Content.distinct("genre", asContentFilter(match)) as unknown as Promise<
+      string[]
+    >,
     Content.aggregate<{ _id: number }>([
       { $match: match },
       { $group: { _id: { $year: "$releaseDate" } } },
@@ -242,22 +261,42 @@ export async function getContentBySlug(slug: string) {
   await connectToDatabase();
   const doc = await Content.findOne({ slug, status: "published" }).lean();
   if (!doc) return null;
+  const raw = doc as unknown as Record<string, unknown>;
   return {
-    ...toListItem(doc as unknown as Record<string, unknown>),
-    body: String((doc as Record<string, unknown>).body ?? ""),
+    ...toListItem(raw),
+    body: String(raw.body ?? ""),
+    // Only the detail page renders the chronology, so it is read here rather
+    // than widened into the list item every card on the site carries.
+    timeline: ((raw.timeline as TimelineEntry[] | undefined) ?? []).map(
+      (entry) => ({
+        label: String(entry.label ?? ""),
+        title: String(entry.title ?? ""),
+        body: String(entry.body ?? ""),
+      }),
+    ),
   };
 }
 
 /** More from the same channel, excluding the piece being read. */
-export async function getRelatedContent(category: string, excludeSlug: string, limit = 3) {
+export async function getRelatedContent(
+  category: string,
+  excludeSlug: string,
+  limit = 3,
+) {
   await connectToDatabase();
   const docs = await Content.find(
-    asContentFilter({ status: "published", category, slug: { $ne: excludeSlug } }),
+    asContentFilter({
+      status: "published",
+      category,
+      slug: { $ne: excludeSlug },
+    }),
   )
     .sort({ popularityScore: -1 })
     .limit(limit)
     .lean();
-  return docs.map((doc) => toListItem(doc as unknown as Record<string, unknown>));
+  return docs.map((doc) =>
+    toListItem(doc as unknown as Record<string, unknown>),
+  );
 }
 
 /**

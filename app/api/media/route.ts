@@ -57,9 +57,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const contentType = upstream.headers.get("content-type") ?? "application/octet-stream";
+    const contentType =
+      upstream.headers.get("content-type") ?? "application/octet-stream";
     if (!ALLOWED_PREFIXES.some((prefix) => contentType.startsWith(prefix))) {
-      return NextResponse.json({ error: "Unsupported media type" }, { status: 415 });
+      return NextResponse.json(
+        { error: "Unsupported media type" },
+        { status: 415 },
+      );
     }
 
     const headers = new Headers({
@@ -69,7 +73,12 @@ export async function GET(request: NextRequest) {
       "Cache-Control": "public, max-age=86400, immutable",
     });
 
-    for (const header of ["content-length", "content-range", "last-modified", "etag"]) {
+    for (const header of [
+      "content-length",
+      "content-range",
+      "last-modified",
+      "etag",
+    ]) {
       const value = upstream.headers.get(header);
       if (value) headers.set(header, value);
     }
@@ -80,6 +89,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("[api/media] proxy failed:", target.href, error);
-    return NextResponse.json({ error: "Upstream unreachable" }, { status: 504 });
+    return NextResponse.json(
+      { error: "Upstream unreachable" },
+      { status: 504 },
+    );
   }
 }

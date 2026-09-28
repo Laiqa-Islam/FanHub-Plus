@@ -5,6 +5,11 @@
  * module may only export async functions — exporting a constant from there
  * fails the build.
  */
-export const BOOKMARK_TYPES = ["content", "character", "merchandise", "event"] as const;
+export const BOOKMARK_TYPES = [
+  "content",
+  "character",
+  "merchandise",
+  "event",
+] as const;
 
 export type BookmarkTargetType = (typeof BOOKMARK_TYPES)[number];

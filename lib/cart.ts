@@ -24,11 +24,15 @@ export function formatPrice(cents: number) {
 }
 
 export function cartSubtotal(lines: CartLine[]) {
-  return lines.reduce((total, line) => total + line.priceCents * line.quantity, 0);
+  return lines.reduce(
+    (total, line) => total + line.priceCents * line.quantity,
+    0,
+  );
 }
 
 export function shippingForSubtotal(subtotalCents: number) {
-  if (subtotalCents <= 0 || subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS) return 0;
+  if (subtotalCents <= 0 || subtotalCents >= FREE_SHIPPING_THRESHOLD_CENTS)
+    return 0;
   return STANDARD_SHIPPING_CENTS;
 }
 
@@ -51,14 +55,19 @@ export function normalizeCart(value: unknown): CartLine[] {
       return [];
     }
 
-    return [{
-      id: line.id,
-      slug: line.slug,
-      name: line.name,
-      category: line.category,
-      imageUrl: line.imageUrl,
-      priceCents: Number(line.priceCents),
-      quantity: Math.min(MAX_CART_QUANTITY, Math.max(1, Number(line.quantity))),
-    }];
+    return [
+      {
+        id: line.id,
+        slug: line.slug,
+        name: line.name,
+        category: line.category,
+        imageUrl: line.imageUrl,
+        priceCents: Number(line.priceCents),
+        quantity: Math.min(
+          MAX_CART_QUANTITY,
+          Math.max(1, Number(line.quantity)),
+        ),
+      },
+    ];
   });
 }

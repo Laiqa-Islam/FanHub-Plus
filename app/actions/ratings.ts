@@ -31,7 +31,10 @@ export async function rateContent(
     return { ok: false, message: "Sign in to rate this." };
   }
   if (!user.emailVerified) {
-    return { ok: false, message: "Confirm your email address to rate content." };
+    return {
+      ok: false,
+      message: "Confirm your email address to rate content.",
+    };
   }
   if (!Number.isInteger(stars) || stars < 1 || stars > 5) {
     return { ok: false, message: "Ratings run from one to five stars." };
@@ -40,7 +43,8 @@ export async function rateContent(
   try {
     await connectToDatabase();
 
-    const content = await Content.findById(contentId).select("slug ratingCount");
+    const content =
+      await Content.findById(contentId).select("slug ratingCount");
     if (!content) return { ok: false, message: "That item no longer exists." };
 
     await Rating.findOneAndUpdate(
@@ -98,7 +102,9 @@ export async function getMyRating(contentId: string): Promise<number | null> {
 
   try {
     await connectToDatabase();
-    const rating = await Rating.findOne({ userId: user.id, contentId }).select("stars").lean();
+    const rating = await Rating.findOne({ userId: user.id, contentId })
+      .select("stars")
+      .lean();
     return rating?.stars ?? null;
   } catch {
     return null;

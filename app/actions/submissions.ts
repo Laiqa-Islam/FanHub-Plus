@@ -7,7 +7,11 @@ import { connectToDatabase } from "@/lib/db";
 import { FanSubmission, Content, ActivityLog } from "@/models";
 import { requireUser, requireAdmin } from "@/lib/dal";
 import { rateLimit } from "@/lib/rate-limit";
-import { verifyUploadedAsset, destroyAsset, type VerifiedAsset } from "@/lib/cloudinary";
+import {
+  verifyUploadedAsset,
+  destroyAsset,
+  type VerifiedAsset,
+} from "@/lib/cloudinary";
 import { CATEGORY_SLUGS, type CategorySlug } from "@/lib/constants";
 import {
   FORMAT_SPECS,
@@ -52,13 +56,20 @@ const AttachmentSchema = z.object({
 });
 
 const BaseSchema = z.object({
-  title: z.string().trim().min(6, "Give it a title of at least 6 characters.").max(120),
+  title: z
+    .string()
+    .trim()
+    .min(6, "Give it a title of at least 6 characters.")
+    .max(120),
   category: z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]], {
     error: "Pick a channel.",
   }),
-  format: z.enum(SUBMISSION_FORMATS as unknown as [SubmissionFormat, ...SubmissionFormat[]], {
-    error: "Pick a format.",
-  }),
+  format: z.enum(
+    SUBMISSION_FORMATS as unknown as [SubmissionFormat, ...SubmissionFormat[]],
+    {
+      error: "Pick a format.",
+    },
+  ),
   body: z.string().trim().max(20_000),
   transcript: z.string().trim().max(30_000).default(""),
   embedUrl: z.string().trim().max(400).default(""),
@@ -117,7 +128,10 @@ function checkFormat(
     }
   }
 
-  if (format === "article" && attachments.some((item) => item.kind !== "image")) {
+  if (
+    format === "article" &&
+    attachments.some((item) => item.kind !== "image")
+  ) {
     errors.attachments = "A written piece takes a single cover image.";
   }
 
@@ -152,7 +166,9 @@ export async function submitFanContent(
 
   const limit = await rateLimit(`submission:${user.id}`, 5, 3600);
   if (!limit.ok) {
-    return { message: `You've submitted a few already. Try again in ${limit.retryAfterSeconds}s.` };
+    return {
+      message: `You've submitted a few already. Try again in ${limit.retryAfterSeconds}s.`,
+    };
   }
 
   const parsed = BaseSchema.safeParse({
@@ -175,7 +191,8 @@ export async function submitFanContent(
 
   // Only the attachments this format actually uses, so a member who switches
   // format mid-compose doesn't silently carry the previous file along.
-  const wanted = format === "gallery" ? data.attachments : data.attachments.slice(0, 1);
+  const wanted =
+    format === "gallery" ? data.attachments : data.attachments.slice(0, 1);
   const attachments = FORMAT_SPECS[format].uploadKind ? wanted : [];
 
   // Verified assets are tracked so they can be cleaned up if anything below
@@ -184,7 +201,11 @@ export async function submitFanContent(
 
   try {
     for (const attachment of attachments) {
-      const asset = await verifyUploadedAsset(attachment.publicId, attachment.kind, user.id);
+      const asset = await verifyUploadedAsset(
+        attachment.publicId,
+        attachment.kind,
+        user.id,
+      );
       verified.push(asset);
     }
   } catch (error) {
@@ -219,10 +240,12 @@ export async function submitFanContent(
       embedProvider: embed?.provider ?? "",
       embedId: embed?.id ?? "",
       // Stored as plain text and rendered as text, so it never needs escaping.
-      transcript: format === "audio" || format === "video" ? data.transcript : "",
-      ownWorkDeclared: FORMAT_SPECS[format].requiresOwnWork && verified.length > 0
-        ? data.ownWork
-        : false,
+      transcript:
+        format === "audio" || format === "video" ? data.transcript : "",
+      ownWorkDeclared:
+        FORMAT_SPECS[format].requiresOwnWork && verified.length > 0
+          ? data.ownWork
+          : false,
     });
 
     await ActivityLog.create({
@@ -238,12 +261,17 @@ export async function submitFanContent(
   }
 
   revalidatePath("/submit");
-  return { success: true, message: "Submitted. An administrator will review it shortly." };
+  return {
+    success: true,
+    message: "Submitted. An administrator will review it shortly.",
+  };
 }
 
 /** Best-effort removal of assets belonging to a submission that never saved. */
 async function discard(assets: VerifiedAsset[]) {
-  await Promise.all(assets.map((asset) => destroyAsset(asset.publicId, asset.kind)));
+  await Promise.all(
+    assets.map((asset) => destroyAsset(asset.publicId, asset.kind)),
+  );
 }
 
 /**
@@ -291,7 +319,9 @@ function publishableFields(submission: {
   embedId?: string;
   transcript?: string;
 }): PublishableFields {
-  const format = isSubmissionFormat(submission.format) ? submission.format : "article";
+  const format = isSubmissionFormat(submission.format)
+    ? submission.format
+    : "article";
   const media: PublishedPlate[] = (submission.media ?? []).map((asset) => ({
     url: String(asset.url ?? ""),
     publicId: String(asset.publicId ?? ""),
@@ -418,7 +448,9 @@ export async function reviewSubmission(
       }
 
       const fields = publishableFields(
-        submission.toObject() as unknown as Parameters<typeof publishableFields>[0],
+        submission.toObject() as unknown as Parameters<
+          typeof publishableFields
+        >[0],
       );
 
       const published = await Content.create({

@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 
 /**
  * Feeds the dashboard's "recent activity" strip and the admin usage statistics
@@ -6,7 +12,12 @@ import { Schema, model, models, type InferSchemaType, type Model } from "mongoos
  */
 const ActivityLogSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
     action: {
       type: String,
       enum: [
@@ -20,6 +31,8 @@ const ActivityLogSchema = new Schema(
         "submitted-content",
         "updated-profile",
         "chatbot-message",
+        "claimed-pass",
+        "released-pass",
       ],
       required: true,
       index: true,

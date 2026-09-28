@@ -12,7 +12,9 @@ import { MERCH_SEED } from "./data/merch-events";
 
 async function main() {
   await connectToDatabase();
-  const suppliedProducts = MERCH_SEED.filter((item) => item.imageUrl?.startsWith("/merch/"));
+  const suppliedProducts = MERCH_SEED.filter((item) =>
+    item.imageUrl?.startsWith("/merch/"),
+  );
 
   for (const [index, item] of suppliedProducts.entries()) {
     const slug = slugify(item.name);
@@ -53,7 +55,9 @@ async function main() {
     },
   );
 
-  console.log(`Upserted ${suppliedProducts.length} storefront merchandise items and refreshed shop pricing.`);
+  console.log(
+    `Upserted ${suppliedProducts.length} storefront merchandise items and refreshed shop pricing.`,
+  );
   await mongoose.disconnect();
 }
 

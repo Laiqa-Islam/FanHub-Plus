@@ -4,7 +4,10 @@ import { connectToDatabase } from "@/lib/db";
 import { MerchandiseItem } from "@/models";
 import { CATEGORIES, MERCH_TAGS, categoryBySlug } from "@/lib/constants";
 import { Misreg } from "@/components/press";
-import { ResourceManager, type FieldSpec } from "@/components/admin/resource-manager";
+import {
+  ResourceManager,
+  type FieldSpec,
+} from "@/components/admin/resource-manager";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Merch · Admin" };
@@ -43,7 +46,10 @@ const FIELDS: FieldSpec[] = [
 
 export default async function AdminMerchPage() {
   await connectToDatabase();
-  const docs = await MerchandiseItem.find().sort({ createdAt: -1 }).limit(200).lean();
+  const docs = await MerchandiseItem.find()
+    .sort({ createdAt: -1 })
+    .limit(200)
+    .lean();
 
   const rows = docs.map((doc) => {
     const category = categoryBySlug(doc.category);
@@ -68,12 +74,21 @@ export default async function AdminMerchPage() {
     <div>
       <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Store catalogue</p>
-        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-movies)">
+        <Misreg
+          as="h1"
+          className="text-[clamp(1.7rem,4.2vw,2.6rem)]"
+          ghostInk="var(--ch-movies)"
+        >
           Merchandise
         </Misreg>
       </div>
 
-      <ResourceManager kind="merchandise" rows={rows} fields={FIELDS} singular="item" />
+      <ResourceManager
+        kind="merchandise"
+        rows={rows}
+        fields={FIELDS}
+        singular="item"
+      />
     </div>
   );
 }

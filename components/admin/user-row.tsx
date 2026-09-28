@@ -44,7 +44,11 @@ export function UserRow({ user }: { user: AdminUser }) {
       <span className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] font-mono text-[0.68rem] font-bold uppercase">
         {user.avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
+          <img
+            src={user.avatarUrl}
+            alt=""
+            className="h-full w-full object-cover"
+          />
         ) : (
           initials(user.name)
         )}

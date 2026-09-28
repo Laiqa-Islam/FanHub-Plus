@@ -12,6 +12,7 @@ import {
   Inbox,
   HelpCircle,
   UserCog,
+  Ticket,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ const LINKS = [
   { href: "/admin/merch", label: "Merch", icon: Package },
   { href: "/admin/events", label: "Events", icon: CalendarDays },
   { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
+  { href: "/admin/tickets", label: "Passes", icon: Ticket },
   { href: "/admin/submissions", label: "Submissions", icon: Inbox },
   { href: "/admin/feedback", label: "Feedback", icon: MessageSquare },
   { href: "/admin/users", label: "Users", icon: UserCog },
@@ -33,7 +35,9 @@ export function AdminNav() {
   return (
     <nav className="flex flex-wrap" aria-label="Admin sections">
       {LINKS.map((link) => {
-        const active = link.exact ? pathname === link.href : pathname.startsWith(link.href);
+        const active = link.exact
+          ? pathname === link.href
+          : pathname.startsWith(link.href);
         return (
           <Link
             key={link.href}

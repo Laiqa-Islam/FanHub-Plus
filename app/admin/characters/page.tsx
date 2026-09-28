@@ -4,7 +4,10 @@ import { connectToDatabase } from "@/lib/db";
 import { CharacterProfile } from "@/models";
 import { CATEGORIES, categoryBySlug } from "@/lib/constants";
 import { Misreg } from "@/components/press";
-import { ResourceManager, type FieldSpec } from "@/components/admin/resource-manager";
+import {
+  ResourceManager,
+  type FieldSpec,
+} from "@/components/admin/resource-manager";
 
 export const metadata: Metadata = { title: "Characters · Admin" };
 export const dynamic = "force-dynamic";
@@ -24,7 +27,12 @@ const FIELDS: FieldSpec[] = [
   { name: "kanji", label: "Name in original script", half: true },
   { name: "role", label: "Role", hint: "e.g. Sorcerer · Mentor", half: true },
   { name: "grade", label: "Grade", hint: "e.g. Special Grade", half: true },
-  { name: "sealMark", label: "Seal glyph", hint: "One or two characters.", half: true },
+  {
+    name: "sealMark",
+    label: "Seal glyph",
+    hint: "One or two characters.",
+    half: true,
+  },
   {
     name: "accent",
     label: "Accent colour",
@@ -43,7 +51,10 @@ const FIELDS: FieldSpec[] = [
 
 export default async function AdminCharactersPage() {
   await connectToDatabase();
-  const docs = await CharacterProfile.find().sort({ createdAt: -1 }).limit(200).lean();
+  const docs = await CharacterProfile.find()
+    .sort({ createdAt: -1 })
+    .limit(200)
+    .lean();
 
   const rows = docs.map((doc) => {
     const category = categoryBySlug(doc.category);
@@ -80,12 +91,21 @@ export default async function AdminCharactersPage() {
     <div>
       <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Profile cards</p>
-        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-kpop)">
+        <Misreg
+          as="h1"
+          className="text-[clamp(1.7rem,4.2vw,2.6rem)]"
+          ghostInk="var(--ch-kpop)"
+        >
           Characters
         </Misreg>
       </div>
 
-      <ResourceManager kind="character" rows={rows} fields={FIELDS} singular="character" />
+      <ResourceManager
+        kind="character"
+        rows={rows}
+        fields={FIELDS}
+        singular="character"
+      />
     </div>
   );
 }

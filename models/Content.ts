@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 import { CATEGORY_SLUGS, CONTENT_TYPES } from "@/lib/constants";
 import { EMBED_PROVIDERS } from "@/lib/embeds";
 import { MediaAssetSchema } from "./media-asset";
@@ -12,7 +18,12 @@ const ContentSchema = new Schema(
   {
     title: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, index: true },
-    category: { type: String, enum: CATEGORY_SLUGS, required: true, index: true },
+    category: {
+      type: String,
+      enum: CATEGORY_SLUGS,
+      required: true,
+      index: true,
+    },
     type: { type: String, enum: CONTENT_TYPES, required: true, index: true },
 
     summary: { type: String, default: "" },
@@ -40,10 +51,35 @@ const ContentSchema = new Schema(
     gallery: { type: [MediaAssetSchema], default: [] },
 
     /**
+     * Dated milestones rendered beside the article as a timeline (SRS FR-7).
+     *
+     * Stored on the piece rather than as its own collection: an entry has no
+     * meaning away from the article that frames it, nothing else queries
+     * them, and a run of six is small enough that a sub-document array
+     * costs less than a join on every article read.
+     */
+    timeline: {
+      type: [
+        {
+          _id: false,
+          /** The marker — a year, a date, a chapter number. */
+          label: { type: String, required: true, trim: true },
+          title: { type: String, required: true, trim: true },
+          body: { type: String, default: "", trim: true },
+        },
+      ],
+      default: [],
+    },
+
+    /**
      * Embedded player, stored as provider + id rather than a URL. See
      * `lib/embeds.ts` — the URL is rebuilt at render time, never persisted.
      */
-    embedProvider: { type: String, enum: [...EMBED_PROVIDERS, ""], default: "" },
+    embedProvider: {
+      type: String,
+      enum: [...EMBED_PROVIDERS, ""],
+      default: "",
+    },
     embedId: { type: String, default: "" },
 
     /** Transcript for audio and video, shown under the player (v2 Phase 16). */
@@ -80,4 +116,5 @@ ContentSchema.virtual("averageRating").get(function () {
 export type ContentDoc = InferSchemaType<typeof ContentSchema>;
 
 export const Content: Model<ContentDoc> =
-  (models.Content as Model<ContentDoc>) ?? model<ContentDoc>("Content", ContentSchema);
+  (models.Content as Model<ContentDoc>) ??
+  model<ContentDoc>("Content", ContentSchema);

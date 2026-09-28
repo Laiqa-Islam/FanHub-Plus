@@ -31,7 +31,9 @@ export function Field({
         {label}
       </label>
       {children}
-      {hint && !error && <p className="text-[0.8rem] text-[var(--ink-faint)]">{hint}</p>}
+      {hint && !error && (
+        <p className="text-[0.8rem] text-[var(--ink-faint)]">{hint}</p>
+      )}
       {error && (
         <p
           role="alert"
@@ -90,7 +92,12 @@ export function Textarea({
       <textarea
         id={inputId}
         aria-invalid={Boolean(error)}
-        className={cn(controlStyles, "min-h-28 resize-y", error && "border-[var(--n1)]", className)}
+        className={cn(
+          controlStyles,
+          "min-h-28 resize-y",
+          error && "border-[var(--n1)]",
+          className,
+        )}
         {...props}
       />
     </Field>
@@ -114,7 +121,11 @@ export function Select({
   const inputId = id ?? generatedId;
   return (
     <Field label={label} error={error} hint={hint} htmlFor={inputId}>
-      <select id={inputId} className={cn(controlStyles, "cursor-pointer", className)} {...props}>
+      <select
+        id={inputId}
+        className={cn(controlStyles, "cursor-pointer", className)}
+        {...props}
+      >
         {children}
       </select>
     </Field>

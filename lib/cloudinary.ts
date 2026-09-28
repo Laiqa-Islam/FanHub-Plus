@@ -100,7 +100,9 @@ export async function verifyUploadedAsset(
   // Check the path before spending an API call: an id outside the member's own
   // folder is a claim on someone else's file.
   if (!publicId.startsWith(expectedPrefix) || publicId.includes("..")) {
-    throw new Error("That upload couldn't be matched to your account. Try attaching it again.");
+    throw new Error(
+      "That upload couldn't be matched to your account. Try attaching it again.",
+    );
   }
 
   let resource: {
@@ -119,18 +121,24 @@ export async function verifyUploadedAsset(
     });
   } catch (error) {
     console.error("[cloudinary] verification lookup failed:", publicId, error);
-    throw new Error("We couldn't find that upload. Please attach the file again.");
+    throw new Error(
+      "We couldn't find that upload. Please attach the file again.",
+    );
   }
 
   if (!resource?.secure_url) {
-    throw new Error("We couldn't find that upload. Please attach the file again.");
+    throw new Error(
+      "We couldn't find that upload. Please attach the file again.",
+    );
   }
 
   const format = (resource.format ?? "").toLowerCase();
   if (!rule.formats.includes(format)) {
     // Delete rather than leave a rejected file sitting in the account.
     await destroyAsset(publicId, kind);
-    throw new Error(`${format || "That file"} isn't a supported ${rule.label} format.`);
+    throw new Error(
+      `${format || "That file"} isn't a supported ${rule.label} format.`,
+    );
   }
 
   const bytes = Number(resource.bytes ?? 0);
@@ -162,7 +170,10 @@ export async function verifyUploadedAsset(
  * `folder` is appended to the configured root, e.g. "avatars" → "fanhub/avatars".
  * Throws a message safe to show the user.
  */
-export async function uploadImage(file: File, folder: string): Promise<UploadedAsset> {
+export async function uploadImage(
+  file: File,
+  folder: string,
+): Promise<UploadedAsset> {
   const rule = MEDIA_RULES.image;
 
   if (!rule.mimes.includes(file.type)) {
@@ -217,7 +228,10 @@ export async function uploadImage(file: File, folder: string): Promise<UploadedA
  * `kind` matters: Cloudinary keys deletion by resource type, and asking the
  * image API to delete a video reports success while deleting nothing.
  */
-export async function destroyAsset(publicId: string, kind: MediaKind = "image"): Promise<void> {
+export async function destroyAsset(
+  publicId: string,
+  kind: MediaKind = "image",
+): Promise<void> {
   if (!publicId) return;
   try {
     await cloudinary.uploader.destroy(publicId, {
@@ -231,6 +245,7 @@ export async function destroyAsset(publicId: string, kind: MediaKind = "image"):
 }
 
 /** Back-compat alias for the avatar path, which only ever handles images. */
-export const destroyImage = (publicId: string) => destroyAsset(publicId, "image");
+export const destroyImage = (publicId: string) =>
+  destroyAsset(publicId, "image");
 
 export { cloudinary };

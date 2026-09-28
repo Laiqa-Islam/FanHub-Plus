@@ -18,13 +18,21 @@ export function CartPageContent() {
   const subtotal = cartSubtotal(lines);
   const shipping = shippingForSubtotal(subtotal);
   const total = subtotal + shipping;
-  const amountToFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD_CENTS - subtotal);
-  const progress = Math.min(100, (subtotal / FREE_SHIPPING_THRESHOLD_CENTS) * 100);
+  const amountToFreeShipping = Math.max(
+    0,
+    FREE_SHIPPING_THRESHOLD_CENTS - subtotal,
+  );
+  const progress = Math.min(
+    100,
+    (subtotal / FREE_SHIPPING_THRESHOLD_CENTS) * 100,
+  );
 
   if (!hydrated) {
     return (
       <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8">
-        <p className="mark animate-pulse text-[var(--n2)]" role="status">Loading your cart…</p>
+        <p className="mark animate-pulse text-[var(--n2)]" role="status">
+          Loading your cart…
+        </p>
       </div>
     );
   }
@@ -38,10 +46,13 @@ export function CartPageContent() {
           </span>
           <p className="mark mt-6 text-[var(--n3)]">Cart empty</p>
           <h1 className="mt-3 font-display text-[clamp(2rem,7vw,4rem)] font-black leading-[0.95]">
-            Your next drop<br />starts here.
+            Your next drop
+            <br />
+            starts here.
           </h1>
           <p className="mx-auto mt-5 max-w-md text-[var(--ink-soft)]">
-            Browse the merch collection and add a few favourites before heading to checkout.
+            Browse the merch collection and add a few favourites before heading
+            to checkout.
           </p>
           <Button asChild size="lg" className="mt-7">
             <Link href="/merch">Shop merch</Link>
@@ -55,7 +66,9 @@ export function CartPageContent() {
     <div className="mx-auto max-w-[88rem] px-5 py-10 sm:px-8 sm:py-14">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4 border-b border-[var(--rule-strong)] pb-6">
         <div>
-          <p className="mark mb-3 text-[var(--n3)]">Bag check · {lines.length} lines</p>
+          <p className="mark mb-3 text-[var(--n3)]">
+            Bag check · {lines.length} lines
+          </p>
           <h1 className="font-display text-[clamp(2rem,6vw,4rem)] font-black leading-[0.92]">
             Your cart<span className="text-[var(--n1)]">.</span>
           </h1>
@@ -79,11 +92,19 @@ export function CartPageContent() {
                 href={`/merch/${line.slug}`}
                 className="relative aspect-square overflow-hidden rounded-xl bg-[var(--paper-2)]"
               >
-                <Image src={line.imageUrl} alt="" fill sizes="112px" className="object-cover" />
+                <Image
+                  src={line.imageUrl}
+                  alt=""
+                  fill
+                  sizes="112px"
+                  className="object-cover"
+                />
               </Link>
 
               <div className="min-w-0">
-                <p className="mark !text-[0.55rem] text-[var(--n2)]">{line.category}</p>
+                <p className="mark !text-[0.55rem] text-[var(--n2)]">
+                  {line.category}
+                </p>
                 <Link
                   href={`/merch/${line.slug}`}
                   className="mt-1 block font-display text-[0.9rem] font-bold leading-tight transition-colors hover:text-[var(--n2)] sm:text-[1rem]"
@@ -106,7 +127,10 @@ export function CartPageContent() {
                   >
                     <Minus className="h-3.5 w-3.5" aria-hidden />
                   </button>
-                  <span className="w-7 text-center font-mono text-[0.72rem] tabular-nums" aria-live="polite">
+                  <span
+                    className="w-7 text-center font-mono text-[0.72rem] tabular-nums"
+                    aria-live="polite"
+                  >
                     {line.quantity}
                   </span>
                   <button
@@ -136,15 +160,19 @@ export function CartPageContent() {
           <p className="mark text-[var(--n3)]">Order summary</p>
           <div className="mt-5 space-y-3 border-b border-[var(--rule)] pb-5 text-[0.9rem]">
             <div className="flex justify-between gap-4 text-[var(--ink-soft)]">
-              <span>Subtotal</span><span>{formatPrice(subtotal)}</span>
+              <span>Subtotal</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between gap-4 text-[var(--ink-soft)]">
-              <span>Shipping</span><span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
+              <span>Shipping</span>
+              <span>{shipping === 0 ? "Free" : formatPrice(shipping)}</span>
             </div>
           </div>
           <div className="flex items-end justify-between gap-4 py-5">
             <span className="font-display text-[0.85rem] font-bold">Total</span>
-            <span className="font-display text-[1.45rem] font-black text-[var(--n3)]">{formatPrice(total)}</span>
+            <span className="font-display text-[1.45rem] font-black text-[var(--n3)]">
+              {formatPrice(total)}
+            </span>
           </div>
 
           <div className="mb-5 rounded-xl bg-[var(--paper-2)] p-3">
@@ -153,8 +181,14 @@ export function CartPageContent() {
                 ? `${formatPrice(amountToFreeShipping)} away from free shipping.`
                 : "Free shipping unlocked."}
             </p>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--edge)]" aria-hidden>
-              <div className="h-full rounded-full bg-[var(--n3)] transition-[width] duration-300" style={{ width: `${progress}%` }} />
+            <div
+              className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--edge)]"
+              aria-hidden
+            >
+              <div
+                className="h-full rounded-full bg-[var(--n3)] transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
 

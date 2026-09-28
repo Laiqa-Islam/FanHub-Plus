@@ -17,7 +17,11 @@ export default async function AdminOverviewPage() {
     <div>
       <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Usage statistics</p>
-        <Misreg as="h1" className="text-[clamp(1.75rem,4.5vw,2.8rem)]" ghostInk="var(--spot-2)">
+        <Misreg
+          as="h1"
+          className="text-[clamp(1.75rem,4.5vw,2.8rem)]"
+          ghostInk="var(--spot-2)"
+        >
           Overview
         </Misreg>
       </div>
@@ -83,14 +87,15 @@ export default async function AdminOverviewPage() {
                       aria-hidden
                       className="h-2.5 w-2.5 rounded-full"
                       style={{
-                    background: `var(--ch-${category.token})`,
-                    boxShadow: `0 0 9px var(--ch-${category.token})`,
-                  }}
+                        background: `var(--ch-${category.token})`,
+                        boxShadow: `0 0 9px var(--ch-${category.token})`,
+                      }}
                     />
                     {category.name}
                   </span>
                   <span className="tabular-nums text-[var(--ink-faint)]">
-                    {category.views.toLocaleString()} views · {category.count} pieces
+                    {category.views.toLocaleString()} views · {category.count}{" "}
+                    pieces
                   </span>
                 </div>
                 <div className="h-3 w-full border border-[var(--edge)] bg-[var(--paper-2)]">
@@ -124,7 +129,9 @@ export default async function AdminOverviewPage() {
                     <span className="font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
                       {String(index + 1).padStart(2, "0")}
                     </span>
-                    <span className="min-w-0 flex-1 truncate text-[0.9rem]">{item.title}</span>
+                    <span className="min-w-0 flex-1 truncate text-[0.9rem]">
+                      {item.title}
+                    </span>
                     <span className="flex shrink-0 items-center gap-2.5 font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
                       <span className="inline-flex items-center gap-1">
                         <Eye className="h-3 w-3" aria-hidden />
@@ -154,8 +161,13 @@ export default async function AdminOverviewPage() {
                   key={`${entry.at}-${index}`}
                   className="flex items-baseline gap-3 border-b border-[var(--rule)] py-2"
                 >
-                  <span aria-hidden className="h-1.5 w-1.5 shrink-0 bg-[var(--spot)]" />
-                  <span className="min-w-0 flex-1 text-[0.88rem]">{entry.label}</span>
+                  <span
+                    aria-hidden
+                    className="h-1.5 w-1.5 shrink-0 bg-[var(--spot)]"
+                  />
+                  <span className="min-w-0 flex-1 text-[0.88rem]">
+                    {entry.label}
+                  </span>
                   <span className="shrink-0 font-mono text-[0.6rem] uppercase text-[var(--ink-faint)]">
                     {relativeTime(entry.at)}
                   </span>
@@ -169,7 +181,15 @@ export default async function AdminOverviewPage() {
   );
 }
 
-function Stat({ label, value, hint }: { label: string; value: number; hint?: string }) {
+function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: number;
+  hint?: string;
+}) {
   return (
     <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5">
       <p className="font-display text-[2.6rem] leading-none tabular-nums">
@@ -177,7 +197,9 @@ function Stat({ label, value, hint }: { label: string; value: number; hint?: str
       </p>
       <p className="mark mt-1.5 !text-[0.58rem]">{label}</p>
       {hint && (
-        <p className="mt-1 font-mono text-[0.6rem] text-[var(--ink-faint)]">{hint}</p>
+        <p className="mt-1 font-mono text-[0.6rem] text-[var(--ink-faint)]">
+          {hint}
+        </p>
       )}
     </div>
   );

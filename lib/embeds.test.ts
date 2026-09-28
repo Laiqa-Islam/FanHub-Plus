@@ -40,28 +40,38 @@ describe("parseEmbed — recognising legitimate links", () => {
   });
 
   it("keeps the Spotify resource type alongside the id", () => {
-    expect(parseEmbed("https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC")).toEqual({
+    expect(
+      parseEmbed("https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC"),
+    ).toEqual({
       provider: "spotify",
       id: "track/4uLU6hMCjMI75M1A2tKUQC",
     });
   });
 
   it("strips Spotify's locale prefix", () => {
-    expect(parseEmbed("https://open.spotify.com/intl-de/album/4uLU6hMCjMI75M1A2tKUQC")).toEqual({
+    expect(
+      parseEmbed(
+        "https://open.spotify.com/intl-de/album/4uLU6hMCjMI75M1A2tKUQC",
+      ),
+    ).toEqual({
       provider: "spotify",
       id: "album/4uLU6hMCjMI75M1A2tKUQC",
     });
   });
 
   it("reads a SoundCloud permalink as user/track", () => {
-    expect(parseEmbed("https://soundcloud.com/artist-name/track-title")).toEqual({
+    expect(
+      parseEmbed("https://soundcloud.com/artist-name/track-title"),
+    ).toEqual({
       provider: "soundcloud",
       id: "artist-name/track-title",
     });
   });
 
   it("lower-cases SoundCloud permalinks, which are case-insensitive", () => {
-    expect(parseEmbed("https://soundcloud.com/Artist/Track")?.id).toBe("artist/track");
+    expect(parseEmbed("https://soundcloud.com/Artist/Track")?.id).toBe(
+      "artist/track",
+    );
   });
 });
 
@@ -73,14 +83,20 @@ describe("parseEmbed — rejecting everything else", () => {
     ["a data: URL", "data:text/html,<script>alert(1)</script>"],
     ["a file: URL", "file:///etc/passwd"],
     ["an unsupported host", "https://evil.example.com/watch?v=dQw4w9WgXcQ"],
-    ["a lookalike suffix host", "https://youtube.com.evil.example/watch?v=dQw4w9WgXcQ"],
+    [
+      "a lookalike suffix host",
+      "https://youtube.com.evil.example/watch?v=dQw4w9WgXcQ",
+    ],
     ["a lookalike prefix host", "https://notyoutube.com/watch?v=dQw4w9WgXcQ"],
     ["a YouTube URL with no id", "https://www.youtube.com/"],
     ["a YouTube channel page", "https://www.youtube.com/@someone"],
     ["a SoundCloud user page", "https://soundcloud.com/artist-name"],
     ["a SoundCloud set", "https://soundcloud.com/artist-name/sets"],
     ["a Vimeo URL with no numeric id", "https://vimeo.com/channels/staffpicks"],
-    ["an unknown Spotify type", "https://open.spotify.com/artistx/4uLU6hMCjMI75M1A2tKUQC"],
+    [
+      "an unknown Spotify type",
+      "https://open.spotify.com/artistx/4uLU6hMCjMI75M1A2tKUQC",
+    ],
     ["not a URL at all", "just some text"],
   ])("rejects %s", (_label, input) => {
     expect(parseEmbed(input)).toBeNull();
@@ -126,7 +142,14 @@ describe("parseEmbed — rejecting everything else", () => {
   });
 
   it("rejects ids carrying characters that have meaning in a URL", () => {
-    for (const hostile of ['a"onload=x', "a'b", "a>b", "a%2Fb", "a\\b", "a#b"]) {
+    for (const hostile of [
+      'a"onload=x',
+      "a'b",
+      "a>b",
+      "a%2Fb",
+      "a\\b",
+      "a#b",
+    ]) {
       expect(parseEmbed(`https://youtu.be/${hostile}`)).toBeNull();
       expect(parseEmbed(`https://soundcloud.com/user/${hostile}`)).toBeNull();
     }
@@ -196,7 +219,9 @@ describe("embedHref and embedKind", () => {
     expect(embedHref("youtube", "dQw4w9WgXcQ")).toBe(
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     );
-    expect(embedHref("soundcloud", "artist/track")).toBe("https://soundcloud.com/artist/track");
+    expect(embedHref("soundcloud", "artist/track")).toBe(
+      "https://soundcloud.com/artist/track",
+    );
   });
 
   it("applies the same validation as embedSrc", () => {

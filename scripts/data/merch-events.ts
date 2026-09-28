@@ -14,7 +14,8 @@
 export type MerchSeed = {
   category: string;
   name: string;
-  tag: "Limited Edition" | "Pre-Order" | "Collectible" | "Exclusive" | "Restock";
+  tag:
+    "Limited Edition" | "Pre-Order" | "Collectible" | "Exclusive" | "Restock";
   isUpcoming: boolean;
   /** Days from today; negative is in the past. */
   releaseOffset: number;
@@ -441,6 +442,11 @@ export type EventSeed = {
   /** Days from today. */
   inDays: number;
   description: string;
+  /**
+   * Narrative copy for the highlight reel. Only the events near enough to be
+   * highlighted carry one — the rest are listings.
+   */
+  story?: string;
 };
 
 export const EVENT_SEED: EventSeed[] = [
@@ -508,6 +514,12 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 34,
     description:
       "Strong cosplay presence with a well-run masquerade and dedicated repair stations on the floor. Good first convention for anyone bringing a build.",
+    story:
+      "Three days, the whole of ExCeL, and more happening at once than any one person " +
+      "can see. The main halls are the advertised version — panels, signings, the " +
+      "queue for the big announcement. The actual convention is the artist alley and " +
+      "the cosplay repair station, where people who spent four months on a build fix " +
+      "it with a glue gun and carry on. Go with a plan and abandon it by lunchtime.",
   },
   {
     category: "anime",
@@ -542,7 +554,7 @@ export const EVENT_SEED: EventSeed[] = [
     city: "Lucca",
     country: "Italy",
     venue: "Lucca Historic Centre",
-    lat: 43.8430,
+    lat: 43.843,
     lng: 10.5079,
     inDays: 155,
     description:
@@ -556,7 +568,7 @@ export const EVENT_SEED: EventSeed[] = [
     country: "United States",
     venue: "Mandalay Bay",
     lat: 36.0918,
-    lng: -115.1760,
+    lng: -115.176,
     inDays: 118,
     description:
       "The fighting-game community's flagship tournament. Open bracket, which means anyone can enter and occasionally someone unknown goes very far.",
@@ -573,6 +585,12 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 12,
     description:
       "Big-screen finale showing followed by a Q&A with two of the series' directors. Limited capacity.",
+    story:
+      "Eight months of Sunday-night theorising, settled in one room. The Watershed " +
+      "has been running these for the whole season and the last one is the reason the " +
+      "rest existed — a hundred people who have already read every thread, watching " +
+      "the thing they have been arguing about, live and at the same time. Expect " +
+      "audible reactions. Expect at least one person to be very wrong in public.",
   },
   {
     category: "movies",
@@ -586,6 +604,12 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 27,
     description:
       "Premiere screening with the cinematographer in attendance, presented from a 35mm print.",
+    story:
+      "The first public screening, with the people who made it in the room. A " +
+      "premiere is mostly a queue and a photograph, but the forty minutes after the " +
+      "credits are the reason to come: a director taking questions from an audience " +
+      "that has had no time to form a consensus yet, which is the only point at which " +
+      "the answers are still interesting.",
   },
   {
     category: "cosplay",
@@ -599,6 +623,12 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 18,
     description:
       "Informal build day. Bring work in progress, share heat guns, and get a second opinion before you commit to a cut.",
+    story:
+      "Bring the thing you have been stuck on. This is a working day rather than a " +
+      "showcase: long tables, heat guns, contact cement, and enough people who have " +
+      "already made the mistake you are about to make. The useful part is not the " +
+      "demonstration at the front — it is the person two seats down who looks at your " +
+      "bevel and tells you to start that edge again.",
   },
   {
     category: "comics",
@@ -608,7 +638,7 @@ export const EVENT_SEED: EventSeed[] = [
     country: "United States",
     venue: "Seattle Convention Center",
     lat: 47.6116,
-    lng: -122.3320,
+    lng: -122.332,
     inDays: 73,
     description:
       "Creator-focused programming and one of the better artist alleys in North America.",
@@ -638,6 +668,12 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 40,
     description:
       "A working session on panel layout and screentone, capped at twenty places. Materials provided.",
+    story:
+      "Six hours, a small room, and one working professional who will look at your " +
+      "pages and tell you the truth about them. The morning is panel construction and " +
+      "pacing; the afternoon is everyone drawing the same two-page spread and seeing " +
+      "how differently it comes out. Bring finished work rather than your best work — " +
+      "the critique is more useful on something you have already stopped defending.",
   },
   {
     category: "k-pop",
@@ -651,5 +687,11 @@ export const EVENT_SEED: EventSeed[] = [
     inDays: 9,
     description:
       "Album playback, concept discussion and a photocard trade table. Free entry, arrive early for the trade.",
+    story:
+      "A basement room, one good sound system, and a tracklist nobody in the room has " +
+      "heard yet. The format is simple enough that it lives or dies on the crowd: the " +
+      "album plays start to finish with no talking over it, and then everyone argues " +
+      "about the B-sides until they are asked to leave. Come for the first play, stay " +
+      "for the part where someone tries to defend the ballad.",
   },
 ];

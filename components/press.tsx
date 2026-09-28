@@ -20,7 +20,10 @@ export function InkStrip({
       {CATEGORIES.map((category, index) => (
         <span
           key={category.slug}
-          className={cn("block h-full w-full origin-left", animated && "animate-[ink-roll_.5s_both]")}
+          className={cn(
+            "block h-full w-full origin-left",
+            animated && "animate-[ink-roll_.5s_both]",
+          )}
           style={{
             background: `var(--ch-${category.token})`,
             boxShadow: `0 0 12px var(--ch-${category.token})`,
@@ -53,9 +56,15 @@ export function Misreg({
   as?: "span" | "h1" | "h2" | "h3";
 }) {
   return (
-    <Tag className={cn("misreg", className)} data-ghost={children} style={
-      ghostInk ? ({ ["--ghost-ink" as string]: ghostInk } as React.CSSProperties) : undefined
-    }>
+    <Tag
+      className={cn("misreg", className)}
+      data-ghost={children}
+      style={
+        ghostInk
+          ? ({ ["--ghost-ink" as string]: ghostInk } as React.CSSProperties)
+          : undefined
+      }
+    >
       {children}
     </Tag>
   );

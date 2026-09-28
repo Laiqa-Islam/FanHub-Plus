@@ -35,7 +35,9 @@ export async function generateMetadata(
   return { title: category.name, description: category.tagline };
 }
 
-export default async function CategoryPage(props: PageProps<"/category/[slug]">) {
+export default async function CategoryPage(
+  props: PageProps<"/category/[slug]">,
+) {
   const { slug } = await props.params;
   const category = categoryBySlug(slug);
   if (!category) notFound();
@@ -77,7 +79,12 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
           }}
         />
         <div className="mx-auto max-w-7xl px-5 pb-12 pt-10">
-          <Breadcrumbs trail={[{ href: "/explore", label: "Channels" }, { label: category.name }]} />
+          <Breadcrumbs
+            trail={[
+              { href: "/explore", label: "Channels" },
+              { label: category.name },
+            ]}
+          />
 
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div className="max-w-2xl">
@@ -89,7 +96,9 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
                 />
                 <p className="mark">Channel · {total} items</p>
               </div>
-              <h1 className="font-display text-[clamp(1.75rem,4.5vw,2.8rem)]">{category.name}</h1>
+              <h1 className="font-display text-[clamp(1.75rem,4.5vw,2.8rem)]">
+                {category.name}
+              </h1>
               <p className="mt-4 text-[1.02rem] leading-relaxed text-[var(--ink-soft)]">
                 {category.tagline}
               </p>
@@ -108,9 +117,9 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
                       aria-hidden
                       className="h-2 w-2 rounded-full"
                       style={{
-                    background: `var(--ch-${other.token})`,
-                    boxShadow: `0 0 9px var(--ch-${other.token})`,
-                  }}
+                        background: `var(--ch-${other.token})`,
+                        boxShadow: `0 0 9px var(--ch-${other.token})`,
+                      }}
                     />
                     {other.name}
                   </Link>
@@ -136,7 +145,10 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
           </p>
         ) : (
           <>
-            <Reveal stagger={0.04} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <Reveal
+              stagger={0.04}
+              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            >
               {items.map((item, index) => (
                 <ContentCard key={item.id} item={item} priority={index < 3} />
               ))}
@@ -156,7 +168,9 @@ export default async function CategoryPage(props: PageProps<"/category/[slug]">)
         {characters.length > 0 && (
           <section className="mt-20 border-t border-[var(--rule)] pt-14">
             <div className="mb-7 flex items-center justify-between">
-              <h2 className="font-display text-[1.5rem]">Characters in {category.name}</h2>
+              <h2 className="font-display text-[1.5rem]">
+                Characters in {category.name}
+              </h2>
               <Link
                 href={`/characters?category=${slug}`}
                 className="group flex items-center gap-1.5 font-mono text-[0.72rem] uppercase tracking-[0.13em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot)]"

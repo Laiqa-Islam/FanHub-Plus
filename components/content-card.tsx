@@ -68,7 +68,10 @@ export function ContentCard({
         {/* The channel signal, lit, top left. */}
         <span
           className="absolute left-3.5 top-3.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 font-mono text-[0.58rem] font-medium uppercase tracking-[0.14em] text-[var(--void)]"
-          style={{ background: ink, boxShadow: `0 0 14px color-mix(in oklch, ${ink} 45%, transparent)` }}
+          style={{
+            background: ink,
+            boxShadow: `0 0 14px color-mix(in oklch, ${ink} 45%, transparent)`,
+          }}
         >
           <Icon className="h-3 w-3" aria-hidden />
           {item.type}
@@ -79,14 +82,22 @@ export function ContentCard({
         </span>
 
         <div className="relative z-10 flex flex-col gap-2 p-4">
-          <p className="font-mono text-[0.56rem] uppercase tracking-[0.16em]" style={{ color: ink }}>
+          <p
+            className="font-mono text-[0.56rem] uppercase tracking-[0.16em]"
+            style={{ color: ink }}
+          >
             {category?.name}
             {item.releaseDate && (
-              <span className="text-[var(--ink-faint)]"> · {formatDate(item.releaseDate)}</span>
+              <span className="text-[var(--ink-faint)]">
+                {" "}
+                · {formatDate(item.releaseDate)}
+              </span>
             )}
           </p>
 
-          <h3 className="font-display text-[1.02rem] font-bold leading-[1.15]">{item.title}</h3>
+          <h3 className="font-display text-[1.02rem] font-bold leading-[1.15]">
+            {item.title}
+          </h3>
 
           <p className="line-clamp-2 text-[0.86rem] leading-snug text-[var(--ink-soft)]">
             {item.summary}
@@ -95,12 +106,20 @@ export function ContentCard({
           <div className="mt-1 flex items-center gap-3 font-mono text-[0.58rem] uppercase tracking-[0.12em] text-[var(--ink-faint)]">
             {item.ratingCount > 0 && (
               <span className="inline-flex items-center gap-1 tabular-nums">
-                <Star className="h-3 w-3 fill-current" style={{ color: ink }} aria-hidden />
+                <Star
+                  className="h-3 w-3 fill-current"
+                  style={{ color: ink }}
+                  aria-hidden
+                />
                 {item.averageRating.toFixed(1)}
               </span>
             )}
-            <span className="tabular-nums">{item.viewCount.toLocaleString()} reads</span>
-            {item.genre[0] && <span className="ml-auto truncate">{item.genre[0]}</span>}
+            <span className="tabular-nums">
+              {item.viewCount.toLocaleString()} reads
+            </span>
+            {item.genre[0] && (
+              <span className="ml-auto truncate">{item.genre[0]}</span>
+            )}
           </div>
         </div>
 

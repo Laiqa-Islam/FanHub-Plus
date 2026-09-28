@@ -24,7 +24,10 @@ export function Pagination({
     .sort((a, b) => a - b);
 
   return (
-    <nav aria-label="Pagination" className="mt-14 flex items-center justify-center gap-2">
+    <nav
+      aria-label="Pagination"
+      className="mt-14 flex items-center justify-center gap-2"
+    >
       <PageLink
         href={hrefFor(page - 1)}
         disabled={page <= 1}
@@ -35,7 +38,9 @@ export function Pagination({
       {pages.map((p, index) => (
         <span key={p} className="flex items-center gap-2">
           {index > 0 && pages[index - 1] !== p - 1 && (
-            <span className="font-mono text-[0.75rem] text-[var(--ink-faint)]">…</span>
+            <span className="font-mono text-[0.75rem] text-[var(--ink-faint)]">
+              …
+            </span>
           )}
           <Link
             href={hrefFor(p)}
@@ -80,7 +85,10 @@ function PageLink({
     return (
       <span
         aria-disabled="true"
-        className={cn(className, "cursor-not-allowed text-[var(--ink-faint)] opacity-45")}
+        className={cn(
+          className,
+          "cursor-not-allowed text-[var(--ink-faint)] opacity-45",
+        )}
       >
         {icon}
         <span className="sr-only">{label}</span>
@@ -91,7 +99,10 @@ function PageLink({
   return (
     <Link
       href={href}
-      className={cn(className, "text-[var(--ink-soft)] hover:border-[var(--rule-strong)] hover:text-[var(--ink)]")}
+      className={cn(
+        className,
+        "text-[var(--ink-soft)] hover:border-[var(--rule-strong)] hover:text-[var(--ink)]",
+      )}
     >
       {icon}
       <span className="sr-only">{label}</span>

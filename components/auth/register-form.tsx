@@ -62,7 +62,8 @@ export function RegisterForm() {
       </Button>
 
       <p className="text-[0.78rem] leading-relaxed text-[var(--ink-faint)]">
-        Fan Hub Plus showcases merchandise for discovery only — we never ask for payment details.
+        Fan Hub Plus showcases merchandise for discovery only — we never ask for
+        payment details.
       </p>
     </form>
   );

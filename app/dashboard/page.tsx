@@ -1,17 +1,38 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { MailWarning, ShieldAlert, Sparkles, Bookmark, Compass, Activity } from "lucide-react";
+import {
+  MailWarning,
+  ShieldAlert,
+  Sparkles,
+  Bookmark,
+  Compass,
+  Activity,
+  CalendarDays,
+  ArrowUpRight,
+  PlayCircle,
+  PenLine,
+  ShoppingBag,
+  Settings,
+  Shield,
+  Inbox,
+  Ticket,
+} from "lucide-react";
 
 import { requireUser } from "@/lib/dal";
 import { connectToDatabase } from "@/lib/db";
 import { ActivityLog, Content } from "@/models";
 import { CATEGORIES, categoryBySlug, type CategorySlug } from "@/lib/constants";
 import { getClippings, getClippingCounts } from "@/lib/bookmarks-query";
-import { relativeTime, formatDate } from "@/lib/utils";
+import { getMyPasses } from "@/lib/home";
+import { relativeTime } from "@/lib/utils";
 import { Reveal } from "@/components/motion/reveal";
-import { InkStrip, Misreg, RegMark } from "@/components/press";
+import { CountUp } from "@/components/motion/count-up";
+import { InkStrip, Misreg, RegMark, PressHeading } from "@/components/press";
+import { ContentCard } from "@/components/content-card";
+import { Duotone } from "@/components/duotone";
 import { Button } from "@/components/ui/button";
+import type { ContentListItem } from "@/lib/queries";
 
 export const metadata: Metadata = { title: "Your desk" };
 export const dynamic = "force-dynamic";
@@ -23,14 +44,60 @@ function greeting() {
   return "Good evening";
 }
 
+/** Whole days since the account was opened, floored at one. */
+function daysSince(iso: string) {
+  const start = new Date(iso).getTime();
+  if (Number.isNaN(start)) return 1;
+  return Math.max(1, Math.floor((Date.now() - start) / 86_400_000));
+}
+
+/**
+ * The four places a signed-in member actually goes. These were reachable
+ * only from the header before, which meant the page you land on after
+ * signing in was the one page that never told you what you could do.
+ */
+const SHORTCUTS = [
+  {
+    href: "/explore",
+    label: "Explore",
+    body: "Search and filter the library",
+    icon: Compass,
+    ink: "var(--n2)",
+  },
+  {
+    href: "/media",
+    label: "Multimedia",
+    body: "Watch and listen in place",
+    icon: PlayCircle,
+    ink: "var(--n1)",
+  },
+  {
+    href: "/submit",
+    label: "Submit",
+    body: "Send a piece to the editors",
+    icon: PenLine,
+    ink: "var(--n3)",
+  },
+  {
+    href: "/merch",
+    label: "Shop",
+    body: "Fan-picked merch and your cart",
+    icon: ShoppingBag,
+    ink: "var(--ch-kpop)",
+  },
+];
+
 export default async function DashboardPage(props: PageProps<"/dashboard">) {
   const user = await requireUser();
   const params = await props.searchParams;
 
   await connectToDatabase();
 
-  const [activity, clippings, counts, recommended] = await Promise.all([
-    ActivityLog.find({ userId: user.id }).sort({ createdAt: -1 }).limit(7).lean(),
+  const [activity, clippings, counts, recommended, passes] = await Promise.all([
+    ActivityLog.find({ userId: user.id })
+      .sort({ createdAt: -1 })
+      .limit(8)
+      .lean(),
     getClippings(user.id).then((rows) => rows.slice(0, 4)),
     getClippingCounts(user.id),
     // Lead with the member's own channels; fall back to everything.
@@ -43,27 +110,148 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
       .sort({ popularityScore: -1, createdAt: -1 })
       .limit(6)
       .lean(),
+    getMyPasses(user.id),
   ]);
 
-  const favorites = CATEGORIES.filter((c) => user.favoriteCategories.includes(c.slug));
+  const favorites = CATEGORIES.filter((c) =>
+    user.favoriteCategories.includes(c.slug),
+  );
   const firstName = user.name.split(" ")[0];
+
+  // The recommendations render through the same `ContentCard` the explorer
+  // and the front page use, so a piece looks identical wherever a member
+  // meets it. That means mapping the lean documents onto the shape that card
+  // expects rather than inventing a second, plainer card for this page.
+  const picks: ContentListItem[] = recommended.map((doc) => {
+    const ratingCount = Number(doc.ratingCount ?? 0);
+    const ratingSum = Number(doc.ratingSum ?? 0);
+    return {
+      id: String(doc._id),
+      title: String(doc.title),
+      slug: String(doc.slug),
+      category: String(doc.category),
+      type: String(doc.type),
+      summary: String(doc.summary ?? ""),
+      coverImage: String(doc.coverImage ?? ""),
+      genre: (doc.genre as string[]) ?? [],
+      releaseDate: doc.releaseDate
+        ? new Date(doc.releaseDate as Date).toISOString()
+        : null,
+      popularityScore: Number(doc.popularityScore ?? 0),
+      viewCount: Number(doc.viewCount ?? 0),
+      averageRating: ratingCount > 0 ? ratingSum / ratingCount : 0,
+      ratingCount,
+      mediaUrl: String(doc.mediaUrl ?? ""),
+      mediaPoster: String(doc.mediaPoster ?? ""),
+      mediaCredit: String(doc.mediaCredit ?? ""),
+      mediaRuntime: String(doc.mediaRuntime ?? ""),
+      mediaTags: (doc.mediaTags as string[]) ?? [],
+    } as ContentListItem;
+  });
+
+  const stats = [
+    {
+      label: "Saved",
+      value: counts.all ?? 0,
+      href: "/bookmarks",
+      icon: Bookmark,
+      ink: "var(--n2)",
+    },
+    {
+      label: "Channels followed",
+      value: favorites.length,
+      href: "/profile",
+      icon: Compass,
+      ink: "var(--n1)",
+    },
+    {
+      label: "Recent actions",
+      value: activity.length,
+      href: undefined,
+      icon: Activity,
+      ink: "var(--n3)",
+    },
+    {
+      label: "Days a member",
+      value: daysSince(user.createdAt),
+      href: "/profile",
+      icon: CalendarDays,
+      ink: "var(--ch-gaming)",
+    },
+  ];
 
   return (
     <div>
-      {/* Masthead — this issue is addressed to one reader */}
-      <header className="border-b border-[var(--rule-strong)]">
-        <div className="mx-auto max-w-[88rem] px-5 pb-8 pt-8 sm:px-8">
-          <div className="mb-6 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-[var(--rule)] pb-3 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--ink-faint)]">
+      {/* Masthead — this issue is addressed to one reader. */}
+      <header className="relative overflow-hidden border-b border-[var(--rule-strong)]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 opacity-[0.1]"
+          style={{
+            background:
+              "radial-gradient(55% 60% at 12% 0%, var(--n1), transparent 70%), radial-gradient(45% 60% at 88% 20%, var(--n2), transparent 70%)",
+          }}
+        />
+
+        <div className="relative mx-auto max-w-[88rem] px-5 pb-9 pt-8 sm:px-8">
+          <div className="mb-7 flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-[var(--rule)] pb-3 font-mono text-[0.64rem] uppercase tracking-[0.18em] text-[var(--ink-faint)]">
             <RegMark className="text-[var(--ink)]" />
             <span>{new Date().toDateString()}</span>
-            <span>{user.role === "admin" ? "Editor" : "Subscriber"} edition</span>
-            <span className="ml-auto text-[var(--spot-deep)]">Personal copy</span>
+            <span>
+              {user.role === "admin" ? "Editor" : "Subscriber"} edition
+            </span>
+            <span className="ml-auto text-[var(--n1)]">Personal copy</span>
           </div>
 
-          <p className="mark mb-3">{greeting()}</p>
-          <Misreg as="h1" className="text-[clamp(1.9rem,5.5vw,3.5rem)]" ghostInk="var(--spot-2)">
-            {firstName}
-          </Misreg>
+          <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
+            <div className="flex items-center gap-5">
+              {/* A lit disc rather than a plain avatar frame, so the one
+                  portrait on the page belongs to the same family as the
+                  character dossiers and the header mark. */}
+              <span
+                className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-[var(--n1)] font-display text-[1.5rem] font-black leading-none text-[var(--n1)] sm:h-20 sm:w-20"
+                style={{
+                  boxShadow:
+                    "0 0 26px color-mix(in oklch, var(--n1) 45%, transparent), inset 0 0 18px color-mix(in oklch, var(--n1) 22%, transparent)",
+                }}
+              >
+                {user.avatarUrl ? (
+                  <Image
+                    src={user.avatarUrl}
+                    alt=""
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                ) : (
+                  firstName.charAt(0).toUpperCase()
+                )}
+              </span>
+
+              <div className="min-w-0">
+                <p className="mark mb-2.5">{greeting()}</p>
+                <Misreg
+                  as="h1"
+                  className="text-[clamp(1.9rem,5.5vw,3.5rem)]"
+                  ghostInk="var(--n2)"
+                >
+                  {firstName}
+                </Misreg>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <Button asChild size="sm">
+                <Link href="/explore">Find something to read</Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link href="/profile">
+                  <Settings className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                  Settings
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
         <InkStrip height={5} />
       </header>
@@ -95,82 +283,120 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
           )}
         </div>
 
+        {/* Admins land here after signing in, so this is where the control
+            panel has to be announced. It was previously reachable only from
+            a line in the sitemap. */}
+        {user.role === "admin" && (
+          <section className="mt-8 overflow-hidden rounded-2xl border border-[color-mix(in_oklch,var(--n1)_40%,transparent)] bg-[var(--paper-2)]">
+            <div className="flex flex-wrap items-center gap-5 p-5">
+              <span
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-xl text-[var(--void)]"
+                style={{
+                  background: "var(--n1)",
+                  boxShadow:
+                    "0 0 22px color-mix(in oklch, var(--n1) 45%, transparent)",
+                }}
+              >
+                <Shield className="h-5 w-5" aria-hidden />
+              </span>
+
+              <div className="min-w-0 flex-1">
+                <p className="mark !text-[0.56rem] text-[var(--n1)]">
+                  Editor access
+                </p>
+                <p className="mt-1.5 font-display text-[1.05rem] font-bold leading-none">
+                  You have the control panel
+                </p>
+                <p className="mt-2 text-[0.86rem] leading-snug text-[var(--ink-soft)]">
+                  Usage statistics, and the editors for content, characters,
+                  merch, events, the FAQ, submissions, feedback and users.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button asChild size="sm">
+                  <Link href="/admin">Open control panel</Link>
+                </Button>
+                <Button asChild size="sm" variant="outline">
+                  <Link href="/admin/submissions">
+                    <Inbox className="mr-1.5 h-3.5 w-3.5" aria-hidden />
+                    Review queue
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* The counts, in the same idiom the front page uses for the library
+            totals — counted up on arrival rather than printed flat. */}
         <Reveal
           stagger={0.06}
-          className="mt-8 grid gap-2.5 sm:grid-cols-3"
+          className="mt-8 grid grid-cols-2 gap-2.5 lg:grid-cols-4"
         >
-          <Stat label="Saved" value={counts.all ?? 0} href="/bookmarks" icon={Bookmark} />
-          <Stat label="Channels followed" value={favorites.length} href="/profile" icon={Compass} />
-          <Stat label="Recent actions" value={activity.length} icon={Activity} />
+          {stats.map((stat) => (
+            <StatTile key={stat.label} {...stat} />
+          ))}
         </Reveal>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-          <section>
-            <div className="mb-6 flex items-end justify-between border-t border-[var(--rule-strong)] pt-3">
-              <h2 className="font-display text-[1.44rem] leading-none">
-                {favorites.length > 0 ? "From your channels" : "Most read"}
-              </h2>
-              <Link
-                href="/explore"
-                className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot-deep)]"
-              >
-                See all →
-              </Link>
-            </div>
+        <div className="mt-14 grid gap-12 lg:grid-cols-[minmax(0,1.62fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
+            <PressHeading
+              mark={favorites.length > 0 ? "Your channels" : "Most read"}
+              title={
+                favorites.length > 0
+                  ? "Picked for you"
+                  : "What everyone is reading"
+              }
+              ghostInk="var(--n2)"
+              action={
+                <Link
+                  href="/explore"
+                  className="group inline-flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
+                >
+                  See all
+                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              }
+            />
 
-            {recommended.length === 0 ? (
+            {picks.length === 0 ? (
               <Empty
                 title="Nothing published yet"
                 body="Once content is seeded or added from the admin panel, it appears here."
                 action={{ href: "/explore", label: "Open the explorer" }}
               />
             ) : (
-              <Reveal stagger={0.05} className="flex flex-col">
-                {recommended.map((item, index) => {
-                  const category = categoryBySlug(item.category);
-                  return (
-                    <Link
-                      key={String(item._id)}
-                      href={`/content/${item.slug}`}
-                      className="reveal group flex items-baseline gap-4 border-b border-[var(--rule)] py-3.5 transition-colors hover:bg-[var(--paper-2)]"
-                    >
-                      <span className="font-mono text-[0.62rem] tabular-nums text-[var(--ink-faint)]">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <span
-                        aria-hidden
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{
-                    background: `var(--ch-${category?.token ?? "anime"})`,
-                    boxShadow: `0 0 9px var(--ch-${category?.token ?? "anime"})`,
-                  }}
-                      />
-                      <span className="min-w-0 flex-1">
-                        <span className="block font-display text-[0.97rem] leading-[0.95] transition-transform duration-200 group-hover:translate-x-1">
-                          {item.title}
-                        </span>
-                        <span className="mt-1 block font-mono text-[0.6rem] uppercase tracking-[0.13em] text-[var(--ink-faint)]">
-                          {category?.name} · {item.type} · {formatDate(item.releaseDate)}
-                        </span>
-                      </span>
-                    </Link>
-                  );
-                })}
+              // Two across, not three: this grid lives in the narrower of the
+              // two page columns, and a third track squeezed the cards to
+              // roughly 270px, where the titles started breaking mid-word.
+              <Reveal stagger={0.05} className="grid gap-4 sm:grid-cols-2">
+                {picks.map((item, index) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    className="reveal"
+                  />
+                ))}
               </Reveal>
             )}
 
-            <div className="mt-12">
-              <div className="mb-5 flex items-end justify-between border-t border-[var(--rule-strong)] pt-3">
-                <h2 className="font-display text-[1.44rem] leading-none">
-                  Recent clippings
-                </h2>
-                <Link
-                  href="/bookmarks"
-                  className="font-mono text-[0.66rem] uppercase tracking-[0.14em] text-[var(--ink-soft)] transition-colors hover:text-[var(--spot-deep)]"
-                >
-                  Open file →
-                </Link>
-              </div>
+            <div className="mt-14">
+              <PressHeading
+                mark="Your file"
+                title="Recent clippings"
+                ghostInk="var(--n1)"
+                action={
+                  <Link
+                    href="/bookmarks"
+                    className="group inline-flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.16em] text-[var(--ink-soft)] transition-colors hover:text-[var(--n2)]"
+                  >
+                    Open file
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </Link>
+                }
+              />
 
               {clippings.length === 0 ? (
                 <Empty
@@ -179,58 +405,134 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                   action={{ href: "/explore", label: "Find something" }}
                 />
               ) : (
-                <div className="grid gap-4 sm:grid-cols-2">
+                <Reveal stagger={0.05} className="grid gap-4 sm:grid-cols-2">
                   {clippings.map((row) => {
-                    const category = categoryBySlug(row.category);
-                    const ink = `var(--ch-${category?.token ?? "anime"})`;
+                    const ink = `var(--ch-${categoryBySlug(row.category)?.token ?? "anime"})`;
                     return (
                       <Link
                         key={row.bookmarkId}
                         href={row.href}
-                        className="group flex gap-3 rounded-2xl border border-[var(--edge)] bg-[var(--paper)] p-3 transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-[var(--lift-md)]"
+                        className="reveal group relative flex gap-4 overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-3 transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-[var(--edge-strong)]"
                       >
-                        <span className="relative h-16 w-16 shrink-0 overflow-hidden border border-[var(--edge)]">
+                        <span className="relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-xl bg-[var(--paper-2)]">
                           {row.imageUrl && (
                             <Image
                               src={row.imageUrl}
                               alt=""
                               fill
-                              sizes="64px"
-                              className="plate object-cover"
+                              sizes="72px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
                             />
                           )}
-                          <span
-                            aria-hidden
-                            className="absolute inset-0 mix-blend-multiply dark:mix-blend-screen"
-                            style={{ background: ink, opacity: 0.5 }}
-                          />
+                          <Duotone ink={ink} strength={0.4} scrim={false} />
                         </span>
-                        <span className="min-w-0">
-                          <span className="block font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+
+                        <span className="min-w-0 flex-1">
+                          <span
+                            className="block font-mono text-[0.54rem] uppercase tracking-[0.16em]"
+                            style={{ color: ink }}
+                          >
                             {row.kindLabel}
                           </span>
-                          <span className="mt-0.5 block font-display text-[0.95rem] leading-[0.98] group-hover:text-[var(--spot-deep)]">
+                          <span className="mt-1.5 block line-clamp-2 font-display text-[0.92rem] font-bold leading-[1.18]">
                             {row.title}
                           </span>
-                          {row.note && (
-                            <span className="mt-1 block line-clamp-1 text-[0.78rem] italic text-[var(--ink-soft)]">
+                          {row.note ? (
+                            <span className="mt-1.5 block line-clamp-1 text-[0.76rem] italic text-[var(--ink-faint)]">
                               {row.note}
                             </span>
+                          ) : (
+                            <span className="mt-1.5 block font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+                              {relativeTime(row.savedAt)}
+                            </span>
                           )}
+                        </span>
+
+                        <span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          style={{
+                            border: `1px solid ${ink}`,
+                            boxShadow: `0 0 26px color-mix(in oklch, ${ink} 26%, transparent)`,
+                          }}
+                        />
+                      </Link>
+                    );
+                  })}
+                </Reveal>
+              )}
+            </div>
+          </div>
+
+          <aside className="flex min-w-0 flex-col gap-12">
+            {/* A booking with a date on it is the most time-sensitive thing
+                on this page, so it leads the column. A pass you can only
+                find by navigating back to the event you booked it from is a
+                pass people lose. */}
+            {passes.length > 0 && (
+              <section>
+                <SideHeading
+                  title="Your passes"
+                  href="/events"
+                  linkLabel="All events"
+                />
+                <Reveal stagger={0.05} className="grid gap-2">
+                  {passes.map((pass) => {
+                    const passInk = `var(--ch-${categoryBySlug(pass.category)?.token ?? "anime"})`;
+                    return (
+                      <Link
+                        key={pass.code}
+                        href={`/tickets/${pass.code}`}
+                        className="reveal group flex items-center gap-3 rounded-xl border p-2.5 transition-[transform,border-color] duration-300 hover:-translate-y-0.5"
+                        style={{
+                          borderColor: `color-mix(in oklch, ${passInk} 35%, transparent)`,
+                          background: `color-mix(in oklch, ${passInk} 7%, transparent)`,
+                        }}
+                      >
+                        <span
+                          aria-hidden
+                          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg text-[var(--void)]"
+                          style={{ background: passInk }}
+                        >
+                          <Ticket className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-display text-[0.88rem] font-bold leading-none">
+                            {pass.eventTitle}
+                          </span>
+                          <span className="mt-1 flex flex-wrap items-center gap-x-2 font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+                            {pass.status === "pending" && (
+                              <span style={{ color: "var(--n3)" }}>
+                                Awaiting approval ·
+                              </span>
+                            )}
+                            {pass.startsAt
+                              ? new Date(pass.startsAt).toLocaleDateString(
+                                  "en-GB",
+                                  {
+                                    day: "numeric",
+                                    month: "short",
+                                    timeZone: "UTC",
+                                  },
+                                )
+                              : ""}
+                            {pass.city ? ` · ${pass.city}` : ""}
+                          </span>
                         </span>
                       </Link>
                     );
                   })}
-                </div>
-              )}
-            </div>
-          </section>
+                </Reveal>
+              </section>
+            )}
 
-          <aside className="flex flex-col gap-10">
             <section>
-              <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.22rem] leading-none">
-                Your channels
-              </h2>
+              <SideHeading
+                title="Your channels"
+                href="/profile"
+                linkLabel="Edit"
+              />
+
               {favorites.length === 0 ? (
                 <Empty
                   title="No channels yet"
@@ -238,89 +540,241 @@ export default async function DashboardPage(props: PageProps<"/dashboard">) {
                   action={{ href: "/profile", label: "Pick channels" }}
                 />
               ) : (
-                <ul className="flex flex-col">
-                  {favorites.map((category) => (
-                    <li key={category.slug}>
+                <Reveal stagger={0.05} className="grid gap-2">
+                  {favorites.map((category, index) => {
+                    const ink = `var(--ch-${category.token})`;
+                    return (
                       <Link
+                        key={category.slug}
                         href={`/category/${category.slug}`}
-                        className="group flex items-center gap-3 border-b border-[var(--rule)] py-2.5 transition-colors hover:bg-[var(--paper-2)]"
+                        className="reveal group flex items-center gap-3 rounded-xl border border-[var(--edge)] bg-[var(--paper-3)] p-2.5 transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-[var(--edge-strong)]"
                       >
                         <span
                           aria-hidden
-                          className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-125 rounded-full"
+                          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg font-mono text-[0.58rem] font-bold tabular-nums text-[var(--void)] transition-transform duration-300 group-hover:scale-105"
                           style={{
-                    background: `var(--ch-${category.token})`,
-                    boxShadow: `0 0 9px var(--ch-${category.token})`,
-                  }}
-                        />
-                        <span className="font-display text-[0.95rem] leading-none">
-                          {category.name}
+                            background: ink,
+                            boxShadow: `0 0 14px color-mix(in oklch, ${ink} 45%, transparent)`,
+                          }}
+                        >
+                          {String(index + 1).padStart(2, "0")}
                         </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block font-display text-[0.9rem] font-bold leading-none">
+                            {category.name}
+                          </span>
+                          <span className="mt-1 block truncate text-[0.72rem] text-[var(--ink-faint)]">
+                            {category.tagline}
+                          </span>
+                        </span>
+                        <ArrowUpRight
+                          className="h-3.5 w-3.5 shrink-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                          style={{ color: ink }}
+                          aria-hidden
+                        />
                       </Link>
-                    </li>
-                  ))}
-                </ul>
+                    );
+                  })}
+                </Reveal>
               )}
             </section>
 
             <section>
-              <h2 className="mb-4 border-t border-[var(--rule-strong)] pt-3 font-display text-[1.22rem] leading-none">
-                Activity
-              </h2>
+              <SideHeading title="Activity" />
+
               {activity.length === 0 ? (
                 <p className="text-[0.9rem] text-[var(--ink-soft)]">
                   What you do here shows up in this column.
                 </p>
               ) : (
-                <ol className="flex flex-col">
-                  {activity.map((entry) => (
-                    <li
-                      key={String(entry._id)}
-                      className="flex items-baseline gap-3 border-b border-[var(--rule)] py-2"
-                    >
-                      <span aria-hidden className="h-1.5 w-1.5 shrink-0 bg-[var(--spot)]" />
-                      <span className="min-w-0 flex-1 text-[0.9rem]">
-                        {entry.label || entry.action}
-                      </span>
-                      <span className="shrink-0 font-mono text-[0.6rem] uppercase tracking-[0.1em] text-[var(--ink-faint)]">
-                        {relativeTime(entry.createdAt)}
-                      </span>
-                    </li>
-                  ))}
-                </ol>
+                // A timeline rather than a ruled list: the vertical thread is
+                // what makes a run of entries read as a sequence in time
+                // instead of a table with the borders left on.
+                // The thread sits outside the list: an `ol` may only contain
+                // `li`, and a decorative span in there is invalid markup.
+                <div className="relative">
+                  <span
+                    aria-hidden
+                    className="absolute bottom-2 left-[3px] top-2 w-px"
+                    style={{
+                      background:
+                        "linear-gradient(to bottom, var(--n1), color-mix(in oklch, var(--n2) 40%, transparent), transparent)",
+                    }}
+                  />
+                  <ol className="flex flex-col gap-4 pl-5">
+                    {activity.map((entry) => (
+                      <li key={String(entry._id)} className="relative">
+                        <span
+                          aria-hidden
+                          className="absolute -left-5 top-[0.4rem] h-[7px] w-[7px] rounded-full"
+                          style={{
+                            background: "var(--n1)",
+                            boxShadow: "0 0 10px var(--n1)",
+                          }}
+                        />
+                        <p className="text-[0.88rem] leading-snug text-[var(--ink-soft)]">
+                          {entry.label || entry.action}
+                        </p>
+                        <p className="mt-1 font-mono text-[0.56rem] uppercase tracking-[0.14em] text-[var(--ink-faint)]">
+                          {relativeTime(entry.createdAt)}
+                        </p>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
               )}
             </section>
           </aside>
         </div>
+
+        {/* The close: where to go next. */}
+        <section className="mt-16">
+          <PressHeading
+            mark="Jump to"
+            title="Everything else"
+            ghostInk="var(--n3)"
+          />
+          <Reveal
+            stagger={0.06}
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {(user.role === "admin"
+              ? [
+                  ...SHORTCUTS,
+                  {
+                    href: "/admin",
+                    label: "Control panel",
+                    body: "Statistics and every editor",
+                    icon: Shield,
+                    ink: "var(--n1)",
+                  },
+                ]
+              : SHORTCUTS
+            ).map((shortcut) => (
+              <Link
+                key={shortcut.href}
+                href={shortcut.href}
+                className="reveal group relative overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5 transition-[transform,border-color] duration-300 hover:-translate-y-1"
+              >
+                <span
+                  className="grid h-9 w-9 place-items-center rounded-full transition-transform duration-300 group-hover:scale-110"
+                  style={{
+                    background: `color-mix(in oklch, ${shortcut.ink} 16%, transparent)`,
+                    color: shortcut.ink,
+                  }}
+                >
+                  <shortcut.icon className="h-4 w-4" aria-hidden />
+                </span>
+                <p className="mt-4 font-display text-[1rem] font-bold leading-none">
+                  {shortcut.label}
+                </p>
+                <p className="mt-2 text-[0.84rem] leading-snug text-[var(--ink-soft)]">
+                  {shortcut.body}
+                </p>
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  style={{
+                    border: `1px solid ${shortcut.ink}`,
+                    boxShadow: `0 0 26px color-mix(in oklch, ${shortcut.ink} 26%, transparent)`,
+                  }}
+                />
+              </Link>
+            ))}
+          </Reveal>
+        </section>
       </div>
     </div>
   );
 }
 
-function Stat({
+/** A sidebar heading: the section headings are too heavy for a narrow column. */
+function SideHeading({
+  title,
+  href,
+  linkLabel,
+}: {
+  title: string;
+  href?: string;
+  linkLabel?: string;
+}) {
+  return (
+    <div className="mb-5">
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 className="font-display text-[1.15rem] font-black leading-none">
+          {title}
+        </h2>
+        {href && linkLabel && (
+          <Link
+            href={href}
+            className="font-mono text-[0.58rem] uppercase tracking-[0.16em] text-[var(--ink-faint)] transition-colors hover:text-[var(--n2)]"
+          >
+            {linkLabel}
+          </Link>
+        )}
+      </div>
+      <div
+        aria-hidden
+        className="mt-3 h-px w-full"
+        style={{
+          background: "linear-gradient(90deg, var(--rule-strong), transparent)",
+        }}
+      />
+    </div>
+  );
+}
+
+function StatTile({
   label,
   value,
   href,
   icon: Icon,
+  ink,
 }: {
   label: string;
   value: number;
   href?: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: React.ComponentType<{
+    className?: string;
+    style?: React.CSSProperties;
+  }>;
+  ink: string;
 }) {
   const inner = (
     <>
-      <Icon className="h-4 w-4 text-[var(--spot)]" aria-hidden />
-      <p className="mt-4 font-display text-[2.8rem] leading-none tabular-nums">{value}</p>
-      <p className="mark mt-1 !text-[0.58rem]">{label}</p>
+      <Icon className="h-4 w-4" style={{ color: ink }} aria-hidden />
+      <p
+        className="mt-3.5 font-display text-[clamp(1.8rem,4vw,2.6rem)] font-black leading-none"
+        style={{
+          textShadow: `0 0 24px color-mix(in oklch, ${ink} 32%, transparent)`,
+          color: ink,
+        }}
+      >
+        <CountUp to={value} />
+      </p>
+      <p className="mark mt-1.5 !text-[0.56rem] text-[var(--ink-faint)]">
+        {label}
+      </p>
     </>
   );
+
   const className =
-    "reveal rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-5 transition-colors hover:border-[var(--n2)]";
+    "reveal relative overflow-hidden rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4 transition-[transform,border-color] duration-300";
 
   return href ? (
-    <Link href={href} className={className}>
+    <Link
+      href={href}
+      className={`${className} group hover:-translate-y-1 hover:border-[var(--edge-strong)]`}
+    >
       {inner}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          border: `1px solid ${ink}`,
+          boxShadow: `0 0 24px color-mix(in oklch, ${ink} 24%, transparent)`,
+        }}
+      />
     </Link>
   ) : (
     <div className={className}>{inner}</div>
@@ -337,13 +791,13 @@ function Empty({
   action?: { href: string; label: string };
 }) {
   return (
-    <div className="border border-dashed border-[var(--edge-strong)] p-6 text-center">
-      <p className="font-display text-[0.95rem] leading-none">{title}</p>
-      <p className="mx-auto mt-2.5 max-w-xs text-[0.88rem] leading-relaxed text-[var(--ink-soft)]">
+    <div className="rounded-2xl border border-dashed border-[var(--edge-strong)] bg-[var(--paper-2)] p-8 text-center">
+      <p className="font-display text-[1rem] font-bold leading-none">{title}</p>
+      <p className="mx-auto mt-3 max-w-xs text-[0.88rem] leading-relaxed text-[var(--ink-soft)]">
         {body}
       </p>
       {action && (
-        <Button asChild size="sm" variant="outline" className="mt-4">
+        <Button asChild size="sm" variant="outline" className="mt-5">
           <Link href={action.href}>{action.label}</Link>
         </Button>
       )}
@@ -364,9 +818,11 @@ function Notice({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-4 rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-4">
-      <Icon className="h-5 w-5 shrink-0 text-[var(--flag)]" aria-hidden />
+      <Icon className="h-5 w-5 shrink-0 text-[var(--n3)]" aria-hidden />
       <div className="min-w-0 flex-1">
-        <p className="font-display text-[0.95rem] leading-none">{title}</p>
+        <p className="font-display text-[0.95rem] font-bold leading-none">
+          {title}
+        </p>
         <p className="mt-1.5 text-[0.88rem] text-[var(--ink-soft)]">{body}</p>
       </div>
       {action && (

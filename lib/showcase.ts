@@ -21,7 +21,8 @@ export type MerchItem = {
 };
 
 type LooseFilter = Record<string, unknown>;
-const asMerchFilter = (f: LooseFilter) => f as unknown as Parameters<typeof MerchandiseItem.find>[0];
+const asMerchFilter = (f: LooseFilter) =>
+  f as unknown as Parameters<typeof MerchandiseItem.find>[0];
 
 function toMerchItem(doc: Record<string, unknown>): MerchItem {
   return {
@@ -35,7 +36,9 @@ function toMerchItem(doc: Record<string, unknown>): MerchItem {
     gallery: (doc.gallery as string[]) ?? [],
     tag: String(doc.tag ?? ""),
     isUpcoming: Boolean(doc.isUpcoming),
-    releaseDate: doc.releaseDate ? new Date(doc.releaseDate as string).toISOString() : null,
+    releaseDate: doc.releaseDate
+      ? new Date(doc.releaseDate as string).toISOString()
+      : null,
     viewCount: Number(doc.viewCount ?? 0),
     popularityScore: Number(doc.popularityScore ?? 0),
   };
@@ -56,7 +59,9 @@ export async function getMerch(options: {
     .sort({ isUpcoming: -1, releaseDate: -1 })
     .lean();
 
-  return docs.map((doc) => toMerchItem(doc as unknown as Record<string, unknown>));
+  return docs.map((doc) =>
+    toMerchItem(doc as unknown as Record<string, unknown>),
+  );
 }
 
 /** Groups the showcase by fandom, which is how the SRS asks for it. */
@@ -77,7 +82,11 @@ export async function getMerchBySlug(slug: string) {
   return doc ? toMerchItem(doc as unknown as Record<string, unknown>) : null;
 }
 
-export async function getRelatedMerch(category: string, excludeSlug: string, limit = 4) {
+export async function getRelatedMerch(
+  category: string,
+  excludeSlug: string,
+  limit = 4,
+) {
   await connectToDatabase();
   const docs = await MerchandiseItem.find(
     asMerchFilter({ category, slug: { $ne: excludeSlug } }),
@@ -85,7 +94,9 @@ export async function getRelatedMerch(category: string, excludeSlug: string, lim
     .sort({ popularityScore: -1 })
     .limit(limit)
     .lean();
-  return docs.map((doc) => toMerchItem(doc as unknown as Record<string, unknown>));
+  return docs.map((doc) =>
+    toMerchItem(doc as unknown as Record<string, unknown>),
+  );
 }
 
 /** Popularity tracking (SRS FR-7, optional). Best-effort, never blocking. */
@@ -119,15 +130,23 @@ export async function getUpcoming(category?: string): Promise<UpcomingEntry[]> {
   const now = new Date();
 
   const merchFilter: LooseFilter = { isUpcoming: true };
-  const contentFilter: LooseFilter = { status: "published", releaseDate: { $gt: now } };
+  const contentFilter: LooseFilter = {
+    status: "published",
+    releaseDate: { $gt: now },
+  };
   if (category) {
     merchFilter.category = category;
     contentFilter.category = category;
   }
 
   const [merch, content] = await Promise.all([
-    MerchandiseItem.find(asMerchFilter(merchFilter)).sort({ releaseDate: 1 }).lean(),
-    Content.find(contentFilter as never).sort({ releaseDate: 1 }).limit(12).lean(),
+    MerchandiseItem.find(asMerchFilter(merchFilter))
+      .sort({ releaseDate: 1 })
+      .lean(),
+    Content.find(contentFilter as never)
+      .sort({ releaseDate: 1 })
+      .limit(12)
+      .lean(),
   ]);
 
   const entries: UpcomingEntry[] = [
@@ -140,7 +159,9 @@ export async function getUpcoming(category?: string): Promise<UpcomingEntry[]> {
       description: item.description ?? "",
       imageUrl: item.imageUrl ?? "",
       tag: item.tag ?? "",
-      releaseDate: item.releaseDate ? new Date(item.releaseDate).toISOString() : null,
+      releaseDate: item.releaseDate
+        ? new Date(item.releaseDate).toISOString()
+        : null,
     })),
     ...content.map((item) => ({
       id: String(item._id),
@@ -151,7 +172,9 @@ export async function getUpcoming(category?: string): Promise<UpcomingEntry[]> {
       description: item.summary ?? "",
       imageUrl: item.coverImage ?? "",
       tag: item.type ?? "",
-      releaseDate: item.releaseDate ? new Date(item.releaseDate).toISOString() : null,
+      releaseDate: item.releaseDate
+        ? new Date(item.releaseDate).toISOString()
+        : null,
     })),
   ];
 

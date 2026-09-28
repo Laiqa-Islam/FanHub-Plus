@@ -44,7 +44,9 @@ const METER_INKS = ["var(--n1)", "var(--n2)", "var(--n3)"];
 
 /** Drops rows with nothing in them, so a thin record renders short, not broken. */
 export function visibleRows(rows: readonly DossierRow[]): DossierRow[] {
-  return rows.filter((row) => (row.list ? row.list.length > 0 : Boolean(row.value)));
+  return rows.filter((row) =>
+    row.list ? row.list.length > 0 : Boolean(row.value),
+  );
 }
 
 export function CharacterDossier({
@@ -104,7 +106,10 @@ export function CharacterDossier({
                     color: accent,
                     fontFamily:
                       '"Noto Sans JP", "Yu Gothic", "Hiragino Sans", "Microsoft YaHei", sans-serif',
-                    writingMode: (data.sealMark ?? "").length > 1 ? "vertical-rl" : undefined,
+                    writingMode:
+                      (data.sealMark ?? "").length > 1
+                        ? "vertical-rl"
+                        : undefined,
                   }}
                 >
                   {data.sealMark || "呪"}
@@ -139,7 +144,11 @@ export function CharacterDossier({
               {data.bio}
             </p>
 
-            {actions && <div className="mt-1 flex flex-wrap items-center gap-3">{actions}</div>}
+            {actions && (
+              <div className="mt-1 flex flex-wrap items-center gap-3">
+                {actions}
+              </div>
+            )}
           </div>
 
           {/* ── The render ───────────────────────────────────────────── */}
@@ -218,11 +227,17 @@ export function CharacterDossier({
               {row.list ? (
                 <ul className="mt-3 flex flex-col gap-2">
                   {row.list.map((entry) => (
-                    <li key={entry} className="flex gap-2.5 text-[0.92rem] leading-snug">
+                    <li
+                      key={entry}
+                      className="flex gap-2.5 text-[0.92rem] leading-snug"
+                    >
                       <span
                         aria-hidden
                         className="mt-[0.45rem] h-1.5 w-1.5 shrink-0 rounded-full"
-                        style={{ background: accent, boxShadow: `0 0 7px ${accent}` }}
+                        style={{
+                          background: accent,
+                          boxShadow: `0 0 7px ${accent}`,
+                        }}
                       />
                       <span className="text-[var(--ink-soft)]">{entry}</span>
                     </li>
@@ -281,12 +296,14 @@ export function CharacterDossier({
             })}
           </dl>
           <p className="mt-5 border-t border-[var(--rule)] pt-4 text-[0.78rem] leading-relaxed text-[var(--ink-faint)]">
-            These four meters are Fan Hub Plus&apos;s own editorial read, not a figure from any
-            official source — they exist to be argued with.
+            These four meters are Fan Hub Plus&apos;s own editorial read, not a
+            figure from any official source — they exist to be argued with.
             {data.signature && (
               <>
                 {" "}
-                Signature: <span className="text-[var(--ink-soft)]">{data.signature}</span>.
+                Signature:{" "}
+                <span className="text-[var(--ink-soft)]">{data.signature}</span>
+                .
               </>
             )}
             {data.debutYear ? ` First appeared ${data.debutYear}.` : ""}

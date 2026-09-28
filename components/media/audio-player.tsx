@@ -14,10 +14,16 @@ export function AudioPlayer({
   src,
   title,
   ink = "var(--spot)",
+  autoPlay = false,
+  onEnded,
 }: {
   src: string;
   title: string;
   ink?: string;
+  /** Start as soon as the player mounts, for a shelf that advances itself. */
+  autoPlay?: boolean;
+  /** Called when playback finishes — the theatre uses it to queue the next. */
+  onEnded?: () => void;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -25,6 +31,13 @@ export function AudioPlayer({
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
   const [failed, setFailed] = useState(false);
+
+  // See the note in VideoPlayer: kept in a ref so the listener effect can
+  // stay on empty deps rather than re-attaching on every progress tick.
+  const endedRef = useRef(onEnded);
+  useEffect(() => {
+    endedRef.current = onEnded;
+  }, [onEnded]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -41,10 +54,13 @@ export function AudioPlayer({
     const onLoaded = () => setDuration(audio.duration || 0);
     const onTime = () => {
       setCurrent(audio.currentTime);
-      if (audio.duration) setProgress((audio.currentTime / audio.duration) * 100);
+      if (audio.duration)
+        setProgress((audio.currentTime / audio.duration) * 100);
     };
     const onError = () => setFailed(true);
+    const onEndedEvent = () => endedRef.current?.();
 
+    audio.addEventListener("ended", onEndedEvent);
     audio.addEventListener("play", onPlay);
     audio.addEventListener("pause", onPause);
     audio.addEventListener("loadedmetadata", onLoaded);
@@ -53,6 +69,7 @@ export function AudioPlayer({
 
     return () => {
       clearTimeout(stallTimer);
+      audio.removeEventListener("ended", onEndedEvent);
       audio.removeEventListener("play", onPlay);
       audio.removeEventListener("pause", onPause);
       audio.removeEventListener("loadedmetadata", onLoaded);
@@ -60,6 +77,11 @@ export function AudioPlayer({
       audio.removeEventListener("error", onError);
     };
   }, []);
+
+  useEffect(() => {
+    if (!autoPlay) return;
+    audioRef.current?.play().catch(() => {});
+  }, [autoPlay, src]);
 
   function toggle() {
     const audio = audioRef.current;
@@ -76,7 +98,9 @@ export function AudioPlayer({
   if (failed) {
     return (
       <div className="rounded-2xl border border-[var(--edge)] bg-[var(--paper-2)] p-6 text-center">
-        <p className="font-display text-[0.95rem]">This track won&apos;t load</p>
+        <p className="font-display text-[0.95rem]">
+          This track won&apos;t load
+        </p>
         <p className="mt-1.5 text-[0.88rem] text-[var(--ink-soft)]">
           The audio source is unreachable right now.
         </p>
@@ -104,7 +128,9 @@ export function AudioPlayer({
         </button>
 
         <div className="min-w-0 flex-1">
-          <p className="truncate font-display text-[0.95rem] leading-none">{title}</p>
+          <p className="truncate font-display text-[0.95rem] leading-none">
+            {title}
+          </p>
 
           {/* Level meters. Bars past the playhead sit flat and grey. */}
           <div aria-hidden className="mt-2.5 flex h-8 items-end gap-[2px]">
@@ -115,7 +141,10 @@ export function AudioPlayer({
                   key={index}
                   className="flex-1 transition-[height,background-color] duration-150"
                   style={{
-                    height: playing && passed ? `${height}%` : `${Math.max(12, height * 0.32)}%`,
+                    height:
+                      playing && passed
+                        ? `${height}%`
+                        : `${Math.max(12, height * 0.32)}%`,
                     background: passed ? ink : "var(--rule)",
                     animation:
                       playing && passed
@@ -159,8 +188,9 @@ export function AudioPlayer({
 // Fixed pseudo-random heights: stable across renders, unlike Math.random(),
 // which would differ between server and client and break hydration.
 const METER_HEIGHTS = [
-  38, 62, 45, 80, 55, 92, 48, 70, 35, 85, 58, 44, 76, 52, 88, 41, 66, 95, 50, 72, 39, 60, 83,
-  47, 68, 54, 90, 42, 75, 57, 64, 86, 49, 71, 36, 79, 53, 67, 94, 46,
+  38, 62, 45, 80, 55, 92, 48, 70, 35, 85, 58, 44, 76, 52, 88, 41, 66, 95, 50,
+  72, 39, 60, 83, 47, 68, 54, 90, 42, 75, 57, 64, 86, 49, 71, 36, 79, 53, 67,
+  94, 46,
 ];
 
 function formatTime(seconds: number) {

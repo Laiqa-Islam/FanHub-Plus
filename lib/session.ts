@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 import type { Role } from "@/lib/constants";
 
 const secretKey = process.env.SESSION_SECRET;
-if (!secretKey) throw new Error("SESSION_SECRET is missing. Add it to .env.local.");
+if (!secretKey)
+  throw new Error("SESSION_SECRET is missing. Add it to .env.local.");
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export const SESSION_COOKIE = "fanhub_session";
@@ -29,7 +30,9 @@ export async function encrypt(payload: SessionPayload): Promise<string> {
 export async function decrypt(token?: string): Promise<SessionPayload | null> {
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify(token, encodedKey, { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify(token, encodedKey, {
+      algorithms: ["HS256"],
+    });
     return payload as unknown as SessionPayload;
   } catch {
     // Expired, tampered with, or signed by a rotated secret — all mean "no session".

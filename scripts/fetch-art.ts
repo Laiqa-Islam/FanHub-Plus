@@ -53,12 +53,42 @@ type Want = {
 /** Series art, grouped by the channel it belongs to. */
 const SERIES: Record<string, Want[]> = {
   anime: [
-    { slug: "anime-jujutsu-kaisen", search: "Jujutsu Kaisen", type: "ANIME", format: "TV" },
-    { slug: "anime-demon-slayer", search: "Kimetsu no Yaiba", type: "ANIME", format: "TV" },
-    { slug: "anime-attack-on-titan", search: "Shingeki no Kyojin", type: "ANIME", format: "TV" },
-    { slug: "anime-chainsaw-man", search: "Chainsaw Man", type: "ANIME", format: "TV" },
-    { slug: "anime-frieren", search: "Sousou no Frieren", type: "ANIME", format: "TV" },
-    { slug: "anime-vinland-saga", search: "Vinland Saga", type: "ANIME", format: "TV" },
+    {
+      slug: "anime-jujutsu-kaisen",
+      search: "Jujutsu Kaisen",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "anime-demon-slayer",
+      search: "Kimetsu no Yaiba",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "anime-attack-on-titan",
+      search: "Shingeki no Kyojin",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "anime-chainsaw-man",
+      search: "Chainsaw Man",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "anime-frieren",
+      search: "Sousou no Frieren",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "anime-vinland-saga",
+      search: "Vinland Saga",
+      type: "ANIME",
+      format: "TV",
+    },
   ],
   manga: [
     { slug: "manga-one-piece", search: "One Piece", type: "MANGA" },
@@ -73,37 +103,126 @@ const SERIES: Record<string, Want[]> = {
     { slug: "comics-tower-of-god", search: "Tower of God", type: "MANGA" },
     { slug: "comics-the-breaker", search: "The Breaker", type: "MANGA" },
     { slug: "comics-noblesse", search: "Noblesse", type: "MANGA" },
-    { slug: "comics-omniscient-reader", search: "Omniscient Reader", type: "MANGA" },
+    {
+      slug: "comics-omniscient-reader",
+      search: "Omniscient Reader",
+      type: "MANGA",
+    },
   ],
   movies: [
-    { slug: "movies-your-name", search: "Kimi no Na wa", type: "ANIME", format: "MOVIE" },
-    { slug: "movies-spirited-away", search: "Sen to Chihiro", type: "ANIME", format: "MOVIE" },
-    { slug: "movies-mugen-train", search: "Mugen Ressha-hen", type: "ANIME", format: "MOVIE" },
-    { slug: "movies-suzume", search: "Suzume no Tojimari", type: "ANIME", format: "MOVIE" },
+    {
+      slug: "movies-your-name",
+      search: "Kimi no Na wa",
+      type: "ANIME",
+      format: "MOVIE",
+    },
+    {
+      slug: "movies-spirited-away",
+      search: "Sen to Chihiro",
+      type: "ANIME",
+      format: "MOVIE",
+    },
+    {
+      slug: "movies-mugen-train",
+      search: "Mugen Ressha-hen",
+      type: "ANIME",
+      format: "MOVIE",
+    },
+    {
+      slug: "movies-suzume",
+      search: "Suzume no Tojimari",
+      type: "ANIME",
+      format: "MOVIE",
+    },
     { slug: "movies-akira", search: "Akira", type: "ANIME", format: "MOVIE" },
-    { slug: "movies-perfect-blue", search: "Perfect Blue", type: "ANIME", format: "MOVIE" },
+    {
+      slug: "movies-perfect-blue",
+      search: "Perfect Blue",
+      type: "ANIME",
+      format: "MOVIE",
+    },
   ],
   "tv-shows": [
-    { slug: "tv-death-note", search: "Death Note", type: "ANIME", format: "TV" },
-    { slug: "tv-classroom-elite", search: "Youkoso Jitsuryoku", type: "ANIME", format: "TV" },
+    {
+      slug: "tv-death-note",
+      search: "Death Note",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "tv-classroom-elite",
+      search: "Youkoso Jitsuryoku",
+      type: "ANIME",
+      format: "TV",
+    },
     { slug: "tv-kakegurui", search: "Kakegurui", type: "ANIME", format: "TV" },
-    { slug: "tv-code-geass", search: "Code Geass", type: "ANIME", format: "TV" },
+    {
+      slug: "tv-code-geass",
+      search: "Code Geass",
+      type: "ANIME",
+      format: "TV",
+    },
     { slug: "tv-monster", search: "Monster", type: "ANIME", format: "TV" },
   ],
   "k-pop": [
-    { slug: "kpop-oshi-no-ko", search: "Oshi no Ko", type: "ANIME", format: "TV" },
-    { slug: "kpop-zombieland-saga", search: "Zombieland Saga", type: "ANIME", format: "TV" },
-    { slug: "kpop-carole-tuesday", search: "Carole & Tuesday", type: "ANIME", format: "TV" },
-    { slug: "kpop-idoly-pride", search: "IDOLY PRIDE", type: "ANIME", format: "TV" },
-    { slug: "kpop-macross-frontier", search: "Macross Frontier", type: "ANIME", format: "TV" },
+    {
+      slug: "kpop-oshi-no-ko",
+      search: "Oshi no Ko",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "kpop-zombieland-saga",
+      search: "Zombieland Saga",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "kpop-carole-tuesday",
+      search: "Carole & Tuesday",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "kpop-idoly-pride",
+      search: "IDOLY PRIDE",
+      type: "ANIME",
+      format: "TV",
+    },
+    {
+      slug: "kpop-macross-frontier",
+      search: "Macross Frontier",
+      type: "ANIME",
+      format: "TV",
+    },
   ],
   cosplay: [
     // The most-built series; their banners read as costume reference.
-    { slug: "cosplay-demon-slayer", search: "Kimetsu no Yaiba", type: "ANIME", banner: true },
-    { slug: "cosplay-jujutsu-kaisen", search: "Jujutsu Kaisen", type: "ANIME", banner: true },
-    { slug: "cosplay-genshin", search: "Genshin Impact", type: "ANIME", banner: true },
+    {
+      slug: "cosplay-demon-slayer",
+      search: "Kimetsu no Yaiba",
+      type: "ANIME",
+      banner: true,
+    },
+    {
+      slug: "cosplay-jujutsu-kaisen",
+      search: "Jujutsu Kaisen",
+      type: "ANIME",
+      banner: true,
+    },
+    {
+      slug: "cosplay-genshin",
+      search: "Genshin Impact",
+      type: "ANIME",
+      banner: true,
+    },
     { slug: "cosplay-re-zero", search: "Re:Zero", type: "ANIME", banner: true },
-    { slug: "cosplay-fate-stay-night", search: "Fate/stay night", type: "ANIME", banner: true },
+    {
+      slug: "cosplay-fate-stay-night",
+      search: "Fate/stay night",
+      type: "ANIME",
+      banner: true,
+    },
   ],
 };
 
@@ -139,13 +258,22 @@ const CHARACTERS: { slug: string; search: string }[] = [
   { slug: "char-sakayanagi", search: "Arisu Sakayanagi" },
 ];
 
-type Provenance = Record<string, { source: string; url: string; title?: string }>;
+type Provenance = Record<
+  string,
+  { source: string; url: string; title?: string }
+>;
 
-async function anilist<T>(query: string, variables: Record<string, unknown>): Promise<T> {
+async function anilist<T>(
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<T> {
   for (let attempt = 0; ; attempt++) {
     const response = await fetch("https://graphql.anilist.co", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ query, variables }),
     });
 
@@ -160,7 +288,10 @@ async function anilist<T>(query: string, variables: Record<string, unknown>): Pr
     }
 
     if (!response.ok) throw new Error(`AniList HTTP ${response.status}`);
-    const body = (await response.json()) as { data?: T; errors?: { message: string }[] };
+    const body = (await response.json()) as {
+      data?: T;
+      errors?: { message: string }[];
+    };
 
     if (body.errors?.length) {
       const message = body.errors.map((e) => e.message).join("; ");
@@ -275,7 +406,9 @@ async function main() {
           title: media.title.english ?? media.title.romaji,
         };
         fetched++;
-        console.log(`  ✓ ${written}  ${media.title.english ?? media.title.romaji}`);
+        console.log(
+          `  ✓ ${written}  ${media.title.english ?? media.title.romaji}`,
+        );
       } catch (error) {
         failures.push(`${want.slug}: ${(error as Error).message}`);
         console.log(`  ✗ ${want.slug} — ${(error as Error).message}`);
@@ -297,7 +430,11 @@ async function main() {
     try {
       await sleep(THROTTLE_MS);
       const data = await anilist<{
-        Character: { name: { full: string }; image: { large: string }; siteUrl: string };
+        Character: {
+          name: { full: string };
+          image: { large: string };
+          siteUrl: string;
+        };
       }>(CHARACTER_QUERY, { search: want.search });
 
       const written = await download(data.Character.image.large, want.slug);
@@ -352,7 +489,11 @@ async function main() {
     }
   }
 
-  await writeFile(SOURCES_FILE, `${JSON.stringify(provenance, null, 2)}\n`, "utf8");
+  await writeFile(
+    SOURCES_FILE,
+    `${JSON.stringify(provenance, null, 2)}\n`,
+    "utf8",
+  );
 
   console.log(
     `\n✓ ${fetched} fetched, ${skipped} already present, ${failures.length} failed.`,

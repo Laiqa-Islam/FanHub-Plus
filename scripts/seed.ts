@@ -117,6 +117,27 @@ function daysFromNow(days: number) {
   return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 }
 
+/**
+ * Doors open at a plausible hour rather than at whatever time the seed
+ * happened to run. Without this an event listing reads "03:51 – 03:51",
+ * which is both the wrong time of day and a zero-length event.
+ */
+const DOORS: Record<string, { hour: number; hours: number }> = {
+  convention: { hour: 10, hours: 8 },
+  meetup: { hour: 18, hours: 3 },
+  screening: { hour: 19, hours: 2 },
+  premiere: { hour: 19, hours: 3 },
+  concert: { hour: 20, hours: 3 },
+};
+
+function scheduleAt(days: number, type: string) {
+  const { hour, hours } = DOORS[type] ?? DOORS.convention;
+  const start = daysFromNow(days);
+  start.setUTCHours(hour, 0, 0, 0);
+  const end = new Date(start.getTime() + hours * 60 * 60 * 1000);
+  return { start, end };
+}
+
 /** Wraps the seed paragraphs as the rich-text body the article pages render. */
 function toHtml(paragraphs: string[]) {
   return paragraphs.map((p) => `<p>${p}</p>`).join("\n");
@@ -225,6 +246,7 @@ async function seed() {
           type: item.type,
           summary: item.summary,
           body: toHtml(item.paragraphs),
+          timeline: item.timeline ?? [],
           // A piece that names its own art gets it, so the picture on the
           // card is the thing the piece is about; the rest cycle the pool.
           coverImage: item.art
@@ -339,6 +361,7 @@ async function seed() {
   // ── Events ───────────────────────────────────────────────────────────────
   console.log("→ Seeding events…");
   for (const [index, event] of EVENT_SEED.entries()) {
+    const schedule = scheduleAt(event.inDays, event.type);
     const slug = slugify(`${event.title}-${event.city}`);
     await Event.findOneAndUpdate(
       { slug },
@@ -352,13 +375,25 @@ async function seed() {
           country: event.country,
           venue: event.venue,
           description: event.description,
+          story: event.story ?? "",
           // GeoJSON order is [longitude, latitude].
           location: { type: "Point", coordinates: [event.lng, event.lat] },
-          startsAt: daysFromNow(event.inDays),
-          endsAt: daysFromNow(
-            event.inDays + (event.type === "convention" ? 3 : 0),
-          ),
-          ticketUrl: "https://example.com/tickets",
+          startsAt: schedule.start,
+          // A convention runs over several days; everything else ends the
+          // same evening it started.
+          endsAt:
+            event.type === "convention"
+              ? new Date(schedule.start.getTime() + 3 * 24 * 60 * 60 * 1000)
+              : schedule.end,
+          // Left empty on purpose. Every event used to carry the same
+          // https://example.com/tickets placeholder, which put a ticket icon
+          // on every row that went nowhere real. Passes are claimed on the
+          // event's own page now; this field stays for genuine external
+          // ticketing an editor may add later.
+          ticketUrl: "",
+          // A spread of limits so the listing shows the states that exist:
+          // unlimited, plenty left, and nearly gone.
+          capacity: [0, 120, 40, 250, 0, 60][index % 6],
           imageUrl: stock(EVENT_IMAGES[index % EVENT_IMAGES.length]),
           isHighlight: event.inDays < 45,
         },

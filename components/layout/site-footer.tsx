@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { CATEGORIES } from "@/lib/constants";
 import { InkStrip, RegMark } from "@/components/press";
 
@@ -44,20 +45,21 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[88rem] px-5 py-14 sm:px-8">
         <div className="grid gap-10 md:grid-cols-[1.5fr_repeat(3,1fr)]">
           <div>
-            <Link href="/" className="flex items-baseline gap-1.5">
-              <span className="font-display text-[1.25rem] font-black leading-none">
-                FAN<span className="text-[var(--n2)]">{"//"}</span>HUB
-              </span>
-              <span
-                aria-hidden
-                className="grid h-5 w-5 place-items-center rounded-md bg-[var(--n1)] font-mono text-[0.78rem] font-bold leading-none text-[var(--void)] shadow-[0_0_14px_color-mix(in_oklch,var(--n1)_55%,transparent)]"
-              >
-                +
-              </span>
+            {/* The footer has room for the full lockup, so it gets the
+                supplied artwork rather than the redrawn mark. */}
+            <Link href="/" className="inline-block">
+              <Image
+                src="/brand/fanhub-plus-logo.webp"
+                alt="Fan Hub Plus — where fans plug in"
+                width={1568}
+                height={1020}
+                sizes="(max-width: 768px) 70vw, 20rem"
+                className="h-auto w-[15rem] max-w-full rounded-xl"
+              />
             </Link>
             <p className="mt-4 max-w-xs text-[0.95rem] leading-relaxed text-[var(--ink-soft)]">
-              Eight fandoms, eight signals. Anime, gaming, film, television, K-Pop, comics,
-              manga and cosplay — one undercity, open all night.
+              Eight fandoms, eight signals. Anime, gaming, film, television,
+              K-Pop, comics, manga and cosplay — one undercity, open all night.
             </p>
             <RegMark className="mt-6 text-[var(--ink-faint)]" />
           </div>
@@ -113,7 +115,9 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-10 flex flex-col gap-2 border-t border-[var(--rule)] pt-6 font-mono text-[0.64rem] uppercase tracking-[0.14em] text-[var(--ink-faint)] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Fan Hub Plus — academic project build</p>
+          <p>
+            © {new Date().getFullYear()} Fan Hub Plus — academic project build
+          </p>
           <p>Merch checkout is a demo · no real payments</p>
         </div>
       </div>

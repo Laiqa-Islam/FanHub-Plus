@@ -37,7 +37,13 @@ export type AdminStats = {
   activeUsers: { last7: number; last30: number };
   pending: { submissions: number; feedback: number };
   chatbot: { totalMessages: number; last30: number };
-  categories: { slug: string; name: string; token: string; count: number; views: number }[];
+  categories: {
+    slug: string;
+    name: string;
+    token: string;
+    count: number;
+    views: number;
+  }[];
   topContent: { title: string; slug: string; views: number; rating: number }[];
   recentActivity: { label: string; action: string; at: string }[];
 };
@@ -87,7 +93,13 @@ export async function getAdminStats(): Promise<AdminStats> {
 
     Content.aggregate<{ _id: string; count: number; views: number }>([
       { $match: { status: "published" } },
-      { $group: { _id: "$category", count: { $sum: 1 }, views: { $sum: "$viewCount" } } },
+      {
+        $group: {
+          _id: "$category",
+          count: { $sum: 1 },
+          views: { $sum: "$viewCount" },
+        },
+      },
       { $sort: { views: -1 } },
     ]),
 

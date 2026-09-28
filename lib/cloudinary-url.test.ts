@@ -9,8 +9,10 @@ import {
   videoPosterUrl,
 } from "./cloudinary-url";
 
-const IMAGE = "https://res.cloudinary.com/demo/image/upload/v1790397001/fanhub/plate.jpg";
-const VIDEO = "https://res.cloudinary.com/demo/video/upload/v1790397001/fanhub/reel.mp4";
+const IMAGE =
+  "https://res.cloudinary.com/demo/image/upload/v1790397001/fanhub/plate.jpg";
+const VIDEO =
+  "https://res.cloudinary.com/demo/video/upload/v1790397001/fanhub/reel.mp4";
 const UNSPLASH = "https://images.unsplash.com/photo-123?w=800";
 const LOCAL = "/img/local.png";
 
@@ -114,7 +116,9 @@ describe("videoPosterUrl", () => {
 
 describe("audioUrl", () => {
   it("transcodes to mp3 so any upload is playable", () => {
-    const url = audioUrl("https://res.cloudinary.com/demo/video/upload/v1/fanhub/take.flac");
+    const url = audioUrl(
+      "https://res.cloudinary.com/demo/video/upload/v1/fanhub/take.flac",
+    );
     expect(url).toContain("f_mp3");
     expect(url.endsWith(".mp3")).toBe(true);
   });

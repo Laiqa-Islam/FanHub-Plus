@@ -10,7 +10,9 @@ import { getCurrentUser } from "@/lib/dal";
 
 export const metadata: Metadata = { title: "Confirm your email" };
 
-export default async function VerifyEmailPage(props: PageProps<"/verify-email">) {
+export default async function VerifyEmailPage(
+  props: PageProps<"/verify-email">,
+) {
   const params = await props.searchParams;
   const token = typeof params.token === "string" ? params.token : "";
   const user = await getCurrentUser();
@@ -36,9 +38,13 @@ export default async function VerifyEmailPage(props: PageProps<"/verify-email">)
     return (
       <AuthShell title="Email confirmed" subtitle={result.message}>
         <div className="flex items-start gap-3 border border-[var(--spot-2)]/35 bg-[var(--spot-2-wash)] p-5">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+          <CheckCircle2
+            className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]"
+            aria-hidden
+          />
           <p className="text-[0.9rem] leading-relaxed text-[var(--ink-soft)]">
-            Bookmarks, fan submissions and your personalised dashboard are all unlocked.
+            Bookmarks, fan submissions and your personalised dashboard are all
+            unlocked.
           </p>
         </div>
         <Button asChild size="lg" className="mt-6 w-full">
@@ -53,7 +59,10 @@ export default async function VerifyEmailPage(props: PageProps<"/verify-email">)
   return (
     <AuthShell title="That link didn't work" subtitle={result.message}>
       <div className="mb-6 flex items-start gap-3 border border-[var(--flag)]/35 bg-[var(--flag)]/10 p-5">
-        <MailWarning className="mt-0.5 h-5 w-5 shrink-0 text-[var(--flag)]" aria-hidden />
+        <MailWarning
+          className="mt-0.5 h-5 w-5 shrink-0 text-[var(--flag)]"
+          aria-hidden
+        />
         <p className="text-[0.9rem] leading-relaxed text-[var(--ink-soft)]">
           Confirmation links expire after an hour and can only be used once.
         </p>

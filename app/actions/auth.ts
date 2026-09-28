@@ -19,11 +19,13 @@ import {
   fieldErrors,
 } from "@/lib/validation";
 
-export type FormState = {
-  errors?: Record<string, string>;
-  message?: string;
-  success?: boolean;
-} | undefined;
+export type FormState =
+  | {
+      errors?: Record<string, string>;
+      message?: string;
+      success?: boolean;
+    }
+  | undefined;
 
 const TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hour
 
@@ -32,7 +34,10 @@ function hashToken(raw: string) {
   return createHash("sha256").update(raw).digest("hex");
 }
 
-async function issueToken(userId: string, purpose: "email-verification" | "password-reset") {
+async function issueToken(
+  userId: string,
+  purpose: "email-verification" | "password-reset",
+) {
   const raw = randomBytes(32).toString("hex");
   // Invalidate any outstanding tokens of the same purpose for this user.
   await Token.deleteMany({ userId, purpose });
@@ -57,7 +62,10 @@ async function clientKey(prefix: string) {
 
 // ── Register ────────────────────────────────────────────────────────────────
 
-export async function register(_prev: FormState, formData: FormData): Promise<FormState> {
+export async function register(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const parsed = RegisterSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
@@ -69,7 +77,9 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
 
   const limit = await rateLimit(await clientKey("register"), 5, 600);
   if (!limit.ok) {
-    return { message: `Too many sign-up attempts. Try again in ${limit.retryAfterSeconds}s.` };
+    return {
+      message: `Too many sign-up attempts. Try again in ${limit.retryAfterSeconds}s.`,
+    };
   }
 
   const { name, email, password } = parsed.data;
@@ -115,7 +125,10 @@ export async function register(_prev: FormState, formData: FormData): Promise<Fo
 
 // ── Login ───────────────────────────────────────────────────────────────────
 
-export async function login(_prev: FormState, formData: FormData): Promise<FormState> {
+export async function login(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const parsed = LoginSchema.safeParse({
     email: formData.get("email"),
     password: formData.get("password"),
@@ -126,7 +139,9 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
   const key = await clientKey(`login:${email}`);
   const limit = await rateLimit(key, 8, 600);
   if (!limit.ok) {
-    return { message: `Too many attempts. Try again in ${limit.retryAfterSeconds}s.` };
+    return {
+      message: `Too many attempts. Try again in ${limit.retryAfterSeconds}s.`,
+    };
   }
 
   const next = String(formData.get("next") || "/dashboard");
@@ -164,12 +179,16 @@ export async function login(_prev: FormState, formData: FormData): Promise<FormS
     });
   } catch (error) {
     console.error("[auth] login failed:", error);
-    return { message: "Something went wrong signing you in. Please try again." };
+    return {
+      message: "Something went wrong signing you in. Please try again.",
+    };
   }
 
   // Only allow relative redirects — an attacker-supplied absolute URL here
   // would turn the login form into an open redirect.
-  redirect(next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard");
+  redirect(
+    next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard",
+  );
 }
 
 // ── Logout ──────────────────────────────────────────────────────────────────
@@ -182,8 +201,11 @@ export async function logout() {
 
 // ── Email verification ──────────────────────────────────────────────────────
 
-export async function verifyEmail(rawToken: string): Promise<{ ok: boolean; message: string }> {
-  if (!rawToken) return { ok: false, message: "This verification link is invalid." };
+export async function verifyEmail(
+  rawToken: string,
+): Promise<{ ok: boolean; message: string }> {
+  if (!rawToken)
+    return { ok: false, message: "This verification link is invalid." };
 
   try {
     await connectToDatabase();
@@ -194,27 +216,45 @@ export async function verifyEmail(rawToken: string): Promise<{ ok: boolean; mess
     });
 
     if (!record || record.expiresAt < new Date()) {
-      return { ok: false, message: "This link has expired. Request a new one below." };
+      return {
+        ok: false,
+        message: "This link has expired. Request a new one below.",
+      };
     }
 
-    await User.findByIdAndUpdate(record.userId, { emailVerifiedAt: new Date() });
+    await User.findByIdAndUpdate(record.userId, {
+      emailVerifiedAt: new Date(),
+    });
     record.usedAt = new Date();
     await record.save();
 
-    return { ok: true, message: "Email confirmed. Your account is fully unlocked." };
+    return {
+      ok: true,
+      message: "Email confirmed. Your account is fully unlocked.",
+    };
   } catch (error) {
     console.error("[auth] verifyEmail failed:", error);
-    return { ok: false, message: "We couldn't confirm your email. Please try again." };
+    return {
+      ok: false,
+      message: "We couldn't confirm your email. Please try again.",
+    };
   }
 }
 
-export async function resendVerification(_prev: FormState, formData: FormData): Promise<FormState> {
-  const email = String(formData.get("email") || "").trim().toLowerCase();
+export async function resendVerification(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
+  const email = String(formData.get("email") || "")
+    .trim()
+    .toLowerCase();
   if (!email) return { errors: { email: "Enter your email address." } };
 
   const limit = await rateLimit(await clientKey(`resend:${email}`), 3, 900);
   if (!limit.ok) {
-    return { message: `Please wait ${limit.retryAfterSeconds}s before requesting another link.` };
+    return {
+      message: `Please wait ${limit.retryAfterSeconds}s before requesting another link.`,
+    };
   }
 
   try {
@@ -229,7 +269,10 @@ export async function resendVerification(_prev: FormState, formData: FormData): 
   }
 
   // Deliberately uniform response — never reveals whether the address exists.
-  return { success: true, message: "If that address needs confirming, a new link is on its way." };
+  return {
+    success: true,
+    message: "If that address needs confirming, a new link is on its way.",
+  };
 }
 
 // ── Password reset ──────────────────────────────────────────────────────────
@@ -238,13 +281,17 @@ export async function requestPasswordReset(
   _prev: FormState,
   formData: FormData,
 ): Promise<FormState> {
-  const parsed = ForgotPasswordSchema.safeParse({ email: formData.get("email") });
+  const parsed = ForgotPasswordSchema.safeParse({
+    email: formData.get("email"),
+  });
   if (!parsed.success) return { errors: fieldErrors(parsed.error) };
 
   const { email } = parsed.data;
   const limit = await rateLimit(await clientKey(`forgot:${email}`), 3, 900);
   if (!limit.ok) {
-    return { message: `Please wait ${limit.retryAfterSeconds}s before trying again.` };
+    return {
+      message: `Please wait ${limit.retryAfterSeconds}s before trying again.`,
+    };
   }
 
   try {
@@ -264,7 +311,10 @@ export async function requestPasswordReset(
   };
 }
 
-export async function resetPassword(_prev: FormState, formData: FormData): Promise<FormState> {
+export async function resetPassword(
+  _prev: FormState,
+  formData: FormData,
+): Promise<FormState> {
   const parsed = ResetPasswordSchema.safeParse({
     token: formData.get("token"),
     password: formData.get("password"),

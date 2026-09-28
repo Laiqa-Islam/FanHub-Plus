@@ -142,7 +142,10 @@ export function FilterBar({
               label="Channel"
               value={current("category")}
               onChange={(value) => setParam("category", value)}
-              options={CATEGORIES.map((c) => ({ value: c.slug, label: c.name }))}
+              options={CATEGORIES.map((c) => ({
+                value: c.slug,
+                label: c.name,
+              }))}
               allLabel="All channels"
             />
           )}

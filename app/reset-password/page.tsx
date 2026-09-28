@@ -2,11 +2,16 @@
 import type { Metadata } from "next";
 
 import { AuthShell } from "@/components/auth/auth-shell";
-import { ResetPasswordForm, ForgotPasswordForm } from "@/components/auth/password-forms";
+import {
+  ResetPasswordForm,
+  ForgotPasswordForm,
+} from "@/components/auth/password-forms";
 
 export const metadata: Metadata = { title: "Choose a new password" };
 
-export default async function ResetPasswordPage(props: PageProps<"/reset-password">) {
+export default async function ResetPasswordPage(
+  props: PageProps<"/reset-password">,
+) {
   // searchParams is a Promise in Next 16.
   const params = await props.searchParams;
   const token = typeof params.token === "string" ? params.token : "";

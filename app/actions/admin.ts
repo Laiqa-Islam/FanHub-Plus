@@ -36,7 +36,11 @@ import type { FormState } from "@/app/actions/auth";
 
 const RESOURCES = {
   content: { model: Content, path: "/admin/content", label: "Piece" },
-  character: { model: CharacterProfile, path: "/admin/characters", label: "Character" },
+  character: {
+    model: CharacterProfile,
+    path: "/admin/characters",
+    label: "Character",
+  },
   merchandise: { model: MerchandiseItem, path: "/admin/merch", label: "Item" },
   event: { model: Event, path: "/admin/events", label: "Event" },
   faq: { model: FaqEntry, path: "/admin/faq", label: "FAQ entry" },
@@ -48,31 +52,44 @@ export type ResourceKind = keyof typeof RESOURCES;
 
 const category = z.enum(CATEGORY_SLUGS as unknown as [string, ...string[]]);
 
-const ContentSchema = z.object({
-  title: z.string().trim().min(3, "Give it a title.").max(160),
-  category,
-  type: z.enum(CONTENT_TYPES as unknown as [string, ...string[]]),
-  summary: z.string().trim().max(400).optional(),
-  body: z.string().trim().max(40_000).optional(),
-  coverImage: z.string().trim().max(600).optional(),
-  mediaUrl: z.string().trim().max(600).optional(),
-  genre: z.string().trim().max(200).optional(),
-  // Admin-controlled media tagging (SRS FR-5).
-  mediaTags: z.string().trim().max(200).optional(),
-  /**
-   * A platform link (v2 Phase 11). Entered as a URL for convenience, but stored
-   * as provider + id — administrators get the same parser members do, and the
-   * same guarantee that no URL from a form reaches an iframe.
-   */
-  embedUrl: z.string().trim().max(400).optional(),
-  transcript: z.string().trim().max(30_000).optional(),
-  status: z.enum(["draft", "published"]),
-}).refine((data) => !data.embedUrl || parseEmbed(data.embedUrl) !== null, {
-  // Without this an unrecognised link would store as an empty embed and the
-  // piece would publish with no player, giving no hint as to why.
-  message: `We can embed ${supportedProviderList()}. That link isn't one of them.`,
-  path: ["embedUrl"],
-});
+const ContentSchema = z
+  .object({
+    title: z.string().trim().min(3, "Give it a title.").max(160),
+    category,
+    type: z.enum(CONTENT_TYPES as unknown as [string, ...string[]]),
+    summary: z.string().trim().max(400).optional(),
+    body: z.string().trim().max(40_000).optional(),
+    coverImage: z.string().trim().max(600).optional(),
+    mediaUrl: z.string().trim().max(600).optional(),
+    genre: z.string().trim().max(200).optional(),
+    // Admin-controlled media tagging (SRS FR-5).
+    mediaTags: z.string().trim().max(200).optional(),
+    /**
+     * A platform link (v2 Phase 11). Entered as a URL for convenience, but stored
+     * as provider + id — administrators get the same parser members do, and the
+     * same guarantee that no URL from a form reaches an iframe.
+     */
+    embedUrl: z.string().trim().max(400).optional(),
+    transcript: z.string().trim().max(30_000).optional(),
+    /**
+     * The article's chronology (SRS FR-7), one milestone per line as
+     * `label | title | body`.
+     *
+     * A repeating structure in a form built entirely from flat text inputs
+     * would mean a second editor UI for one field on one resource. A
+     * delimited textarea is the same trade the genre and tag fields already
+     * make, and it round-trips: what is parsed in is what is printed back
+     * into the box on the next edit.
+     */
+    timeline: z.string().trim().max(8_000).optional(),
+    status: z.enum(["draft", "published"]),
+  })
+  .refine((data) => !data.embedUrl || parseEmbed(data.embedUrl) !== null, {
+    // Without this an unrecognised link would store as an empty embed and the
+    // piece would publish with no player, giving no hint as to why.
+    message: `We can embed ${supportedProviderList()}. That link isn't one of them.`,
+    path: ["embedUrl"],
+  });
 
 const CharacterSchema = z.object({
   name: z.string().trim().min(2, "Give them a name.").max(120),
@@ -117,7 +134,9 @@ const EventSchema = z.object({
   lat: z.coerce.number().min(-90).max(90),
   lng: z.coerce.number().min(-180).max(180),
   startsAt: z.string().min(1, "When does it start?"),
+  story: z.string().trim().max(2000).optional(),
   ticketUrl: z.string().trim().max(600).optional(),
+  capacity: z.coerce.number().int().min(0).max(1_000_000).optional(),
 });
 
 const FaqSchema = z.object({
@@ -128,6 +147,23 @@ const FaqSchema = z.object({
 });
 
 /** Splits a comma-separated field into a clean array. */
+/**
+ * Parses the timeline textarea. Blank lines are skipped, a row with no title
+ * is dropped rather than stored half-empty, and the body is optional.
+ */
+function toTimeline(value?: string) {
+  if (!value) return [];
+  return value
+    .split(/\r?\n/)
+    .map((line) => line.split("|").map((part) => part.trim()))
+    .filter((parts) => parts.length >= 2 && parts[0] && parts[1])
+    .map(([label, title, ...rest]) => ({
+      label,
+      title,
+      body: rest.join(" | ").trim(),
+    }));
+}
+
 function toList(value?: string) {
   return (value ?? "")
     .split(",")
@@ -152,12 +188,15 @@ function buildDocument(kind: ResourceKind, data: Record<string, unknown>) {
         summary: d.summary ?? "",
         // Plain paragraphs typed by an admin are wrapped, but HTML they paste
         // is preserved — this field is only ever editable by administrators.
-        body: d.body?.includes("<") ? d.body : `<p>${(d.body ?? "").replace(/\n{2,}/g, "</p><p>")}</p>`,
+        body: d.body?.includes("<")
+          ? d.body
+          : `<p>${(d.body ?? "").replace(/\n{2,}/g, "</p><p>")}</p>`,
         coverImage: d.coverImage ?? "",
         mediaUrl: d.mediaUrl ?? "",
         genre: toList(d.genre),
         tags: toList(d.genre),
         mediaTags: toList(d.mediaTags),
+        timeline: toTimeline(d.timeline),
         status: d.status,
       };
     }
@@ -212,7 +251,9 @@ function buildDocument(kind: ResourceKind, data: Record<string, unknown>) {
         // asks for it, and an easy thing to get backwards.
         location: { type: "Point", coordinates: [d.lng, d.lat] },
         startsAt: new Date(d.startsAt),
+        story: d.story ?? "",
         ticketUrl: d.ticketUrl ?? "",
+        capacity: d.capacity ?? 0,
       };
     }
     case "faq": {
@@ -278,7 +319,10 @@ export async function saveResource(
     else await model.create(document);
   } catch (error) {
     if ((error as { code?: number }).code === 11000) {
-      return { message: "Something with that title already exists — try a different one." };
+      return {
+        message:
+          "Something with that title already exists — try a different one.",
+      };
     }
     console.error(`[admin] save ${kind} failed:`, error);
     return { message: "We couldn't save that. Please try again." };

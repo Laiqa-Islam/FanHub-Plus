@@ -4,7 +4,11 @@ import { connectToDatabase } from "@/lib/db";
 import { Event } from "@/models";
 import { CATEGORIES, EVENT_TYPES, categoryBySlug } from "@/lib/constants";
 import { Misreg } from "@/components/press";
-import { ResourceManager, type FieldSpec } from "@/components/admin/resource-manager";
+import {
+  ResourceManager,
+  type FieldSpec,
+} from "@/components/admin/resource-manager";
+import { VenueLookup } from "@/components/admin/venue-lookup";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Events · Admin" };
@@ -31,7 +35,13 @@ const FIELDS: FieldSpec[] = [
   { name: "venue", label: "Venue", half: true },
   { name: "city", label: "City", required: true, half: true },
   { name: "country", label: "Country", half: true },
-  { name: "startsAt", label: "Starts", kind: "datetime", required: true, half: true },
+  {
+    name: "startsAt",
+    label: "Starts",
+    kind: "datetime",
+    required: true,
+    half: true,
+  },
   {
     name: "lat",
     label: "Latitude",
@@ -48,7 +58,14 @@ const FIELDS: FieldSpec[] = [
     half: true,
     hint: "−180 to 180.",
   },
+  {
+    name: "story",
+    label: "Highlight story",
+    kind: "textarea",
+    hint: "Narrative copy for the highlight reel. Only shown on highlighted events.",
+  },
   { name: "ticketUrl", label: "Ticket link" },
+  { name: "capacity", label: "Passes available (0 = no limit)" },
   { name: "description", label: "Description", kind: "textarea" },
 ];
 
@@ -83,7 +100,11 @@ export default async function AdminEventsPage() {
         // Stored as GeoJSON [lng, lat]; the form asks for them separately.
         lat: String(coordinates[1] ?? 0),
         lng: String(coordinates[0] ?? 0),
+        story: doc.story ?? "",
         ticketUrl: doc.ticketUrl ?? "",
+        // The resource editor renders every field as a text input, so the
+        // values it is handed are strings.
+        capacity: String(doc.capacity ?? 0),
         description: doc.description ?? "",
       },
     };
@@ -93,12 +114,22 @@ export default async function AdminEventsPage() {
     <div>
       <div className="mb-8 border-t border-[var(--rule-strong)] pt-4">
         <p className="mark mb-3">Conventions, meetups, screenings</p>
-        <Misreg as="h1" className="text-[clamp(1.7rem,4.2vw,2.6rem)]" ghostInk="var(--ch-tv)">
+        <Misreg
+          as="h1"
+          className="text-[clamp(1.7rem,4.2vw,2.6rem)]"
+          ghostInk="var(--ch-tv)"
+        >
           Events
         </Misreg>
       </div>
 
-      <ResourceManager kind="event" rows={rows} fields={FIELDS} singular="event" />
+      <ResourceManager
+        kind="event"
+        rows={rows}
+        fields={FIELDS}
+        toolbar={<VenueLookup />}
+        singular="event"
+      />
     </div>
   );
 }

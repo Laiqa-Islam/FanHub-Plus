@@ -28,7 +28,9 @@ export function Gallery({
 
   const step = useCallback(
     (direction: number) => {
-      setActive((current) => (current + direction + images.length) % images.length);
+      setActive(
+        (current) => (current + direction + images.length) % images.length,
+      );
     },
     [images.length],
   );
@@ -86,7 +88,9 @@ export function Gallery({
                 aria-current={index === active}
                 className={cn(
                   "relative h-16 w-20 shrink-0 overflow-hidden border transition-colors",
-                  index === active ? "border-[var(--spot)]" : "border-[var(--rule-strong)]",
+                  index === active
+                    ? "border-[var(--spot)]"
+                    : "border-[var(--rule-strong)]",
                 )}
               >
                 <Image

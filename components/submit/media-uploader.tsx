@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { UploadCloud, X, FileAudio, FileVideo, AlertCircle, Check } from "lucide-react";
+import {
+  UploadCloud,
+  X,
+  FileAudio,
+  FileVideo,
+  AlertCircle,
+  Check,
+} from "lucide-react";
 
 import {
   MEDIA_RULES,
@@ -101,7 +108,9 @@ export function MediaUploader({
 
   const patch = useCallback((localId: string, changes: Partial<Attachment>) => {
     setItems((current) =>
-      current.map((item) => (item.localId === localId ? { ...item, ...changes } : item)),
+      current.map((item) =>
+        item.localId === localId ? { ...item, ...changes } : item,
+      ),
     );
   }, []);
 
@@ -144,7 +153,10 @@ export function MediaUploader({
               // Hold at 99 until Cloudinary confirms — bytes sent is not the
               // same as bytes stored.
               patch(localId, {
-                progress: Math.min(99, Math.round((event.loaded / event.total) * 100)),
+                progress: Math.min(
+                  99,
+                  Math.round((event.loaded / event.total) * 100),
+                ),
               });
             }
           });
@@ -166,7 +178,10 @@ export function MediaUploader({
           });
 
           request.addEventListener("error", () => {
-            patch(localId, { status: "failed", error: "The upload failed. Check your connection." });
+            patch(localId, {
+              status: "failed",
+              error: "The upload failed. Check your connection.",
+            });
             resolve();
           });
 
@@ -178,7 +193,10 @@ export function MediaUploader({
           request.send(body);
         });
       } catch {
-        patch(localId, { status: "failed", error: "The upload failed. Please try again." });
+        patch(localId, {
+          status: "failed",
+          error: "The upload failed. Please try again.",
+        });
       }
     },
     [kind, patch],
@@ -238,7 +256,8 @@ export function MediaUploader({
 
   const rule = MEDIA_RULES[kind];
   const full = items.length >= max;
-  const Icon = kind === "audio" ? FileAudio : kind === "video" ? FileVideo : UploadCloud;
+  const Icon =
+    kind === "audio" ? FileAudio : kind === "video" ? FileVideo : UploadCloud;
 
   return (
     <div className="flex flex-col gap-3">
@@ -304,7 +323,9 @@ export function MediaUploader({
         }}
       />
 
-      {hint && !error && <p className="text-[0.8rem] text-[var(--ink-faint)]">{hint}</p>}
+      {hint && !error && (
+        <p className="text-[0.8rem] text-[var(--ink-faint)]">{hint}</p>
+      )}
       {error && (
         <p
           role="alert"
@@ -327,17 +348,29 @@ export function MediaUploader({
                   // Local object URL for a file the member just chose; next/image
                   // has nothing to optimise here and cannot accept a blob URL.
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={item.previewUrl} alt="" className="h-full w-full object-cover" />
+                  <img
+                    src={item.previewUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
                 ) : (
-                  <Icon className="h-5 w-5 text-[var(--ink-faint)]" aria-hidden />
+                  <Icon
+                    className="h-5 w-5 text-[var(--ink-faint)]"
+                    aria-hidden
+                  />
                 )}
               </span>
 
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="min-w-0 flex-1 truncate text-[0.88rem] font-medium">{item.name}</p>
+                  <p className="min-w-0 flex-1 truncate text-[0.88rem] font-medium">
+                    {item.name}
+                  </p>
                   {item.status === "ready" && (
-                    <Check className="h-4 w-4 shrink-0 text-[var(--spot-2)]" aria-hidden />
+                    <Check
+                      className="h-4 w-4 shrink-0 text-[var(--spot-2)]"
+                      aria-hidden
+                    />
                   )}
                 </div>
 
@@ -363,14 +396,20 @@ export function MediaUploader({
                 )}
 
                 {item.status === "failed" && (
-                  <p role="alert" className="mt-1 text-[0.8rem] font-medium text-[var(--spot)]">
+                  <p
+                    role="alert"
+                    className="mt-1 text-[0.8rem] font-medium text-[var(--spot)]"
+                  >
                     {item.error}
                   </p>
                 )}
 
                 {captions && item.status === "ready" && (
                   <>
-                    <label className="sr-only" htmlFor={`caption-${item.localId}`}>
+                    <label
+                      className="sr-only"
+                      htmlFor={`caption-${item.localId}`}
+                    >
                       Caption for {item.name}
                     </label>
                     <input
@@ -378,7 +417,9 @@ export function MediaUploader({
                       value={item.caption}
                       maxLength={200}
                       placeholder="Caption this image…"
-                      onChange={(event) => patch(item.localId, { caption: event.target.value })}
+                      onChange={(event) =>
+                        patch(item.localId, { caption: event.target.value })
+                      }
                       className="mt-2 w-full border border-[var(--rule-strong)] bg-[var(--paper-2)] px-2.5 py-1.5 text-[0.84rem] placeholder:text-[var(--ink-faint)] focus:border-[var(--spot)] focus:outline-none"
                     />
                   </>
@@ -409,5 +450,9 @@ export function MediaUploader({
 export function attachmentManifest(items: Attachment[]) {
   return items
     .filter((item) => item.status === "ready" && item.publicId)
-    .map((item) => ({ publicId: item.publicId, kind: item.kind, caption: item.caption }));
+    .map((item) => ({
+      publicId: item.publicId,
+      kind: item.kind,
+      caption: item.caption,
+    }));
 }

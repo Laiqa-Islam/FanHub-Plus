@@ -25,7 +25,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ results: [] });
   }
   if (query.length > 80) {
-    return NextResponse.json({ error: "Search term is too long" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Search term is too long" },
+      { status: 400 },
+    );
   }
 
   // One shared bucket: Nominatim's limit applies to us as a whole, not per user.
@@ -41,9 +44,16 @@ export async function GET(request: NextRequest) {
   url.searchParams.set("q", query);
   url.searchParams.set("format", "jsonv2");
   url.searchParams.set("limit", "5");
-  // Cities, towns and villages only — we are placing events, not addresses.
-  url.searchParams.set("featuretype", "settlement");
   url.searchParams.set("addressdetails", "1");
+
+  // The public listing filters by city, because a reader is narrowing a
+  // calendar to a place they can get to. An editor placing an event needs
+  // the opposite: the actual venue, at the actual coordinates. Asking for
+  // "settlement" there would return the middle of Birmingham for every hall
+  // in Birmingham.
+  if (request.nextUrl.searchParams.get("mode") !== "venue") {
+    url.searchParams.set("featuretype", "settlement");
+  }
 
   try {
     const response = await fetch(url, {
@@ -57,7 +67,10 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      return NextResponse.json({ error: "Place search is unavailable" }, { status: 502 });
+      return NextResponse.json(
+        { error: "Place search is unavailable" },
+        { status: 502 },
+      );
     }
 
     const raw = (await response.json()) as Array<{
@@ -65,7 +78,13 @@ export async function GET(request: NextRequest) {
       lat: string;
       lon: string;
       name?: string;
-      address?: { country?: string };
+      address?: {
+        country?: string;
+        city?: string;
+        town?: string;
+        village?: string;
+        municipality?: string;
+      };
     }>;
 
     return NextResponse.json({
@@ -73,12 +92,23 @@ export async function GET(request: NextRequest) {
         name: place.name ?? place.display_name.split(",")[0],
         label: place.display_name,
         country: place.address?.country ?? "",
+        // Nominatim names the settlement differently depending on how the
+        // place is classified, so all four are checked before falling back.
+        city:
+          place.address?.city ??
+          place.address?.town ??
+          place.address?.village ??
+          place.address?.municipality ??
+          "",
         lat: Number(place.lat),
         lng: Number(place.lon),
       })),
     });
   } catch (error) {
     console.error("[api/geocode] Nominatim request failed:", error);
-    return NextResponse.json({ error: "Place search is unavailable" }, { status: 504 });
+    return NextResponse.json(
+      { error: "Place search is unavailable" },
+      { status: 504 },
+    );
   }
 }

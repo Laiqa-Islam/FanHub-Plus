@@ -12,7 +12,11 @@ import {
   SUBMISSION_FORMATS,
   type SubmissionFormat,
 } from "@/lib/media-kinds";
-import { PROVIDER_SPECS, parseEmbed, supportedProviderList } from "@/lib/embeds";
+import {
+  PROVIDER_SPECS,
+  parseEmbed,
+  supportedProviderList,
+} from "@/lib/embeds";
 import { Input, Textarea, Select, Field } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import {
@@ -47,7 +51,10 @@ export function SubmissionForm() {
   // Recognising the link as the member types is worth more than validating it
   // after a failed submit — they can see straight away that we know the
   // platform, or that we don't.
-  const embed = useMemo(() => (embedUrl.trim() ? parseEmbed(embedUrl) : null), [embedUrl]);
+  const embed = useMemo(
+    () => (embedUrl.trim() ? parseEmbed(embedUrl) : null),
+    [embedUrl],
+  );
 
   const uploading = attachments.some((item) => item.status === "uploading");
 
@@ -61,11 +68,15 @@ export function SubmissionForm() {
   if (state?.success) {
     return (
       <div className="flex items-start gap-3 border border-[var(--spot-2)]/35 bg-[var(--spot-2-wash)] p-6">
-        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+        <CheckCircle2
+          className="mt-0.5 h-5 w-5 shrink-0 text-[var(--spot-2)]"
+          aria-hidden
+        />
         <div>
           <p className="font-semibold text-[var(--ink)]">Submission received</p>
           <p className="mt-1.5 text-[0.9rem] leading-relaxed text-[var(--ink-soft)]">
-            {state.message} You&apos;ll see it on your channel once it&apos;s approved.
+            {state.message} You&apos;ll see it on your channel once it&apos;s
+            approved.
           </p>
           <Button
             variant="outline"
@@ -120,7 +131,9 @@ export function SubmissionForm() {
                     onChange={() => changeFormat(candidate)}
                     className="h-3.5 w-3.5 accent-[var(--spot)]"
                   />
-                  <span className="font-display text-[1rem] font-bold">{option.label}</span>
+                  <span className="font-display text-[1rem] font-bold">
+                    {option.label}
+                  </span>
                 </span>
                 <span className="pl-[1.35rem] text-[0.82rem] leading-relaxed text-[var(--ink-soft)]">
                   {option.blurb}
@@ -140,7 +153,12 @@ export function SubmissionForm() {
         error={state?.errors?.title}
       />
 
-      <Select label="Channel" name="category" required error={state?.errors?.category}>
+      <Select
+        label="Channel"
+        name="category"
+        required
+        error={state?.errors?.category}
+      >
         <option value="">Pick a channel…</option>
         {CATEGORIES.map((category) => (
           <option key={category.slug} value={category.slug}>
@@ -177,7 +195,10 @@ export function SubmissionForm() {
           {embedUrl.trim() &&
             (embed ? (
               <p className="flex items-center gap-2 border-l-2 border-[var(--spot-2)] bg-[var(--spot-2-wash)] px-3 py-2 text-[0.82rem]">
-                <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[var(--spot-2)]" aria-hidden />
+                <CheckCircle2
+                  className="h-3.5 w-3.5 shrink-0 text-[var(--spot-2)]"
+                  aria-hidden
+                />
                 Recognised as {PROVIDER_SPECS[embed.provider].label}.
               </p>
             ) : (
@@ -262,7 +283,10 @@ export function SubmissionForm() {
               : "border-[var(--rule-strong)] bg-[var(--paper-2)]",
           )}
         >
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ink-soft)]" aria-hidden />
+          <ShieldCheck
+            className="mt-0.5 h-4 w-4 shrink-0 text-[var(--ink-soft)]"
+            aria-hidden
+          />
           <div className="flex flex-col gap-1.5">
             <label className="flex items-start gap-2.5 text-[0.88rem] font-medium">
               <input
@@ -270,15 +294,22 @@ export function SubmissionForm() {
                 name="ownWork"
                 className="mt-0.5 h-4 w-4 shrink-0 accent-[var(--spot)]"
               />
-              <span>I made this myself, and I&apos;m happy for Fan Hub Plus to publish it.</span>
+              <span>
+                I made this myself, and I&apos;m happy for Fan Hub Plus to
+                publish it.
+              </span>
             </label>
             <p className="pl-[1.6rem] text-[0.8rem] leading-relaxed text-[var(--ink-faint)]">
-              Uploads are for your own work — your photos, your recording, your edit. To share
-              something a studio or label made, use <strong>Link to a platform</strong> instead, so
-              it stays hosted where it&apos;s licensed.
+              Uploads are for your own work — your photos, your recording, your
+              edit. To share something a studio or label made, use{" "}
+              <strong>Link to a platform</strong> instead, so it stays hosted
+              where it&apos;s licensed.
             </p>
             {state?.errors?.ownWork && (
-              <p role="alert" className="pl-[1.6rem] text-[0.82rem] font-medium text-[var(--spot)]">
+              <p
+                role="alert"
+                className="pl-[1.6rem] text-[0.82rem] font-medium text-[var(--spot)]"
+              >
                 {state.errors.ownWork}
               </p>
             )}

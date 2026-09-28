@@ -19,7 +19,9 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
   const [selected, setSelected] = useState<string[]>(user.favoriteCategories);
   const [preview, setPreview] = useState<string>(user.avatarUrl);
   const [fontScale, setLocalFontScale] = useState(user.preferences.fontScale);
-  const [reducedMotion, setLocalReducedMotion] = useState(user.preferences.reducedMotion);
+  const [reducedMotion, setLocalReducedMotion] = useState(
+    user.preferences.reducedMotion,
+  );
   const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -49,7 +51,9 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
 
   function toggleCategory(slug: string) {
     setSelected((current) =>
-      current.includes(slug) ? current.filter((s) => s !== slug) : [...current, slug],
+      current.includes(slug)
+        ? current.filter((s) => s !== slug)
+        : [...current, slug],
     );
   }
 
@@ -64,7 +68,11 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
               {preview ? (
                 // A local blob or an already-optimised Cloudinary URL.
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={preview} alt="" className="h-full w-full object-cover" />
+                <img
+                  src={preview}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
               ) : (
                 initials(user.name)
               )}
@@ -80,12 +88,17 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
           </div>
 
           <div className="min-w-0">
-            <p className="text-[0.9rem] text-[var(--ink)]">JPG, PNG, WebP or GIF, up to 5 MB.</p>
+            <p className="text-[0.9rem] text-[var(--ink)]">
+              JPG, PNG, WebP or GIF, up to 5 MB.
+            </p>
             <p className="mt-1 text-[0.82rem] text-[var(--ink-soft)]">
               Uploads are stored on Cloudinary and resized automatically.
             </p>
             {state?.errors?.avatar && (
-              <p role="alert" className="mt-2 text-[0.82rem] font-medium text-[var(--spot)]">
+              <p
+                role="alert"
+                className="mt-2 text-[0.82rem] font-medium text-[var(--spot)]"
+              >
                 {state.errors.avatar}
               </p>
             )}
@@ -151,7 +164,9 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
                   className="h-8 w-1 shrink-0 transition-all duration-300 group-hover:h-9"
                   style={{ background: `var(--ch-${category.token})` }}
                 />
-                <span className="min-w-0 flex-1 text-[0.9rem] font-semibold">{category.name}</span>
+                <span className="min-w-0 flex-1 text-[0.9rem] font-semibold">
+                  {category.name}
+                </span>
                 <span
                   className={cn(
                     "grid h-5 w-5 shrink-0 place-items-center border transition-colors",
@@ -169,7 +184,12 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
 
         {/* Selections travel as repeated fields the server action reads with getAll. */}
         {selected.map((slug) => (
-          <input key={slug} type="hidden" name="favoriteCategories" value={slug} />
+          <input
+            key={slug}
+            type="hidden"
+            name="favoriteCategories"
+            value={slug}
+          />
         ))}
       </section>
 
@@ -177,8 +197,8 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
       <section>
         <h2 className="font-display text-[1.3rem]">Display preferences</h2>
         <p className="mt-2 text-[0.88rem] text-[var(--ink-soft)]">
-          Saved to your account, so they follow you to any device. Neon Oni runs on
-          one ground — there is no light mode to choose.
+          Saved to your account, so they follow you to any device. The colour
+          scheme is set from the display menu in the header.
         </p>
 
         <div className="mt-5">
@@ -190,7 +210,9 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
               max={130}
               step={5}
               value={fontScale}
-              onChange={(event) => setLocalFontScale(Number(event.target.value))}
+              onChange={(event) =>
+                setLocalFontScale(Number(event.target.value))
+              }
               className="h-2 w-full cursor-pointer appearance-none rounded-full bg-[var(--paper-2)] accent-[var(--n1)]"
             />
           </Field>
@@ -198,7 +220,9 @@ export function ProfileForm({ user }: { user: CurrentUser }) {
 
         <label className="mt-5 flex cursor-pointer items-center justify-between rounded-2xl border border-[var(--edge)] bg-[var(--paper-3)] p-4 transition-colors hover:border-[var(--n2)]">
           <span>
-            <span className="block text-[0.92rem] font-semibold">Reduce motion</span>
+            <span className="block text-[0.92rem] font-semibold">
+              Reduce motion
+            </span>
             <span className="block text-[0.82rem] text-[var(--ink-soft)]">
               Turns off the scroll reveals, ticker and hero animation.
             </span>

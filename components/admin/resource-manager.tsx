@@ -4,7 +4,11 @@ import { useActionState, useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { saveResource, deleteResource, type ResourceKind } from "@/app/actions/admin";
+import {
+  saveResource,
+  deleteResource,
+  type ResourceKind,
+} from "@/app/actions/admin";
 import { Input, Textarea, Select } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -41,11 +45,14 @@ export function ResourceManager({
   kind,
   rows,
   fields,
+  toolbar,
   singular,
 }: {
   kind: ResourceKind;
   rows: ResourceRow[];
   fields: FieldSpec[];
+  /** Optional control rendered above the fields, e.g. a venue lookup. */
+  toolbar?: React.ReactNode;
   singular: string;
 }) {
   const [editing, setEditing] = useState<ResourceRow | null>(null);
@@ -53,7 +60,10 @@ export function ResourceManager({
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const bound = saveResource.bind(null, kind);
-  const [state, action, pending] = useActionState<FormState, FormData>(bound, undefined);
+  const [state, action, pending] = useActionState<FormState, FormData>(
+    bound,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -68,7 +78,8 @@ export function ResourceManager({
   async function remove(row: ResourceRow) {
     // A native confirm is the honest tool here: this is destructive and
     // immediate, and a custom dialog would add no safety.
-    if (!window.confirm(`Delete “${row.title}”? This cannot be undone.`)) return;
+    if (!window.confirm(`Delete “${row.title}”? This cannot be undone.`))
+      return;
 
     setDeletingId(row.id);
     const result = await deleteResource(kind, row.id);
@@ -122,6 +133,7 @@ export function ResourceManager({
           {editing && <input type="hidden" name="id" value={editing.id} />}
 
           <div className="grid gap-5 sm:grid-cols-2">
+            {toolbar}
             {fields.map((field) => {
               const value = editing?.values[field.name];
               const wrapper = field.half ? "" : "sm:col-span-2";
@@ -239,7 +251,11 @@ export function ResourceManager({
               className="flex flex-wrap items-center gap-4 border-b border-[var(--rule)] py-3"
             >
               {row.ink && (
-                <span aria-hidden className="h-4 w-4 shrink-0" style={{ background: row.ink }} />
+                <span
+                  aria-hidden
+                  className="h-4 w-4 shrink-0"
+                  style={{ background: row.ink }}
+                />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate font-display text-[0.95rem] leading-none">

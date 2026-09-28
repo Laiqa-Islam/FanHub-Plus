@@ -61,16 +61,25 @@ describe("media rules", () => {
 describe("checkFile", () => {
   it("accepts a file inside the rules", () => {
     expect(checkFile({ type: "image/png", size: 1024 }, "image")).toBeNull();
-    expect(checkFile({ type: "video/mp4", size: 10 * 1024 * 1024 }, "video")).toBeNull();
+    expect(
+      checkFile({ type: "video/mp4", size: 10 * 1024 * 1024 }, "video"),
+    ).toBeNull();
   });
 
   it("rejects the wrong kind of file", () => {
-    expect(checkFile({ type: "video/mp4", size: 1024 }, "image")).toMatch(/image file/);
-    expect(checkFile({ type: "application/pdf", size: 1024 }, "image")).toBeTruthy();
+    expect(checkFile({ type: "video/mp4", size: 1024 }, "image")).toMatch(
+      /image file/,
+    );
+    expect(
+      checkFile({ type: "application/pdf", size: 1024 }, "image"),
+    ).toBeTruthy();
   });
 
   it("rejects a file over the cap and says how big it was", () => {
-    const message = checkFile({ type: "image/png", size: 9 * 1024 * 1024 }, "image");
+    const message = checkFile(
+      { type: "image/png", size: 9 * 1024 * 1024 },
+      "image",
+    );
     expect(message).toContain("5 MB");
     expect(message).toContain("9 MB");
   });
@@ -126,7 +135,9 @@ describe("submission formats", () => {
   });
 
   it("expects more prose from a written piece than from a caption", () => {
-    expect(FORMAT_SPECS.article.minBody).toBeGreaterThan(FORMAT_SPECS.video.minBody);
+    expect(FORMAT_SPECS.article.minBody).toBeGreaterThan(
+      FORMAT_SPECS.video.minBody,
+    );
   });
 
   it("keeps the gallery bounds sane", () => {

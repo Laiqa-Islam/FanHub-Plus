@@ -1,4 +1,10 @@
-import { Schema, model, models, type InferSchemaType, type Model } from "mongoose";
+import {
+  Schema,
+  model,
+  models,
+  type InferSchemaType,
+  type Model,
+} from "mongoose";
 
 /**
  * Knowledge-base entries the assistant answers from, editable in the admin
@@ -22,17 +28,27 @@ FaqEntrySchema.index({ question: "text", answer: "text", tags: "text" });
 export type FaqEntryDoc = InferSchemaType<typeof FaqEntrySchema>;
 
 export const FaqEntry: Model<FaqEntryDoc> =
-  (models.FaqEntry as Model<FaqEntryDoc>) ?? model<FaqEntryDoc>("FaqEntry", FaqEntrySchema);
+  (models.FaqEntry as Model<FaqEntryDoc>) ??
+  model<FaqEntryDoc>("FaqEntry", FaqEntrySchema);
 
 /** One turn of conversation, retained for context continuity. */
 const ChatbotQuerySchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", default: null, index: true },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+      index: true,
+    },
     /** Groups turns for anonymous visitors who have no user id. */
     sessionId: { type: String, required: true, index: true },
     message: { type: String, required: true },
     response: { type: String, default: "" },
-    matchedFaqId: { type: Schema.Types.ObjectId, ref: "FaqEntry", default: null },
+    matchedFaqId: {
+      type: Schema.Types.ObjectId,
+      ref: "FaqEntry",
+      default: null,
+    },
   },
   { timestamps: true },
 );

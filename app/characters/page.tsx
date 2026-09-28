@@ -20,10 +20,16 @@ export const dynamic = "force-dynamic";
 
 export default async function CharactersPage(props: PageProps<"/characters">) {
   const params = await props.searchParams;
-  const rawCategory = Array.isArray(params.category) ? params.category[0] : params.category;
-  const activeCategory = CATEGORY_SLUGS.includes(rawCategory as never) ? rawCategory! : "";
+  const rawCategory = Array.isArray(params.category)
+    ? params.category[0]
+    : params.category;
+  const activeCategory = CATEGORY_SLUGS.includes(rawCategory as never)
+    ? rawCategory!
+    : "";
 
-  const rawFranchise = Array.isArray(params.franchise) ? params.franchise[0] : params.franchise;
+  const rawFranchise = Array.isArray(params.franchise)
+    ? params.franchise[0]
+    : params.franchise;
   const activeFranchise = (rawFranchise ?? "").slice(0, 60);
 
   await connectToDatabase();
@@ -52,17 +58,23 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
         <p className="mark mb-3 text-[var(--n2)]">
           Character select · {String(total).padStart(2, "0")} files open
         </p>
-        <h1 className="font-display text-[clamp(1.9rem,5vw,3.4rem)] font-black">The crew</h1>
+        <h1 className="font-display text-[clamp(1.9rem,5vw,3.4rem)] font-black">
+          The crew
+        </h1>
         <p className="mt-4 text-[1rem] leading-relaxed text-[var(--ink-soft)]">
-          Who they are, what they&apos;re for, and why the writing works. Every file carries the
-          site&apos;s own read on them — four meters, open to argument. Filter by channel or by
-          franchise.
+          Who they are, what they&apos;re for, and why the writing works. Every
+          file carries the site&apos;s own read on them — four meters, open to
+          argument. Filter by channel or by franchise.
         </p>
       </header>
 
       {/* Channel filter */}
       <div className="mb-4 flex flex-wrap gap-2">
-        <FilterChip href="/characters" active={!activeCategory} label="All channels" />
+        <FilterChip
+          href="/characters"
+          active={!activeCategory}
+          label="All channels"
+        />
         {CATEGORIES.map((category) => (
           <FilterChip
             key={category.slug}
@@ -78,25 +90,32 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
       {franchises.length > 1 && (
         <div className="mb-10 flex flex-wrap gap-2">
           <FilterChip
-            href={activeCategory ? `/characters?category=${activeCategory}` : "/characters"}
+            href={
+              activeCategory
+                ? `/characters?category=${activeCategory}`
+                : "/characters"
+            }
             active={!activeFranchise}
             label="All franchises"
             small
           />
-          {franchises.filter(Boolean).sort().map((franchise) => {
-            const query = new URLSearchParams();
-            if (activeCategory) query.set("category", activeCategory);
-            query.set("franchise", franchise);
-            return (
-              <FilterChip
-                key={franchise}
-                href={`/characters?${query.toString()}`}
-                active={activeFranchise === franchise}
-                label={franchise}
-                small
-              />
-            );
-          })}
+          {franchises
+            .filter(Boolean)
+            .sort()
+            .map((franchise) => {
+              const query = new URLSearchParams();
+              if (activeCategory) query.set("category", activeCategory);
+              query.set("franchise", franchise);
+              return (
+                <FilterChip
+                  key={franchise}
+                  href={`/characters?${query.toString()}`}
+                  active={activeFranchise === franchise}
+                  label={franchise}
+                  small
+                />
+              );
+            })}
         </div>
       )}
 
@@ -105,12 +124,21 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
           No character files match that filter yet.
         </p>
       ) : (
-        <Reveal stagger={0.04} direction="scale" className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <Reveal
+          stagger={0.04}
+          direction="scale"
+          className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4"
+        >
           {characters.map((character) => {
             const category = categoryBySlug(character.category);
-            const ink = character.accent || `var(--ch-${category?.token ?? "anime"})`;
+            const ink =
+              character.accent || `var(--ch-${category?.token ?? "anime"})`;
             return (
-              <TiltCard key={String(character._id)} className="reveal" intensity={7}>
+              <TiltCard
+                key={String(character._id)}
+                className="reveal"
+                intensity={7}
+              >
                 <Link
                   href={`/characters/${character.slug}`}
                   className="group relative flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-[var(--edge)] bg-[var(--paper-3)]"
@@ -164,7 +192,9 @@ export default async function CharactersPage(props: PageProps<"/characters">) {
                         className="font-mono text-[0.54rem] uppercase tracking-[0.16em]"
                         style={{ color: ink }}
                       >
-                        {character.grade || character.role || character.franchise}
+                        {character.grade ||
+                          character.role ||
+                          character.franchise}
                       </p>
                       <h2 className="mt-1 font-display text-[1.05rem] font-bold leading-tight">
                         {character.name}

@@ -174,8 +174,9 @@ The interface is **Neon Oni**: the fandom undercity after dark. It is built on t
 design system supplied with the mockup — a near-neutral blue-grey ground, compact spacing and
 elevation drawn as an edge plus ambient darkness — with three neon signals laid over the top.
 
-- **One ground, always dark.** There is no light mode: a neon sign only reads against the
-  night. See *Theme and accessibility* below for what that trades away.
+- **Dark is the default ground.** A neon sign only reads against the night, so that is what a
+  visitor who has expressed no preference gets. A light ground is available as an opt-in — see
+  *Theme and accessibility* below for how it is built.
 - **Three signals, never four.** Magenta `#ff2fb4`, cyan `#25f4ee`, acid `#d4ff3a`. Colour is a
   line, a glow and a small solid mark — never a flood. The eight channels each get their own
   neon, tuned to a similar luminance so no channel shouts over the others in the rail.
@@ -200,11 +201,33 @@ than a frozen one.
 
 ### Theme and accessibility
 
-Neon Oni is single-ground by design, so the light/dark toggle the print theme carried has been
-removed along with the stored `preferences.theme` field. **This drops the colour-scheme clause
-of SRS FR-12** — a deliberate trade made when the theme was chosen, recorded here rather than
-left to be discovered. The rest of FR-12 is intact: text scaling (90–130%) and the reduce-motion
-switch both survive, still persisted per account and mirrored to `localStorage`.
+All three display preferences sit behind the accessibility control in the header: **colour
+scheme**, text scaling (90–130%) and reduce-motion. Each is held in `localStorage` and resolved
+by a blocking script before first paint, so a chosen scheme does not flash dark on every
+navigation.
+
+The colour scheme is a three-way choice — Light, Dark, System — rather than a switch, because
+a two-state toggle cannot express "follow my machine", which is the setting most people want
+and the only one that reacts when their machine changes at sunset. It defaults to **dark**: the
+identity is a lit sign on a night ground, so light is opted into rather than imposed by a
+laptop's daytime setting.
+
+> **On the light ground.** Neon Oni was designed as a single dark theme and the light/dark
+> control was removed when it landed, which dropped **SRS FR-12**'s colour-scheme clause. That
+> has been reinstated, so the clause holds again. The light theme is a re-tone, not an
+> inversion: the signals are lit lines on a night ground, and reproducing them at full chroma
+> on white gives unreadable type and haloed edges. Each signal and each channel ink is darkened
+> to clear 4.5:1 on paper while keeping its hue, glow collapses to a contact shadow, the
+> scanline overlay is damped, and the map tiles stop being inverted because OpenStreetMap's own
+> imagery is already light. One token's meaning inverts with the ground: `--void` is defined as
+> "what sits *on* a filled signal", so it is near-black on dark and white on light.
+
+Printing is handled the same way, by redefining the tokens inside `@media print` rather than
+scattering `print:` variants through the components. Browsers drop background colours when
+printing but keep text colours, so the dark theme printed as near-white type on white paper —
+blank sheets. The print palette inverts the ground, darkens every signal and channel ink for
+paper, and hides the site chrome; the event pass opts back into colour printing with
+`print-exact` so its accent band and QR survive.
 
 ## Media
 

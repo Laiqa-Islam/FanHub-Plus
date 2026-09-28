@@ -1,6 +1,11 @@
 "use client";
 
-import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useSyncExternalStore,
+} from "react";
 
 import {
   CART_STORAGE_KEY,
@@ -58,7 +63,11 @@ const getHydratedSnapshot = () => true;
 const getServerHydratedSnapshot = () => false;
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const snapshot = useSyncExternalStore(subscribeToCart, getCartSnapshot, () => "[]");
+  const snapshot = useSyncExternalStore(
+    subscribeToCart,
+    getCartSnapshot,
+    () => "[]",
+  );
   const hydrated = useSyncExternalStore(
     subscribeToHydration,
     getHydratedSnapshot,
@@ -66,34 +75,45 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
   const lines = useMemo(() => parseSnapshot(snapshot), [snapshot]);
 
-  const value = useMemo<CartContextValue>(() => ({
-    lines,
-    hydrated,
-    itemCount: lines.reduce((total, line) => total + line.quantity, 0),
-    addItem(product) {
-      updateCart((current) => {
-        const match = current.find((line) => line.id === product.id);
-        if (!match) return [...current, { ...product, quantity: 1 }];
-        return current.map((line) =>
-          line.id === product.id
-            ? { ...line, quantity: Math.min(MAX_CART_QUANTITY, line.quantity + 1) }
-            : line,
+  const value = useMemo<CartContextValue>(
+    () => ({
+      lines,
+      hydrated,
+      itemCount: lines.reduce((total, line) => total + line.quantity, 0),
+      addItem(product) {
+        updateCart((current) => {
+          const match = current.find((line) => line.id === product.id);
+          if (!match) return [...current, { ...product, quantity: 1 }];
+          return current.map((line) =>
+            line.id === product.id
+              ? {
+                  ...line,
+                  quantity: Math.min(MAX_CART_QUANTITY, line.quantity + 1),
+                }
+              : line,
+          );
+        });
+      },
+      removeItem(id) {
+        updateCart((current) => current.filter((line) => line.id !== id));
+      },
+      setQuantity(id, quantity) {
+        const nextQuantity = Math.min(
+          MAX_CART_QUANTITY,
+          Math.max(1, Math.round(quantity)),
         );
-      });
-    },
-    removeItem(id) {
-      updateCart((current) => current.filter((line) => line.id !== id));
-    },
-    setQuantity(id, quantity) {
-      const nextQuantity = Math.min(MAX_CART_QUANTITY, Math.max(1, Math.round(quantity)));
-      updateCart((current) =>
-        current.map((line) => line.id === id ? { ...line, quantity: nextQuantity } : line),
-      );
-    },
-    clearCart() {
-      writeCart([]);
-    },
-  }), [hydrated, lines]);
+        updateCart((current) =>
+          current.map((line) =>
+            line.id === id ? { ...line, quantity: nextQuantity } : line,
+          ),
+        );
+      },
+      clearCart() {
+        writeCart([]);
+      },
+    }),
+    [hydrated, lines],
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

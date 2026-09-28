@@ -27,7 +27,13 @@ export type Plate = {
  * article body that isn't good enough: a keyboard user who opened it could tab
  * straight out into the page behind and lose track of where they were.
  */
-export function PlateGallery({ plates, title }: { plates: Plate[]; title: string }) {
+export function PlateGallery({
+  plates,
+  title,
+}: {
+  plates: Plate[];
+  title: string;
+}) {
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -36,7 +42,9 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
 
   const step = useCallback(
     (direction: number) => {
-      setActive((current) => (current + direction + plates.length) % plates.length);
+      setActive(
+        (current) => (current + direction + plates.length) % plates.length,
+      );
     },
     [plates.length],
   );
@@ -68,7 +76,10 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
       const last = focusable[focusable.length - 1];
       const activeElement = document.activeElement;
 
-      if (event.shiftKey && (activeElement === first || activeElement === dialog)) {
+      if (
+        event.shiftKey &&
+        (activeElement === first || activeElement === dialog)
+      ) {
         event.preventDefault();
         last.focus();
       } else if (!event.shiftKey && activeElement === last) {
@@ -94,7 +105,9 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
   // Aspect ratio comes from the stored dimensions, so the space is reserved
   // before the image arrives instead of the page jolting when it does.
   const ratio =
-    current.width && current.height ? `${current.width} / ${current.height}` : "4 / 3";
+    current.width && current.height
+      ? `${current.width} / ${current.height}`
+      : "4 / 3";
   const placeholder = lqipUrl(current.url);
 
   return (
@@ -156,7 +169,13 @@ export function PlateGallery({ plates, title }: { plates: Plate[]; title: string
                     : "border-[var(--rule-strong)] opacity-70 hover:opacity-100",
                 )}
               >
-                <Image src={plate.url} alt="" fill sizes="80px" className="object-cover" />
+                <Image
+                  src={plate.url}
+                  alt=""
+                  fill
+                  sizes="80px"
+                  className="object-cover"
+                />
               </button>
             ))}
           </div>

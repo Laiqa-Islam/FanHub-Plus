@@ -17,7 +17,12 @@
  * `lib/embeds.test.ts`.
  */
 
-export const EMBED_PROVIDERS = ["youtube", "vimeo", "spotify", "soundcloud"] as const;
+export const EMBED_PROVIDERS = [
+  "youtube",
+  "vimeo",
+  "spotify",
+  "soundcloud",
+] as const;
 export type EmbedProvider = (typeof EMBED_PROVIDERS)[number];
 
 export type EmbedRef = { provider: EmbedProvider; id: string };
@@ -43,7 +48,13 @@ type ProviderSpec = {
   href: (id: string) => string;
 };
 
-const SPOTIFY_TYPES = ["track", "album", "playlist", "episode", "show"] as const;
+const SPOTIFY_TYPES = [
+  "track",
+  "album",
+  "playlist",
+  "episode",
+  "show",
+] as const;
 
 export const PROVIDER_SPECS: Record<EmbedProvider, ProviderSpec> = {
   youtube: {
@@ -103,7 +114,10 @@ export const EMBED_FRAME_ORIGINS = [
 ] as const;
 
 export function isEmbedProvider(value: unknown): value is EmbedProvider {
-  return typeof value === "string" && (EMBED_PROVIDERS as readonly string[]).includes(value);
+  return (
+    typeof value === "string" &&
+    (EMBED_PROVIDERS as readonly string[]).includes(value)
+  );
 }
 
 /** Strips a leading "www." so host matching stays readable. */
@@ -140,19 +154,32 @@ export function parseEmbed(input: string): EmbedRef | null {
 
   // The single gate every parse funnels through: an id that fails its
   // provider's pattern is discarded, not sanitised and not passed on.
-  return PROVIDER_SPECS[candidate.provider].idPattern.test(candidate.id) ? candidate : null;
+  return PROVIDER_SPECS[candidate.provider].idPattern.test(candidate.id)
+    ? candidate
+    : null;
 }
 
-function matchHost(host: string, segments: string[], url: URL): EmbedRef | null {
+function matchHost(
+  host: string,
+  segments: string[],
+  url: URL,
+): EmbedRef | null {
   // ── YouTube ──
   if (host === "youtu.be") {
     return segments[0] ? { provider: "youtube", id: segments[0] } : null;
   }
-  if (host === "youtube.com" || host === "m.youtube.com" || host === "youtube-nocookie.com") {
+  if (
+    host === "youtube.com" ||
+    host === "m.youtube.com" ||
+    host === "youtube-nocookie.com"
+  ) {
     const v = url.searchParams.get("v");
     if (v) return { provider: "youtube", id: v };
     // /embed/<id>, /shorts/<id>, /live/<id> all carry the id in slot two.
-    if (["embed", "shorts", "live", "v"].includes(segments[0] ?? "") && segments[1]) {
+    if (
+      ["embed", "shorts", "live", "v"].includes(segments[0] ?? "") &&
+      segments[1]
+    ) {
       return { provider: "youtube", id: segments[1] };
     }
     return null;
@@ -172,7 +199,9 @@ function matchHost(host: string, segments: string[], url: URL): EmbedRef | null 
   // ── Spotify ──
   if (host === "open.spotify.com") {
     // Localised links carry an /intl-de/ prefix ahead of the type.
-    const parts = segments[0]?.startsWith("intl-") ? segments.slice(1) : segments;
+    const parts = segments[0]?.startsWith("intl-")
+      ? segments.slice(1)
+      : segments;
     const [type, id] = parts[0] === "embed" ? parts.slice(1) : parts;
     if (!type || !id) return null;
     return { provider: "spotify", id: `${type.toLowerCase()}/${id}` };
@@ -183,7 +212,10 @@ function matchHost(host: string, segments: string[], url: URL): EmbedRef | null 
     // A user page alone isn't playable, and /sets/ (playlists) needs the
     // widget's playlist mode, which this build doesn't offer.
     if (segments.length !== 2 || segments[1] === "sets") return null;
-    return { provider: "soundcloud", id: `${segments[0]}/${segments[1]}`.toLowerCase() };
+    return {
+      provider: "soundcloud",
+      id: `${segments[0]}/${segments[1]}`.toLowerCase(),
+    };
   }
 
   return null;
@@ -222,13 +254,16 @@ export function embedKind(provider: string): "video" | "audio" | null {
  * card render — those fall back to the card's own treatment.
  */
 export function embedThumbnail(provider: string, id: string): string {
-  if (provider !== "youtube" || !PROVIDER_SPECS.youtube.idPattern.test(id)) return "";
+  if (provider !== "youtube" || !PROVIDER_SPECS.youtube.idPattern.test(id))
+    return "";
   // hqdefault exists for every video; maxresdefault 404s on older uploads.
   return `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
 }
 
 /** Human list of what we accept, for form hints and error messages. */
 export function supportedProviderList(): string {
-  const labels = EMBED_PROVIDERS.map((provider) => PROVIDER_SPECS[provider].label);
+  const labels = EMBED_PROVIDERS.map(
+    (provider) => PROVIDER_SPECS[provider].label,
+  );
   return `${labels.slice(0, -1).join(", ")} and ${labels.at(-1)}`;
 }

@@ -14,6 +14,7 @@ import { VideoPlayer } from "@/components/media/video-player";
 import { AudioPlayer } from "@/components/media/audio-player";
 import { EmbedFrame } from "@/components/media/embed-frame";
 import { PlateGallery } from "@/components/media/plate-gallery";
+import { ArticleTimeline } from "@/components/content/article-timeline";
 import { RatingWidget } from "@/components/media/rating-widget";
 import { getCurrentUser } from "@/lib/dal";
 import { mediaSrc } from "@/lib/media";
@@ -46,7 +47,9 @@ export async function generateMetadata(
   };
 }
 
-export default async function ContentDetailPage(props: PageProps<"/content/[slug]">) {
+export default async function ContentDetailPage(
+  props: PageProps<"/content/[slug]">,
+) {
   const { slug } = await props.params;
   const item = await getContentBySlug(slug);
   if (!item) notFound();
@@ -101,19 +104,26 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
             <Breadcrumbs
               trail={[
                 { href: "/explore", label: "Explore" },
-                { href: `/category/${item.category}`, label: category?.name ?? item.category },
+                {
+                  href: `/category/${item.category}`,
+                  label: category?.name ?? item.category,
+                },
                 { label: item.title },
               ]}
             />
 
             <p className="mark mb-4">
-              <span style={{ color: `var(--ch-${category?.token ?? "anime"})` }}>
+              <span
+                style={{ color: `var(--ch-${category?.token ?? "anime"})` }}
+              >
                 {category?.name}
               </span>{" "}
               · {item.type}
             </p>
 
-            <h1 className="font-display text-[clamp(1.7rem,4.4vw,2.6rem)]">{item.title}</h1>
+            <h1 className="font-display text-[clamp(1.7rem,4.4vw,2.6rem)]">
+              {item.title}
+            </h1>
 
             <p className="mt-5 text-[1.08rem] leading-relaxed text-[var(--ink-soft)]">
               {item.summary}
@@ -132,7 +142,10 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
               </span>
               {item.ratingCount > 0 && (
                 <span className="inline-flex items-center gap-1.5 tabular-nums">
-                  <Star className="h-3.5 w-3.5 fill-[var(--flag)] text-[var(--flag)]" aria-hidden />
+                  <Star
+                    className="h-3.5 w-3.5 fill-[var(--flag)] text-[var(--flag)]"
+                    aria-hidden
+                  />
                   {item.averageRating.toFixed(1)} · {item.ratingCount} ratings
                 </span>
               )}
@@ -181,7 +194,11 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
 
             {item.type === "audio" && item.mediaUrl && (
               <figure className="mb-10">
-                <AudioPlayer src={mediaSrc(item.mediaUrl)} title={item.title} ink={ink} />
+                <AudioPlayer
+                  src={mediaSrc(item.mediaUrl)}
+                  title={item.title}
+                  ink={ink}
+                />
                 <MediaCaption credit={item.mediaCredit} tags={item.mediaTags} />
               </figure>
             )}
@@ -200,6 +217,10 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
           // sanitised and reviewed before they can reach this field.
           dangerouslySetInnerHTML={{ __html: item.body }}
         />
+
+        {/* The chronology, after the argument and before the apparatus: it
+            is part of the piece, not an appendix to it. */}
+        <ArticleTimeline entries={item.timeline} ink={ink} />
 
         {/* Transcript (v2 Phase 16). Collapsed so it doesn't dominate the page,
             but present in the DOM so it is searchable and readable without
@@ -255,7 +276,10 @@ export default async function ContentDetailPage(props: PageProps<"/content/[slug
             <h2 className="mb-8 font-display text-[1.5rem]">
               More from {category?.name}
             </h2>
-            <Reveal stagger={0.05} className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <Reveal
+              stagger={0.05}
+              className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3"
+            >
               {related.map((relatedItem) => (
                 <ContentCard key={relatedItem.id} item={relatedItem} />
               ))}
@@ -282,7 +306,9 @@ function MediaCaption({ credit, tags }: { credit: string; tags: string[] }) {
         </span>
       ))}
       {credit && (
-        <span className="ml-auto font-mono text-[0.6rem] text-[var(--ink-faint)]">{credit}</span>
+        <span className="ml-auto font-mono text-[0.6rem] text-[var(--ink-faint)]">
+          {credit}
+        </span>
       )}
     </figcaption>
   );
